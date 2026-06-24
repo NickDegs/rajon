@@ -9,6 +9,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import json, time, os, base64, urllib.request, urllib.parse, urllib.error, re
 import db
+import world
 
 # Twilio Verify (DayRide/hush ile paylaşılan hesap)
 TW_KEY = os.environ.get("TWILIO_API_KEY", "")
@@ -51,6 +52,7 @@ app.add_middleware(
 @app.on_event("startup")
 def _startup():
     db.init_db()
+    world.init()
 
 
 def auth(token: str | None):
@@ -452,6 +454,75 @@ def clan_war(authorization: str = Header(None)):
         "rakip_ad": (b_clan or {}).get("ad", "?") if benim_a else (a_clan or {}).get("ad", "?"),
         "bitis": w["bitis"],
     }}
+
+
+# ── SUNUCU-OTORİTER DÜNYA (tek paylaşılan dünya) ───────────────────
+class WIdxBody(BaseModel):
+    idx: int
+
+class WTipBody(BaseModel):
+    tip: str
+
+class WConquerBody(BaseModel):
+    kind: str
+    idx: int
+
+class WTrainBody(BaseModel):
+    tip: str
+    count: int = 1
+
+class WAttackBody(BaseModel):
+    target_id: str
+
+
+def _w(fn, *a):
+    try:
+        return fn(*a)
+    except world.WErr as e:
+        raise HTTPException(400, e.msg)
+
+
+@app.get("/rajon/world/state")
+def world_state(authorization: str = Header(None)):
+    p = auth(authorization)
+    return world.view(p["id"])
+
+@app.post("/rajon/world/collect")
+def world_collect(authorization: str = Header(None)):
+    p = auth(authorization)
+    return _w(world.collect, p["id"])
+
+@app.post("/rajon/world/racket")
+def world_racket(b: WIdxBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    return _w(world.racket, p["id"], b.idx)
+
+@app.post("/rajon/world/building")
+def world_building(b: WTipBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    return _w(world.building, p["id"], b.tip)
+
+@app.post("/rajon/world/conquer")
+def world_conquer(b: WConquerBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    return _w(world.conquer, p["id"], b.kind, b.idx)
+
+@app.post("/rajon/world/train")
+def world_train(b: WTrainBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    return _w(world.train, p["id"], b.tip, b.count)
+
+@app.post("/rajon/world/attack")
+def world_attack(b: WAttackBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    return _w(world.attack, p["id"], b.target_id)
+
+@app.get("/rajon/world/map")
+def world_map(authorization: str = Header(None)):
+    """Saldırılabilir gerçek oyuncular (paylaşılan dünya haritası)."""
+    me = auth(authorization)
+    top = db.leaderboard(60)
+    return {"me": me["id"], "players": [r for r in top if r["id"] != me["id"]]}
 
 
 def _public(p: dict):
