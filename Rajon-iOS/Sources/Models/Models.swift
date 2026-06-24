@@ -164,6 +164,22 @@ struct Vaha: Identifiable, Codable {
     var fetihte: Bool { (fetihBitis ?? .distantPast) > Date() }
 }
 
+// MARK: - Patron macerası (hero adventure)
+
+struct Macera: Identifiable, Codable {
+    var id = UUID()
+    var ad: String
+    var aciklama: String
+    var sure: Double                // saniye
+    var oduuncash: Int
+    var odulRespect: Int
+    var gearDusur: Bool             // teçhizat düşürür mü
+    var bitis: Date? = nil          // gönderildiyse bitiş zamanı
+
+    var devamEdiyor: Bool { (bitis ?? .distantPast) > Date() }
+    var dondu: Bool { bitis != nil && (bitis ?? .distantFuture) <= Date() }
+}
+
 // MARK: - Rapor (akın/baskın/savunma sonuçları)
 
 struct Rapor: Identifiable, Codable {

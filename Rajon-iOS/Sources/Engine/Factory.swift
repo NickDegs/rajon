@@ -61,6 +61,24 @@ enum Factory {
         }
     }
 
+    /// Patron maceraları — 3 rasgele iş üret (mafya temalı).
+    static let maceraTanim: [(String, String, Double, Int)] = [
+        ("Kumarhane Baskını", "Rakip kumarhaneyi bas, kasayı boşalt.", 90, 6_000),
+        ("Polis Rüşveti", "Bir komiseri cebe at, baskıları durdur.", 120, 9_000),
+        ("Antika Soygunu", "Müzeden bir parça aşır, koleksiyoncuya sat.", 180, 16_000),
+        ("Kaçakçı Buluşması", "Limanda mal teslim al, peşin öde.", 150, 12_000),
+        ("Rakip Tahsildarı", "Bölgendeki tahsildarı haklat.", 100, 7_500),
+        ("Gece Yarısı Anlaşması", "Karanlık bir anlaşmayı kapat.", 240, 26_000),
+    ]
+    static func makeMaceralar(bossLevel: Int) -> [Macera] {
+        maceraTanim.shuffled().prefix(3).map { ad, acik, sure, taban in
+            Macera(ad: ad, aciklama: acik, sure: sure,
+                   oduuncash: taban + bossLevel * 500,
+                   odulRespect: 12 + bossLevel * 2,
+                   gearDusur: Double.random(in: 0...1) < 0.5)
+        }
+    }
+
     /// Rasgele teçhizat üret (nadirlik verilmezse ağırlıklı çekiliş).
     static func makeGear(rarity: Rarity? = nil) -> Gear {
         let r = rarity ?? rollRarity()

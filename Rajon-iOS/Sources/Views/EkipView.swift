@@ -3,11 +3,13 @@ import SwiftUI
 /// Ekip yönetimi — sahadaki kadro + tüm adamlar, yükseltme.
 struct EkipView: View {
     @EnvironmentObject var game: GameStore
+    @State private var maceraAcik = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 sahaKart
+                maceraButon
                 Text("BÜTÜN ADAMLARIN (\(game.crew.count))")
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(Theme.smoke)
@@ -19,6 +21,37 @@ struct EkipView: View {
             }
             .padding(16)
         }
+        .fullScreenCover(isPresented: $maceraAcik) {
+            NavigationStack {
+                MaceraView()
+                    .navigationTitle("Maceralar")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { maceraAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+        }
+    }
+
+    private var maceraButon: some View {
+        Button { maceraAcik = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "briefcase.fill").font(.system(size: 24)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PATRON MACERALARI").font(.system(size: 15, weight: .black)).foregroundStyle(.white)
+                    if let m = game.aktifMacera {
+                        Text("İşte: \(m.ad)").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
+                    } else {
+                        Text("Reisi işe gönder, ödül getir").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+            }
+            .cardStyle(14)
+        }
+        .buttonStyle(.plain)
     }
 
     private var sortedCrew: [Enforcer] {

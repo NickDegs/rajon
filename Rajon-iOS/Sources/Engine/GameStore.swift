@@ -28,13 +28,14 @@ struct SaveState: Codable {
     var raporlar: [Rapor] = []                   // raporlar
     var bolgeler: [Bolge] = []                   // şehir bölgeleri
     var vahalar: [Vaha] = []                     // kaçak noktaları
+    var maceralar: [Macera] = []                 // patron maceraları
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
          gorevler: [Gorev], gorevTarih: Date, binalar: [Bina],
          ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer], cephane: Int,
-         raporlar: [Rapor], bolgeler: [Bolge], vahalar: [Vaha]) {
+         raporlar: [Rapor], bolgeler: [Bolge], vahalar: [Vaha], maceralar: [Macera]) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
@@ -42,7 +43,7 @@ struct SaveState: Codable {
         self.gorevler = gorevler; self.gorevTarih = gorevTarih; self.binalar = binalar
         self.ordu = ordu; self.egitim = egitim; self.seferler = seferler
         self.cephane = cephane; self.raporlar = raporlar; self.bolgeler = bolgeler
-        self.vahalar = vahalar
+        self.vahalar = vahalar; self.maceralar = maceralar
     }
 
     init(from dec: Decoder) throws {
@@ -70,6 +71,7 @@ struct SaveState: Codable {
         raporlar = try c.decodeIfPresent([Rapor].self, forKey: .raporlar) ?? []
         bolgeler = try c.decodeIfPresent([Bolge].self, forKey: .bolgeler) ?? []
         vahalar = try c.decodeIfPresent([Vaha].self, forKey: .vahalar) ?? []
+        maceralar = try c.decodeIfPresent([Macera].self, forKey: .maceralar) ?? []
     }
 }
 
@@ -94,6 +96,7 @@ final class GameStore: ObservableObject {
     @Published var egitim: EgitimIs? = nil     // asker eğitim kuyruğu
     @Published var seferler: [Sefer] = []      // aktif akınlar
     @Published var raporlar: [Rapor] = []      // akın/baskın/savunma raporları
+    @Published var maceralar: [Macera] = []    // patron maceraları
     @Published var gorevler: [Gorev] = []   // günlük görevler
     private var gorevTarih = Date.distantPast
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
@@ -134,6 +137,7 @@ final class GameStore: ObservableObject {
         binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
         bolgeler = Factory.makeBolgeler()
         vahalar = Factory.makeVahalar()
+        maceralar = Factory.makeMaceralar(bossLevel: 1)
         devsirmeCost = 500
         // Başlangıç ekibi: 3 adam
         let baslangic = [
@@ -162,6 +166,7 @@ final class GameStore: ObservableObject {
         insaatlariKontrolEt()
         fetihleriKontrolEt()
         egitimVeSeferleriKontrolEt()
+        maceralariKontrolEt()
         cephaneUret()
         // birikim kapasitesini aşma
         let cap = depoKapasite
@@ -513,6 +518,34 @@ final class GameStore: ObservableObject {
 
     var alinabilirGorevSayisi: Int { gorevler.filter { $0.tamam && !$0.alindi }.count }
 
+    // MARK: Patron maceraları
+    var maceradaMi: Bool { maceralar.contains { $0.devamEdiyor } }
+    var aktifMacera: Macera? { maceralar.first { $0.devamEdiyor } }
+
+    func maceraBaslat(_ id: UUID) {
+        guard !maceradaMi, let i = maceralar.firstIndex(where: { $0.id == id }),
+              maceralar[i].bitis == nil else { return }
+        maceralar[i].bitis = Date().addingTimeInterval(maceralar[i].sure)
+        Haptics.tik(); save()
+    }
+
+    private func maceralariKontrolEt() {
+        var degisti = false
+        for i in maceralar.indices where maceralar[i].dondu {
+            let m = maceralar[i]
+            cash += m.oduuncash
+            respect += m.odulRespect
+            if m.gearDusur { envanter.append(Factory.makeGear()) }
+            raporEkle("Macera tamam: \(m.ad)",
+                      "₺\(fmt(m.oduuncash)) + \(m.odulRespect) itibar\(m.gearDusur ? " + teçhizat" : "")", kazandi: true)
+            var yeni = Factory.makeMaceralar(bossLevel: bossLevel).first ?? m
+            yeni.bitis = nil
+            maceralar[i] = yeni
+            degisti = true
+        }
+        if degisti { save() }
+    }
+
     // MARK: Teçhizat
 
     /// Bir adama envanterden teçhizat tak (varsa eskisini envantere geri koy).
@@ -624,7 +657,7 @@ final class GameStore: ObservableObject {
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
             gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar,
             ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane,
-            raporlar: raporlar, bolgeler: bolgeler, vahalar: vahalar
+            raporlar: raporlar, bolgeler: bolgeler, vahalar: vahalar, maceralar: maceralar
         )
     }
 
@@ -668,6 +701,8 @@ final class GameStore: ObservableObject {
         if bolgeler.isEmpty { bolgeler = Factory.makeBolgeler() }
         vahalar = s.vahalar
         if vahalar.isEmpty { vahalar = Factory.makeVahalar() }
+        maceralar = s.maceralar
+        if maceralar.isEmpty { maceralar = Factory.makeMaceralar(bossLevel: bossLevel) }
     }
 
     @discardableResult
