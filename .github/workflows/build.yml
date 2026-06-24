@@ -177,9 +177,6 @@ jobs:
             -authenticationKeyIssuerID ${{ secrets.APPLE_ASC_ISSUER_ID }} \
             DEVELOPMENT_TEAM=SZF4T3P583 \
             CURRENT_PROJECT_VERSION=$BUILD_NO \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE="$PROFILE_UUID" \
             archive
 
       - name: Export / TestFlight'a yükle
