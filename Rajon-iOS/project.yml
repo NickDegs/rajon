@@ -12,6 +12,8 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - Sources
+    entitlements:
+      path: Sources/Rajon.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.realvirtuality.blockings
