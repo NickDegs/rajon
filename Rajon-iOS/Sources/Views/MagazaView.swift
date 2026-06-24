@@ -19,6 +19,8 @@ struct MagazaView: View {
                     }
                 }
 
+                if store.urun(.vip) != nil { abonelikNotu }
+
                 Button {
                     Task { await store.geriYukle() }
                 } label: {
@@ -47,6 +49,22 @@ struct MagazaView: View {
         }
         .cardStyle(14)
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.green.opacity(0.4), lineWidth: 1))
+    }
+
+    // Apple 3.1.2 — abonelik açıklaması + zorunlu linkler
+    private var abonelikNotu: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Kan Parası VIP — aylık abonelik")
+                .font(.system(size: 13, weight: .black)).foregroundStyle(Theme.gold)
+            Text("Ödeme, satın alma onayında Apple Kimliği hesabına işlenir. Abonelik, mevcut dönemin bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir; hesabına dönem sonundan 24 saat içinde yenileme ücreti yansır. Aboneliği, satın aldıktan sonra App Store hesap ayarlarından yönetebilir veya iptal edebilirsin.")
+                .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+            HStack(spacing: 14) {
+                Link("Gizlilik Politikası", destination: URL(string: "https://rajon.nickdegs.com/privacy")!)
+                Link("Kullanım Şartları (EULA)", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+            }
+            .font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.gold)
+        }
+        .cardStyle(14)
     }
 }
 
