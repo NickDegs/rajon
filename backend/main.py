@@ -59,6 +59,14 @@ class ClanJoinBody(BaseModel):
     clan_id: str
 
 
+class ClanDonateBody(BaseModel):
+    amount: int
+
+
+class WarDeclareBody(BaseModel):
+    target_clan_id: str
+
+
 # ── Uçlar ──────────────────────────────────────────────────
 @app.get("/rajon/health")
 def health():
@@ -112,6 +120,11 @@ def pvp_result(b: AttackResultBody, authorization: str = Header(None)):
         raise HTTPException(404, "rakip bulunamadı")
     loot = max(0, min(b.loot, int(defender["cash"] * 0.10) + 50))
     db.record_attack(p["id"], b.defender_id, b.won, loot)
+    # Clan savaşı puanı (saldıran kazandıysa ve clanlar savaştaysa)
+    if b.won:
+        atk_clan = (db.get_by_id(p["id"]) or {}).get("clan_id") or ""
+        def_clan = defender.get("clan_id") or ""
+        db.war_puan(atk_clan, def_clan)
     me = db.get_by_id(p["id"])
     return {"ok": True, "won": b.won, "loot": loot if b.won else 0, "player": _public(me)}
 
@@ -188,9 +201,60 @@ def clan_mine(authorization: str = Header(None)):
             "uye": len(members),
             "toplam_respect": sum(m["respect"] for m in members),
             "toplam_guc": sum(m["power"] for m in members),
+            "hazine": clan.get("hazine", 0),
+            "savas_galibi": clan.get("savas_galibi", 0),
             "members": members,
         }
     }
+
+
+@app.post("/rajon/clan/donate")
+def clan_donate_ep(b: ClanDonateBody, authorization: str = Header(None)):
+    """Sendika hazinesine bağış (takviye). İstemci nakdi düşer."""
+    p = auth(authorization)
+    cid = (db.get_by_id(p["id"]) or {}).get("clan_id") or ""
+    if not cid:
+        raise HTTPException(400, "çetede değilsin")
+    db.clan_donate(cid, max(0, b.amount))
+    return clan_mine(authorization)
+
+
+@app.post("/rajon/clan/war/declare")
+def clan_war_declare(b: WarDeclareBody, authorization: str = Header(None)):
+    """Lider başka bir çeteye savaş ilan eder (24 saat)."""
+    p = auth(authorization)
+    me = db.get_by_id(p["id"])
+    cid = (me or {}).get("clan_id") or ""
+    clan = db.clan_by_id(cid) if cid else None
+    if not clan or clan["lider"] != p["id"]:
+        raise HTTPException(403, "sadece çete lideri savaş ilan eder")
+    if not db.clan_by_id(b.target_clan_id) or b.target_clan_id == cid:
+        raise HTTPException(400, "geçersiz hedef çete")
+    wid = db.declare_war(cid, b.target_clan_id, 24 * 3600)
+    if not wid:
+        raise HTTPException(409, "zaten aktif bir savaş var")
+    return clan_war(authorization)
+
+
+@app.get("/rajon/clan/war")
+def clan_war(authorization: str = Header(None)):
+    """Çetemin aktif savaşı (skor + kalan süre)."""
+    p = auth(authorization)
+    db.resolve_wars()
+    cid = (db.get_by_id(p["id"]) or {}).get("clan_id") or ""
+    if not cid:
+        return {"war": None}
+    w = db.active_war(cid)
+    if not w:
+        return {"war": None}
+    a_clan = db.clan_by_id(w["a"]); b_clan = db.clan_by_id(w["b"])
+    benim_a = w["a"] == cid
+    return {"war": {
+        "benim_skor": w["skor_a"] if benim_a else w["skor_b"],
+        "rakip_skor": w["skor_b"] if benim_a else w["skor_a"],
+        "rakip_ad": (b_clan or {}).get("ad", "?") if benim_a else (a_clan or {}).get("ad", "?"),
+        "bitis": w["bitis"],
+    }}
 
 
 def _public(p: dict):

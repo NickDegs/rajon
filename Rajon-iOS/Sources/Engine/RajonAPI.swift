@@ -12,6 +12,7 @@ final class OnlineService: ObservableObject {
     @Published var myRank: Int?
     @Published var clanim: Clan?
     @Published var clanListesi: [ClanOzet] = []
+    @Published var clanSavas: ClanSavas?
     @Published var gelenBaskinlar: [GelenBaskin] = []
     @Published var hata: String?
     @Published var mesgul = false
@@ -126,6 +127,23 @@ final class OnlineService: ObservableObject {
     func clanCik() async {
         _ = try? await postRaw("/rajon/clan/leave", body: [:])
         clanim = nil
+        clanSavas = nil
+    }
+
+    func clanBagis(_ miktar: Int) async {
+        if let r: MineResp = try? await post("/rajon/clan/donate", body: ["amount": miktar]) {
+            clanim = r.clan
+        }
+    }
+
+    func clanSavasGetir() async {
+        if let r: ClanSavasResp = try? await get("/rajon/clan/war") { clanSavas = r.war }
+    }
+
+    func clanSavasIlan(_ hedefId: String) async {
+        if let r: ClanSavasResp = try? await post("/rajon/clan/war/declare", body: ["target_clan_id": hedefId]) {
+            clanSavas = r.war
+        }
     }
 
     // MARK: HTTP yardımcıları
@@ -236,8 +254,18 @@ struct Clan: Codable {
     let uye: Int
     let toplam_respect: Int
     let toplam_guc: Int
+    var hazine: Int? = nil
+    var savas_galibi: Int? = nil
     let members: [ClanMember]
 }
+
+struct ClanSavas: Codable {
+    let benim_skor: Int
+    let rakip_skor: Int
+    let rakip_ad: String
+    let bitis: Double
+}
+struct ClanSavasResp: Codable { let war: ClanSavas? }
 
 struct ClanOzet: Codable, Identifiable {
     let id: String

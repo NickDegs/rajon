@@ -56,8 +56,23 @@ def init_db():
                 aciklama    TEXT DEFAULT '',
                 created     INTEGER DEFAULT 0
             );
+
+            CREATE TABLE IF NOT EXISTS clan_wars (
+                id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                a       TEXT NOT NULL,
+                b       TEXT NOT NULL,
+                skor_a  INTEGER DEFAULT 0,
+                skor_b  INTEGER DEFAULT 0,
+                bitis   INTEGER NOT NULL,
+                durum   TEXT DEFAULT 'active'
+            );
             """
         )
+        clan_cols = [r[1] for r in c.execute("PRAGMA table_info(clans)").fetchall()]
+        if "hazine" not in clan_cols:
+            c.execute("ALTER TABLE clans ADD COLUMN hazine INTEGER DEFAULT 0")
+        if "savas_galibi" not in clan_cols:
+            c.execute("ALTER TABLE clans ADD COLUMN savas_galibi INTEGER DEFAULT 0")
         # sonradan eklenen kolonlar (migration)
         cols = [r[1] for r in c.execute("PRAGMA table_info(players)").fetchall()]
         if "clan_id" not in cols:
@@ -215,6 +230,61 @@ def clan_members(cid: str):
             (cid,),
         ).fetchall()
         return [dict(r) for r in rows]
+
+
+def clan_donate(clan_id: str, amount: int):
+    with conn() as c:
+        c.execute("UPDATE clans SET hazine=hazine+? WHERE id=?", (max(0, amount), clan_id))
+
+
+def declare_war(a: str, b: str, sure_sn: int):
+    now = int(time.time())
+    with conn() as c:
+        # zaten aktif savaş var mı
+        ex = c.execute(
+            "SELECT id FROM clan_wars WHERE durum='active' AND (a=? OR b=? OR a=? OR b=?)",
+            (a, a, b, b),
+        ).fetchone()
+        if ex:
+            return None
+        cur = c.execute(
+            "INSERT INTO clan_wars(a,b,bitis) VALUES(?,?,?)", (a, b, now + sure_sn)
+        )
+        return cur.lastrowid
+
+
+def active_war(clan_id: str):
+    with conn() as c:
+        r = c.execute(
+            "SELECT * FROM clan_wars WHERE durum='active' AND (a=? OR b=?) LIMIT 1",
+            (clan_id, clan_id),
+        ).fetchone()
+        return dict(r) if r else None
+
+
+def war_puan(attacker_clan: str, defender_clan: str):
+    """İki clan savaştaysa saldıranın clan skorunu artır."""
+    if not attacker_clan or not defender_clan:
+        return
+    with conn() as c:
+        r = c.execute(
+            "SELECT * FROM clan_wars WHERE durum='active' AND ((a=? AND b=?) OR (a=? AND b=?))",
+            (attacker_clan, defender_clan, defender_clan, attacker_clan),
+        ).fetchone()
+        if not r:
+            return
+        kol = "skor_a" if r["a"] == attacker_clan else "skor_b"
+        c.execute(f"UPDATE clan_wars SET {kol}={kol}+1 WHERE id=?", (r["id"],))
+
+
+def resolve_wars():
+    """Süresi dolan savaşları kapat, galibe +1 zafer."""
+    now = int(time.time())
+    with conn() as c:
+        for r in c.execute("SELECT * FROM clan_wars WHERE durum='active' AND bitis<=?", (now,)).fetchall():
+            galip = r["a"] if r["skor_a"] >= r["skor_b"] else r["b"]
+            c.execute("UPDATE clans SET savas_galibi=savas_galibi+1 WHERE id=?", (galip,))
+            c.execute("UPDATE clan_wars SET durum='ended' WHERE id=?", (r["id"],))
 
 
 def clan_list(limit: int = 50):

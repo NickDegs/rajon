@@ -7,6 +7,8 @@ struct ClanView: View {
 
     @State private var yeniAd = ""
     @State private var yeniAciklama = ""
+    @State private var savasSecAcik = false
+    @State private var bilgi: String?
 
     var body: some View {
         ScrollView {
@@ -23,7 +25,76 @@ struct ClanView: View {
         .task {
             await online.clanGetir()
             await online.clanListele()
+            await online.clanSavasGetir()
         }
+    }
+
+    // MARK: Savaş + takviye
+    private func savasTakviyeKart(_ c: Clan) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("SAVAŞ & TAKVİYE").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                Spacer()
+                Text("🏆 \(c.savas_galibi ?? 0)").font(.system(size: 12, weight: .heavy)).foregroundStyle(Theme.gold)
+            }
+            // Hazine + bağış
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("HAZİNE").font(.system(size: 9, weight: .bold)).foregroundStyle(Theme.smoke)
+                    Text("₺\(fmt(c.hazine ?? 0))").font(.system(size: 16, weight: .heavy, design: .rounded)).foregroundStyle(Theme.gold)
+                }
+                Spacer()
+                ForEach([10_000, 50_000], id: \.self) { m in
+                    Button {
+                        guard game.cash >= m else { bilgi = "Yetersiz nakit"; return }
+                        game.cash -= m; game.save()
+                        Task { await online.clanBagis(m) }
+                    } label: {
+                        Text("Bağış ₺\(fmt(m))").font(.system(size: 12, weight: .black))
+                            .padding(.horizontal, 10).padding(.vertical, 8)
+                            .background(game.cash >= m ? Theme.bloodDim : Theme.panelHi)
+                            .foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 9))
+                    }
+                    .buttonStyle(.plain).disabled(game.cash < m)
+                }
+            }
+            // Savaş durumu
+            if let w = online.clanSavas {
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    let kalan = max(0, Int(w.bitis - Date().timeIntervalSince1970))
+                    VStack(spacing: 4) {
+                        Text("SAVAŞ: \(w.rakip_ad)").font(.system(size: 13, weight: .black)).foregroundStyle(Theme.blood)
+                        HStack {
+                            Text("Biz \(w.benim_skor)").foregroundStyle(w.benim_skor >= w.rakip_skor ? Color.green : .white)
+                            Spacer()
+                            Text(sureMetni(kalan)).foregroundStyle(Theme.gold)
+                            Spacer()
+                            Text("\(w.rakip_skor) Onlar").foregroundStyle(w.rakip_skor > w.benim_skor ? Theme.blood : .white)
+                        }.font(.system(size: 14, weight: .heavy, design: .rounded))
+                        Text("Rakip çete üyelerine baskın yap → savaş puanı kazan.")
+                            .font(.system(size: 10)).foregroundStyle(Theme.smoke)
+                    }
+                    .padding(10).background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+            } else if c.lider_mi {
+                Button { savasSecAcik = true } label: {
+                    Label("Savaş İlan Et", systemImage: "flag.fill")
+                        .font(.system(size: 13, weight: .black))
+                        .frame(maxWidth: .infinity).padding(.vertical, 10)
+                        .background(Theme.blood).foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .confirmationDialog("Hangi çeteye savaş?", isPresented: $savasSecAcik, titleVisibility: .visible) {
+                    ForEach(online.clanListesi.filter { $0.id != c.id }.prefix(8)) { hedef in
+                        Button(hedef.ad) { Task { await online.clanSavasIlan(hedef.id) } }
+                    }
+                    Button("Vazgeç", role: .cancel) {}
+                }
+            } else {
+                Text("Savaşı çete lideri ilan eder.").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+            }
+            if let b = bilgi { Text(b).font(.system(size: 11)).foregroundStyle(Theme.blood) }
+        }
+        .cardStyle(14)
     }
 
     // MARK: Çetem
@@ -46,6 +117,8 @@ struct ClanView: View {
                 }
             }
             .frame(maxWidth: .infinity).cardStyle(18)
+
+            savasTakviyeKart(c)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("ÜYELER").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
