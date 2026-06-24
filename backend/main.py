@@ -15,6 +15,10 @@ TW_KEY = os.environ.get("TWILIO_API_KEY", "")
 TW_SECRET = os.environ.get("TWILIO_API_SECRET", "")
 TW_VERIFY = os.environ.get("TWILIO_VERIFY_SID", "")
 
+# App Review demo hesabı — reviewer SMS alamadığı için sabit numara+kod (Twilio atlanır)
+DEMO_PHONE = "+15550000000"
+DEMO_CODE = "424242"
+
 
 def _phone_norm(p: str) -> str:
     """E.164'e yakın normalize: sadece rakam, baştaki 00/0 düzelt."""
@@ -215,6 +219,8 @@ def sms_start(b: SmsStartBody):
     phone = _phone_norm(b.phone)
     if len(phone) < 8:
         raise HTTPException(400, "geçersiz telefon")
+    if phone == DEMO_PHONE:          # App Review demo — Twilio çağırma
+        return {"ok": True}
     try:
         _tw("Verifications", {"To": phone, "Channel": "sms"})
         return {"ok": True}
@@ -226,12 +232,16 @@ def sms_start(b: SmsStartBody):
 def sms_verify(b: SmsVerifyBody):
     """Kodu doğrula → telefon hesabının token'ı + tam oyun durumu (geri yükleme)."""
     phone = _phone_norm(b.phone)
-    try:
-        r = _tw("VerificationCheck", {"To": phone, "Code": b.code})
-    except urllib.error.HTTPError:
-        raise HTTPException(401, "kod yanlış")
-    if r.get("status") != "approved":
-        raise HTTPException(401, "kod onaylanmadı")
+    if phone == DEMO_PHONE:          # App Review demo — sabit kodu doğrula
+        if b.code != DEMO_CODE:
+            raise HTTPException(401, "kod yanlış")
+    else:
+        try:
+            r = _tw("VerificationCheck", {"To": phone, "Code": b.code})
+        except urllib.error.HTTPError:
+            raise HTTPException(401, "kod yanlış")
+        if r.get("status") != "approved":
+            raise HTTPException(401, "kod onaylanmadı")
 
     # Telefonun hesabı var mı?
     acc = db.get_by_phone(phone)
