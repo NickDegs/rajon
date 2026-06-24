@@ -14,7 +14,7 @@ targets:
       - Sources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.nickdegs.rajon
+        PRODUCT_BUNDLE_IDENTIFIER: app.realvirtuality.blockings
         INFOPLIST_FILE: Sources/Info.plist
         DEVELOPMENT_TEAM: SZF4T3P583
         SWIFT_VERSION: "5.9"

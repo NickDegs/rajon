@@ -70,7 +70,7 @@ jobs:
           home = os.path.expanduser('~')
           key_id = '${{ secrets.APPLE_ASC_KEY_ID }}'
           iss    = '${{ secrets.APPLE_ASC_ISSUER_ID }}'
-          BID    = 'com.nickdegs.rajon'
+          BID    = 'app.realvirtuality.blockings'
           key    = open(f"{home}/.appstoreconnect/private_keys/AuthKey_{key_id}.p8").read()
           token  = jwt.encode({'iss':iss,'exp':int(time.time())+600,'aud':'appstoreconnect-v1'},
                               key, algorithm='ES256', headers={'kid':key_id})
@@ -208,7 +208,7 @@ jobs:
           key_id = '${{ secrets.APPLE_ASC_KEY_ID }}'
           iss = '${{ secrets.APPLE_ASC_ISSUER_ID }}'
           want = '${{ needs.ios.outputs.build_no }}'
-          BID = 'com.nickdegs.rajon'
+          BID = 'app.realvirtuality.blockings'
           key = open(f"{home}/.appstoreconnect/private_keys/AuthKey_{key_id}.p8").read()
           def tok():
               return jwt.encode({'iss':iss,'exp':int(time.time())+600,'aud':'appstoreconnect-v1'},
