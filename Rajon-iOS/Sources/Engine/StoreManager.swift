@@ -1,56 +1,39 @@
 import StoreKit
 
-/// IAP ürün kimlikleri — App Store Connect'te aynı ID ile oluşturulmalı.
-/// Bundle: app.realvirtuality.blockings
+/// IAP ürünleri — YALNIZCA KOZMETİK. Hiçbiri oyunu güçlendirmez (pay-to-win YOK).
+/// Online profilde görünen rozet/çerçeve + geliştiriciye destek. Bundle: app.realvirtuality.blockings
 enum RajonUrun: String, CaseIterable {
-    // Tüketilebilir nakit paketleri (consumable)
-    case nakitKucuk   = "app.realvirtuality.blockings.cash.small"
-    case nakitOrta    = "app.realvirtuality.blockings.cash.medium"
-    case nakitBuyuk   = "app.realvirtuality.blockings.cash.large"
-    case nakitVurgun  = "app.realvirtuality.blockings.cash.huge"
-    // Garantili efsane devşirme (consumable)
-    case efsaneAdam   = "app.realvirtuality.blockings.recruit.legendary"
-    // VIP — aylık abonelik (auto-renewable): 2x gelir + günlük bonus
-    case vip          = "app.realvirtuality.blockings.vip.monthly"
-
-    /// Satın alma karşılığı verilecek nakit (consumable'lar için).
-    var nakitOdul: Int {
-        switch self {
-        case .nakitKucuk:  return 25_000
-        case .nakitOrta:   return 90_000
-        case .nakitBuyuk:  return 300_000
-        case .nakitVurgun: return 1_200_000
-        default:           return 0
-        }
-    }
+    case destekci      = "app.realvirtuality.blockings.supporter"     // Destekçi rozeti
+    case rozetKafatasi = "app.realvirtuality.blockings.badge.skull"   // Kafatası rozeti
+    case cerceveAltin  = "app.realvirtuality.blockings.frame.gold"    // Altın çerçeve
 
     var baslik: String {
         switch self {
-        case .nakitKucuk:  return "Köşe Kapması"
-        case .nakitOrta:   return "Vurgun"
-        case .nakitBuyuk:  return "Soygun"
-        case .nakitVurgun: return "Büyük Hortum"
-        case .efsaneAdam:  return "Garantili Efsane"
-        case .vip:         return "Kan Parası VIP"
+        case .destekci:      return "Destekçi Paketi"
+        case .rozetKafatasi: return "Kafatası Rozeti"
+        case .cerceveAltin:  return "Altın Çerçeve"
         }
     }
-
     var altyazi: String {
         switch self {
-        case .nakitKucuk:  return "₺25K cebe insin"
-        case .nakitOrta:   return "₺90K — işler büyüsün"
-        case .nakitBuyuk:  return "₺300K — mahalle senin"
-        case .nakitVurgun: return "₺1.2M — şehri al"
-        case .efsaneAdam:  return "Kesin efsane bir adam çek"
-        case .vip:         return "2x gelir + her gün nakit · aylık"
+        case .destekci:      return "Profilinde 🎩 Destekçi rozeti — oyunu desteklemiş ol"
+        case .rozetKafatasi: return "Adının yanında kafatası rozeti"
+        case .cerceveAltin:  return "Online profilinde altın çerçeve"
         }
     }
-
     var ikon: String {
         switch self {
-        case .efsaneAdam: return "crown.fill"
-        case .vip:        return "star.circle.fill"
-        default:          return "dollarsign.circle.fill"
+        case .destekci:      return "hands.clap.fill"
+        case .rozetKafatasi: return "flag.checkered"
+        case .cerceveAltin:  return "seal.fill"
+        }
+    }
+    /// Profil yanında gösterilecek kozmetik simge (sahip olunca).
+    var rozetSembol: String? {
+        switch self {
+        case .destekci:      return "🎩"
+        case .rozetKafatasi: return "💀"
+        case .cerceveAltin:  return "⭐️"
         }
     }
 }
@@ -58,117 +41,88 @@ enum RajonUrun: String, CaseIterable {
 @MainActor
 final class StoreManager: ObservableObject {
     @Published var products: [Product] = []
-    @Published var vipAktif = false
+    @Published var unlocked: Set<String> = []   // sahip olunan kozmetikler
     @Published var sonHata: String?
     @Published var yukleniyor = false
 
     private var updates: Task<Void, Never>?
-    weak var game: GameStore?
+    private let kayitAnahtar = "rajon_kozmetikler"
 
     init() {
+        unlocked = Set(UserDefaults.standard.stringArray(forKey: kayitAnahtar) ?? [])
         updates = dinle()
     }
-
     deinit { updates?.cancel() }
 
     func basla(game: GameStore) {
-        self.game = game
         Task {
             await urunleriYukle()
-            // Tamamlanmamış işlemleri yakala (Ask to Buy, Family Sharing, çökme sonrası).
-            // iPad'de currentEntitlements cache'i gecikebildiği için hakkı DİREKT veriyoruz.
+            // Tamamlanmamış işlemler (iPad cache gecikmesi için direkt set)
             for await sonuc in Transaction.unfinished {
-                if case .verified(let t) = sonuc {
-                    await odulVer(t)
-                    await t.finish()
-                }
+                if case .verified(let t) = sonuc { ode(t); await t.finish() }
             }
-            await vipDurumGuncelle()
+            await kozmetikGuncelle()
         }
+    }
+
+    func sahip(_ u: RajonUrun) -> Bool { unlocked.contains(u.rawValue) }
+    var destekciMi: Bool { sahip(.destekci) }
+    /// Profilde gösterilecek en üst kozmetik rozet.
+    var aktifRozet: String? {
+        for u in [RajonUrun.cerceveAltin, .rozetKafatasi, .destekci] where sahip(u) {
+            return u.rozetSembol
+        }
+        return nil
     }
 
     func urunleriYukle() async {
         do {
-            let ids = RajonUrun.allCases.map { $0.rawValue }
-            let p = try await Product.products(for: ids)
-            products = p.sorted { ($0.price) < ($1.price) }
-        } catch {
-            sonHata = "Ürünler yüklenemedi: \(error.localizedDescription)"
-        }
+            let p = try await Product.products(for: RajonUrun.allCases.map { $0.rawValue })
+            products = p.sorted { $0.price < $1.price }
+        } catch { sonHata = "Ürünler yüklenemedi: \(error.localizedDescription)" }
     }
-
-    func urun(_ u: RajonUrun) -> Product? {
-        products.first { $0.id == u.rawValue }
-    }
+    func urun(_ u: RajonUrun) -> Product? { products.first { $0.id == u.rawValue } }
 
     func satinAl(_ product: Product) async {
-        yukleniyor = true
-        defer { yukleniyor = false }
+        yukleniyor = true; defer { yukleniyor = false }
         do {
-            let sonuc = try await product.purchase()
-            switch sonuc {
+            switch try await product.purchase() {
             case .success(let dogrulama):
-                if case .verified(let transaction) = dogrulama {
-                    await odulVer(transaction)
-                    await transaction.finish()
-                }
-            case .userCancelled, .pending:
-                break
-            @unknown default:
-                break
+                if case .verified(let t) = dogrulama { ode(t); await t.finish() }
+            case .userCancelled, .pending: break
+            @unknown default: break
             }
-        } catch {
-            sonHata = "Satın alma başarısız: \(error.localizedDescription)"
-        }
+        } catch { sonHata = "Satın alma başarısız: \(error.localizedDescription)" }
     }
 
-    /// Satın alımı oyuna yansıt.
-    private func odulVer(_ t: Transaction) async {
-        guard let u = RajonUrun(rawValue: t.productID) else { return }
-        switch u {
-        case .nakitKucuk, .nakitOrta, .nakitBuyuk, .nakitVurgun:
-            game?.cash += u.nakitOdul
-            game?.save()
-        case .efsaneAdam:
-            game?.efsaneDevsir()
-        case .vip:
-            // Abonelik iptal/iade edilmediyse hakkı DİREKT ver (cache bekleme — iPad race fix).
-            let gecerli = t.revocationDate == nil
-            vipAktif = gecerli
-            game?.vipAktif = gecerli
-            game?.save()
-        }
+    /// Kozmetiği aç (cache'i bekleme — iPad race fix). Hiçbir oyun etkisi YOK.
+    private func ode(_ t: Transaction) {
+        guard t.revocationDate == nil, RajonUrun(rawValue: t.productID) != nil else { return }
+        unlocked.insert(t.productID)
+        UserDefaults.standard.set(Array(unlocked), forKey: kayitAnahtar)
         Haptics.basari()
     }
 
-    /// Geri yükleme (Restore Purchases).
     func geriYukle() async {
-        yukleniyor = true
-        defer { yukleniyor = false }
+        yukleniyor = true; defer { yukleniyor = false }
         try? await AppStore.sync()
-        await vipDurumGuncelle()
+        await kozmetikGuncelle()
     }
 
-    /// Aktif abonelik / kalıcı haklar.
-    func vipDurumGuncelle() async {
-        var aktif = false
+    func kozmetikGuncelle() async {
+        var sahipOlunan = Set<String>()
         for await sonuc in Transaction.currentEntitlements {
-            if case .verified(let t) = sonuc, t.productID == RajonUrun.vip.rawValue {
-                if t.revocationDate == nil { aktif = true }
-            }
+            if case .verified(let t) = sonuc, t.revocationDate == nil { sahipOlunan.insert(t.productID) }
         }
-        vipAktif = aktif
-        game?.vipAktif = aktif
+        unlocked.formUnion(sahipOlunan)   // sadece ekle (kozmetik kalıcı)
+        UserDefaults.standard.set(Array(unlocked), forKey: kayitAnahtar)
     }
 
     private func dinle() -> Task<Void, Never> {
         Task.detached { [weak self] in
             for await sonuc in Transaction.updates {
                 guard let self else { continue }
-                if case .verified(let t) = sonuc {
-                    await self.odulVer(t)
-                    await t.finish()
-                }
+                if case .verified(let t) = sonuc { await self.ode(t); await t.finish() }
             }
         }
     }

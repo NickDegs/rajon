@@ -1,50 +1,35 @@
 import SwiftUI
 import StoreKit
 
-/// Mağaza — IAP ürünleri (nakit paketleri, efsane, VIP).
+/// Mağaza — YALNIZCA KOZMETİK. Hiçbir ürün oyunu güçlendirmez.
 struct MagazaView: View {
-    @EnvironmentObject var game: GameStore
     @EnvironmentObject var store: StoreManager
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                if store.vipAktif { vipBanner }
+                bilgiNotu
 
-                Text("KAN PARASI VIP")
-                    .sectionHeader()
-                if let p = store.urun(.vip) {
-                    UrunRow(urun: .vip, product: p, owned: store.vipAktif)
-                }
-
-                Text("NAKİT")
-                    .sectionHeader()
-                ForEach([RajonUrun.nakitKucuk, .nakitOrta, .nakitBuyuk, .nakitVurgun], id: \.self) { u in
+                Text("KOZMETİK").sectionHeader()
+                ForEach(RajonUrun.allCases, id: \.self) { u in
                     if let p = store.urun(u) {
-                        UrunRow(urun: u, product: p)
+                        KozmetikRow(urun: u, product: p, owned: store.sahip(u))
+                    } else {
+                        KozmetikRow(urun: u, product: nil, owned: store.sahip(u))
                     }
-                }
-
-                Text("ÖZEL")
-                    .sectionHeader()
-                if let p = store.urun(.efsaneAdam) {
-                    UrunRow(urun: .efsaneAdam, product: p)
                 }
 
                 Button {
                     Task { await store.geriYukle() }
                 } label: {
                     Text("Satın Alımları Geri Yükle")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(Theme.smoke)
+                        .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.smoke)
                 }
                 .padding(.top, 6)
 
                 if store.products.isEmpty {
-                    Text("Ürünler yükleniyor… (TestFlight'ta StoreKit ürünleri ASC'de onaylı olmalı)")
-                        .font(.system(size: 11))
-                        .foregroundStyle(Theme.smoke)
-                        .multilineTextAlignment(.center)
+                    Text("Ürünler yükleniyor… (TestFlight'ta ASC ürünleri onaylı olmalı)")
+                        .font(.system(size: 11)).foregroundStyle(Theme.smoke).multilineTextAlignment(.center)
                 }
                 if let e = store.sonHata {
                     Text(e).font(.system(size: 11)).foregroundStyle(Theme.blood)
@@ -54,31 +39,32 @@ struct MagazaView: View {
         }
     }
 
-    private var vipBanner: some View {
-        HStack {
-            Image(systemName: "star.circle.fill").foregroundStyle(Theme.gold)
-            Text("Kan Parası VIP aktif — gelir 2 katı")
-                .font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
-            Spacer()
+    private var bilgiNotu: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "checkmark.shield.fill").foregroundStyle(Color.green)
+            Text("Adil oyun: Bu satın alımlar **tamamen kozmetiktir**. Oyunu güçlendirmez, pay-to-win yoktur. Her şey oynayarak kazanılır.")
+                .font(.system(size: 12, weight: .medium)).foregroundStyle(.white)
         }
-        .cardStyle(12)
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.gold.opacity(0.5), lineWidth: 1))
+        .cardStyle(14)
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.green.opacity(0.4), lineWidth: 1))
     }
 }
 
-struct UrunRow: View {
+struct KozmetikRow: View {
     @EnvironmentObject var store: StoreManager
     let urun: RajonUrun
-    let product: Product
+    let product: Product?
     var owned: Bool = false
 
     var body: some View {
         HStack(spacing: 12) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10).fill(Theme.panelHi)
-                Image(systemName: urun.ikon)
-                    .font(.system(size: 22))
-                    .foregroundStyle(urun == .vip || urun == .efsaneAdam ? Theme.gold : Theme.blood)
+                if let s = urun.rozetSembol {
+                    Text(s).font(.system(size: 26))
+                } else {
+                    Image(systemName: urun.ikon).font(.system(size: 22)).foregroundStyle(Theme.gold)
+                }
             }
             .frame(width: 48, height: 48)
 
@@ -89,16 +75,16 @@ struct UrunRow: View {
             Spacer()
 
             Button {
-                Task { await store.satinAl(product) }
+                if let p = product { Task { await store.satinAl(p) } }
             } label: {
-                Text(owned ? "AKTİF" : product.displayPrice)
+                Text(owned ? "SAHİP" : (product?.displayPrice ?? "—"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(owned ? Theme.gold : .white)
                     .padding(.horizontal, 14).padding(.vertical, 9)
                     .background(owned ? Theme.panelHi : Theme.blood)
                     .clipShape(RoundedRectangle(cornerRadius: 9))
             }
-            .disabled(owned || store.yukleniyor)
+            .disabled(owned || product == nil || store.yukleniyor)
         }
         .cardStyle(12)
     }

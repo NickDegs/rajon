@@ -44,10 +44,12 @@ struct AyarlarView: View {
                 // Satın almalar
                 VStack(alignment: .leading, spacing: 10) {
                     Text("SATIN ALMALAR").sectionHeader()
-                    if store.vipAktif {
-                        Label("Kan Parası VIP aktif", systemImage: "star.circle.fill")
+                    if store.destekciMi {
+                        Label("Destekçisin — teşekkürler! 🎩", systemImage: "hands.clap.fill")
                             .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.gold)
                     }
+                    Text("Tüm satın alımlar kozmetiktir, oyunu güçlendirmez.")
+                        .font(.system(size: 11)).foregroundStyle(Theme.smoke)
                     Button {
                         Task { await store.geriYukle(); bilgi = "Satın alımlar geri yüklendi." }
                     } label: {

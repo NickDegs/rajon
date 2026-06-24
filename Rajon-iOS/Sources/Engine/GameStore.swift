@@ -144,17 +144,12 @@ final class GameStore: ObservableObject {
             .sink { [weak self] _ in self?.tick() }
     }
 
-    /// VIP aktifse gelir 2 katı.
-    var gelirCarpani: Double { vipAktif ? 2.0 : 1.0 }
+    /// Gelir çarpanı her zaman 1.0 — pay-to-win YOK, satın alımlar gücü etkilemez.
+    var gelirCarpani: Double { 1.0 }
 
     private func tick() {
         let kazanc = saniyelikGelir
         idleKazanc += Int(kazanc.rounded())
-        // VIP günlük bonus
-        if vipAktif, Date().timeIntervalSince(vipSonBonus) >= 86_400 {
-            vipSonBonus = Date()
-            cash += 50_000
-        }
         insaatlariKontrolEt()
         egitimVeSeferleriKontrolEt()
         cephaneUret()

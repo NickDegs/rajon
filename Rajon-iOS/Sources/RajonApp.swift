@@ -5,6 +5,7 @@ struct RajonApp: App {
     @StateObject private var game = GameStore()
     @StateObject private var store = StoreManager()
     @StateObject private var online = OnlineService()
+    @StateObject private var kozmetik = CosmeticStore()
 
     @State private var splash = true
 
@@ -15,6 +16,7 @@ struct RajonApp: App {
                     .environmentObject(game)
                     .environmentObject(store)
                     .environmentObject(online)
+                    .environmentObject(kozmetik)
                     .opacity(splash ? 0 : 1)
 
                 if splash {

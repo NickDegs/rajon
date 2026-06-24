@@ -74,9 +74,6 @@ struct TopBar: View {
             statChip(icon: "circle.hexagongrid.fill", value: fmt(game.cephane), tint: Theme.smoke)
             statChip(icon: "flame.fill", value: fmt(game.respect), tint: Theme.blood)
             Spacer()
-            if game.vipAktif {
-                Image(systemName: "star.circle.fill").foregroundStyle(Theme.gold)
-            }
             Button { magazaAcik = true } label: {
                 Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
             }

@@ -4,6 +4,9 @@ import SwiftUI
 struct OnlineView: View {
     @EnvironmentObject var game: GameStore
     @EnvironmentObject var online: OnlineService
+    @EnvironmentObject var store: StoreManager
+    @EnvironmentObject var kozmetik: CosmeticStore
+    @State private var kozmetikAcik = false
 
     @State private var adGirisi = ""
     @State private var hedef: PvpTarget?
@@ -53,6 +56,19 @@ struct OnlineView: View {
             }
             .preferredColorScheme(.dark)
             .environmentObject(game)
+            .environmentObject(online)
+        }
+        .sheet(isPresented: $kozmetikAcik) {
+            NavigationStack {
+                KozmetikView()
+                    .navigationTitle("Özelleştir")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { kozmetikAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(kozmetik)
+            .environmentObject(store)
             .environmentObject(online)
         }
     }
@@ -113,9 +129,22 @@ struct OnlineView: View {
     // MARK: Profil
     private var profilKart: some View {
         VStack(spacing: 10) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(online.me?.ad ?? online.ad).font(.system(size: 18, weight: .black)).foregroundStyle(.white)
+            HStack(spacing: 12) {
+                Image(kozmetik.avatar).resizable().scaledToFill()
+                    .frame(width: 64, height: 64).clipShape(Circle())
+                    .overlay(Circle().stroke(kozmetik.seciliRenk, lineWidth: 3))
+                    .onTapGesture { kozmetikAcik = true }
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        if !kozmetik.unvan.isEmpty {
+                            Text(kozmetik.unvan).font(.system(size: 11, weight: .black))
+                                .padding(.horizontal, 7).padding(.vertical, 2)
+                                .background(Theme.panelHi).foregroundStyle(Theme.gold).clipShape(Capsule())
+                        }
+                        Text(online.me?.ad ?? online.ad).font(.system(size: 18, weight: .black))
+                            .foregroundStyle(kozmetik.seciliRenk)
+                        if let r = store.aktifRozet { Text(r).font(.system(size: 15)) }
+                    }
                     Text("Güç \(fmt(game.squadPower)) · İtibar \(fmt(online.me?.respect ?? 0))")
                         .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 }
@@ -131,6 +160,13 @@ struct OnlineView: View {
                 skor("Saldırı G.", online.me?.wins ?? 0, Color.green)
                 skor("Yenilgi", online.me?.losses ?? 0, Theme.blood)
                 skor("Savunma G.", online.me?.def_wins ?? 0, Theme.gold)
+            }
+            Button { kozmetikAcik = true } label: {
+                Label("Görünümünü Özelleştir", systemImage: "paintpalette.fill")
+                    .font(.system(size: 14, weight: .black))
+                    .frame(maxWidth: .infinity).padding(.vertical, 11)
+                    .background(Theme.panelHi).foregroundStyle(Theme.gold)
+                    .clipShape(RoundedRectangle(cornerRadius: 11))
             }
         }
         .cardStyle(16)
