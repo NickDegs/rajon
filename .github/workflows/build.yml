@@ -33,6 +33,20 @@ jobs:
       - name: XcodeGen kur
         run: brew install xcodegen
 
+      - name: Mapbox SDK indirme + token
+        env:
+          MAPBOX_DOWNLOAD_TOKEN: ${{ secrets.MAPBOX_DOWNLOAD_TOKEN }}
+          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
+        run: |
+          # SwiftPM'in MapboxMaps paketini indirebilmesi için ~/.netrc (DOWNLOADS:READ secret token)
+          printf 'machine api.mapbox.com\nlogin mapbox\npassword %s\n' "$MAPBOX_DOWNLOAD_TOKEN" > "$HOME/.netrc"
+          chmod 600 "$HOME/.netrc"
+          # Public token'ı Info.plist'e enjekte et (repo'ya yazılmaz, sadece CI'da)
+          PL="Sources/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :MBXAccessToken" "$PL" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :MBXAccessToken string $MAPBOX_PUBLIC_TOKEN" "$PL"
+          echo "Mapbox token enjekte edildi."
+
       - name: Xcodeproj üret
         id: bn
         run: |

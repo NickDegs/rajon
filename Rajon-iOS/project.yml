@@ -5,6 +5,11 @@ options:
     iOS: "17.0"
   createIntermediateGroups: true
 
+packages:
+  MapboxMaps:
+    url: https://github.com/mapbox/mapbox-maps-ios.git
+    from: "11.0.0"
+
 targets:
   Rajon:
     type: application
@@ -12,6 +17,8 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - Sources
+    dependencies:
+      - package: MapboxMaps
     entitlements:
       path: Sources/Rajon.entitlements
     settings:
