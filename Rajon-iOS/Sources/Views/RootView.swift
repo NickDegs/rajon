@@ -69,8 +69,9 @@ struct TopBar: View {
     @Binding var ayarAcik: Bool
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             statChip(icon: "dollarsign.circle.fill", value: fmt(game.cash), tint: Theme.gold)
+            statChip(icon: "circle.hexagongrid.fill", value: fmt(game.cephane), tint: Theme.smoke)
             statChip(icon: "flame.fill", value: fmt(game.respect), tint: Theme.blood)
             Spacer()
             if game.vipAktif {

@@ -18,6 +18,7 @@ struct SeferView: View {
         ScrollView {
             VStack(spacing: 14) {
                 orduKart
+                karaborsaKart
                 egitimKart
                 if !game.seferler.isEmpty { aktifSeferler }
                 hedeflerKart
@@ -51,6 +52,45 @@ struct SeferView: View {
         .cardStyle(14)
     }
 
+    // MARK: Karaborsa
+    private var karaborsaKart: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("KARABORSA").font(.system(size: 13, weight: .black)).foregroundStyle(Theme.smoke)
+                Spacer()
+                Label("\(fmt(game.cephane)) mühimmat", systemImage: "circle.hexagongrid.fill")
+                    .font(.system(size: 12, weight: .heavy)).foregroundStyle(.white)
+            }
+            Text("Mühimmat al/sat. Al: \(game.cephaneAlisKuru)₺ · Sat: \(game.cephaneSatisKuru)₺ (adet)")
+                .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+            HStack(spacing: 8) {
+                ForEach([50, 100, 250], id: \.self) { m in
+                    Button { game.cephaneAl(m) } label: {
+                        VStack(spacing: 0) {
+                            Text("+\(m)").font(.system(size: 13, weight: .black))
+                            Text("₺\(fmt(m * game.cephaneAlisKuru))").font(.system(size: 10, weight: .semibold)).opacity(0.85)
+                        }
+                        .frame(maxWidth: .infinity).padding(.vertical, 8)
+                        .background(game.cash >= m * game.cephaneAlisKuru ? Theme.bloodDim : Theme.panelHi)
+                        .foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 9))
+                    }
+                    .buttonStyle(.plain).disabled(game.cash < m * game.cephaneAlisKuru)
+                }
+                Button { game.cephaneSat(100) } label: {
+                    VStack(spacing: 0) {
+                        Text("Sat 100").font(.system(size: 13, weight: .black))
+                        Text("+₺\(fmt(100 * game.cephaneSatisKuru))").font(.system(size: 10, weight: .semibold)).opacity(0.85)
+                    }
+                    .frame(maxWidth: .infinity).padding(.vertical, 8)
+                    .background(game.cephane >= 100 ? Theme.gold.opacity(0.85) : Theme.panelHi)
+                    .foregroundStyle(game.cephane >= 100 ? .black : Theme.smoke).clipShape(RoundedRectangle(cornerRadius: 9))
+                }
+                .buttonStyle(.plain).disabled(game.cephane < 100)
+            }
+        }
+        .cardStyle(14)
+    }
+
     // MARK: Eğitim
     private var egitimKart: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -72,14 +112,19 @@ struct SeferView: View {
                 Text(secimTip.aciklama).font(.system(size: 11)).foregroundStyle(Theme.smoke)
                 Stepper("Adet: \(adet)", value: $adet, in: 1...50).foregroundStyle(.white)
                 let fiyat = secimTip.maliyet * adet
+                let cephaneFiyat = secimTip.cephaneMaliyet * adet
+                let yeter = game.cash >= fiyat && game.cephane >= cephaneFiyat
                 Button { game.askerEgit(secimTip, sayi: adet) } label: {
-                    Text("EĞİT  ·  ₺\(fmt(fiyat))").font(.system(size: 15, weight: .black))
-                        .frame(maxWidth: .infinity).padding(.vertical, 12)
-                        .background(game.cash >= fiyat ? Theme.blood : Theme.panelHi)
-                        .foregroundStyle(game.cash >= fiyat ? .white : Theme.smoke)
-                        .clipShape(RoundedRectangle(cornerRadius: 11))
+                    VStack(spacing: 1) {
+                        Text("EĞİT").font(.system(size: 15, weight: .black))
+                        Text("₺\(fmt(fiyat))  ·  \(cephaneFiyat) mühimmat").font(.system(size: 11, weight: .semibold)).opacity(0.85)
+                    }
+                    .frame(maxWidth: .infinity).padding(.vertical, 10)
+                    .background(yeter ? Theme.blood : Theme.panelHi)
+                    .foregroundStyle(yeter ? .white : Theme.smoke)
+                    .clipShape(RoundedRectangle(cornerRadius: 11))
                 }
-                .disabled(game.cash < fiyat)
+                .disabled(!yeter)
             }
         }
         .cardStyle(14)

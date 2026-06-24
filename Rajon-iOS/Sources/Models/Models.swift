@@ -152,6 +152,7 @@ enum AskerTip: String, Codable, CaseIterable {
     var savunma: Int  { self == .kabadayi ? 16 : (self == .tetikci ? 5 : 6) }
     var yagma: Int    { self == .sofor ? 220 : 40 }      // taşıma kapasitesi
     var maliyet: Int  { self == .sofor ? 900 : (self == .kabadayi ? 700 : 600) }
+    var cephaneMaliyet: Int { self == .tetikci ? 8 : (self == .kabadayi ? 3 : 2) } // birim başına
     var egitimSure: Double { 8 }                          // birim başına sn
 }
 

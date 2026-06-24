@@ -24,12 +24,13 @@ struct SaveState: Codable {
     var ordu: [String: Int] = [:]                // asker sayıları
     var egitim: EgitimIs? = nil                  // eğitim kuyruğu
     var seferler: [Sefer] = []                   // aktif akınlar
+    var cephane: Int = 200                       // mühimmat
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
          gorevler: [Gorev], gorevTarih: Date, binalar: [Bina],
-         ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer]) {
+         ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer], cephane: Int) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
@@ -59,6 +60,7 @@ struct SaveState: Codable {
         ordu = try c.decodeIfPresent([String: Int].self, forKey: .ordu) ?? [:]
         egitim = try c.decodeIfPresent(EgitimIs.self, forKey: .egitim)
         seferler = try c.decodeIfPresent([Sefer].self, forKey: .seferler) ?? []
+        cephane = try c.decodeIfPresent(Int.self, forKey: .cephane) ?? 200
     }
 }
 
@@ -66,6 +68,7 @@ struct SaveState: Codable {
 @MainActor
 final class GameStore: ObservableObject {
     @Published var cash: Int = 0
+    @Published var cephane: Int = 200       // mühimmat (2. kaynak)
     @Published var respect: Int = 0
     @Published var crew: [Enforcer] = []
     @Published var squad: [UUID] = []
@@ -86,6 +89,7 @@ final class GameStore: ObservableObject {
     private var lastSeen = Date()
     private var vipSonBonus = Date.distantPast
     private var gunlukBonusTarih = Date.distantPast
+    private var cephaneAcc: Double = 0      // mühimmat üretim kesir biriktirici
     private var timer: AnyCancellable?
 
     private let saveURL: URL = {
@@ -148,6 +152,7 @@ final class GameStore: ObservableObject {
         }
         insaatlariKontrolEt()
         egitimVeSeferleriKontrolEt()
+        cephaneUret()
         // birikim kapasitesini aşma
         let cap = depoKapasite
         if idleKazanc > cap { idleKazanc = cap }
@@ -187,6 +192,30 @@ final class GameStore: ObservableObject {
     var maxKadro: Int { min(6, 4 + binaSeviye(.kisla) / 2) }            // saha kadrosu
     var cephanelikBonus: Double { 1.0 + 0.07 * Double(binaSeviye(.cephanelik)) } // saldırı çarpanı
     var korunakSavunma: Int { 60 * binaSeviye(.korunak) }
+
+    // Mühimmat (2. kaynak) — Cephanelik üretir
+    var cephaneUretimDk: Int { 30 * binaSeviye(.cephanelik) }
+    var cephaneMax: Int { 1_500 + 700 * binaSeviye(.cephanelik) }
+    private func cephaneUret() {
+        guard cephaneUretimDk > 0, cephane < cephaneMax else { return }
+        cephaneAcc += Double(cephaneUretimDk) / 60.0
+        if cephaneAcc >= 1 {
+            cephane = min(cephaneMax, cephane + Int(cephaneAcc))
+            cephaneAcc -= Double(Int(cephaneAcc))
+        }
+    }
+    // Karaborsa kurları
+    let cephaneAlisKuru = 12   // 1 mühimmat = 12 nakit (al)
+    let cephaneSatisKuru = 6   // 1 mühimmat = 6 nakit (sat)
+    func cephaneAl(_ miktar: Int) {
+        let fiyat = miktar * cephaneAlisKuru
+        guard miktar > 0, cash >= fiyat, cephane + miktar <= cephaneMax else { return }
+        cash -= fiyat; cephane += miktar; Haptics.tik(); save()
+    }
+    func cephaneSat(_ miktar: Int) {
+        guard miktar > 0, cephane >= miktar else { return }
+        cephane -= miktar; cash += miktar * cephaneSatisKuru; Haptics.tik(); save()
+    }
     /// Karargah inşaatları hızlandırır.
     var insaatHizCarpani: Double { 1.0 / (1.0 + 0.07 * Double(binaSeviye(.karargah))) }
     var insaatMesgul: Bool { binalar.contains { $0.insaatta } }
@@ -246,8 +275,10 @@ final class GameStore: ObservableObject {
     func askerEgit(_ tip: AskerTip, sayi: Int) {
         guard egitim == nil, sayi > 0 else { return }
         let fiyat = tip.maliyet * sayi
-        guard cash >= fiyat else { return }
+        let cephaneFiyat = tip.cephaneMaliyet * sayi
+        guard cash >= fiyat, cephane >= cephaneFiyat else { return }
         cash -= fiyat
+        cephane -= cephaneFiyat
         let sure = tip.egitimSure * Double(sayi) * egitimHiz
         egitim = EgitimIs(tip: tip, sayi: sayi, bitis: Date().addingTimeInterval(sure))
         Haptics.tik()
@@ -514,7 +545,7 @@ final class GameStore: ObservableObject {
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
             gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar,
-            ordu: ordu, egitim: egitim, seferler: seferler
+            ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -538,6 +569,7 @@ final class GameStore: ObservableObject {
             binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
         }
         ordu = s.ordu; egitim = s.egitim; seferler = s.seferler
+        cephane = s.cephane
         return true
     }
 
