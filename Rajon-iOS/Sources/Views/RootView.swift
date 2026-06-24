@@ -3,12 +3,13 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var game: GameStore
     @State private var tab = 0
+    @State private var magazaAcik = false
 
     var body: some View {
         ZStack {
             Theme.bg
             VStack(spacing: 0) {
-                TopBar()
+                TopBar(magazaAcik: $magazaAcik)
                 TabView(selection: $tab) {
                     UsView()
                         .tag(0)
@@ -22,9 +23,26 @@ struct RootView: View {
                     DevsirView()
                         .tag(3)
                         .tabItem { Label("Devşir", systemImage: "dice.fill") }
+                    OnlineView()
+                        .tag(4)
+                        .tabItem { Label("Online", systemImage: "globe") }
                 }
                 .tint(Theme.blood)
             }
+        }
+        .sheet(isPresented: $magazaAcik) {
+            NavigationStack {
+                MagazaView()
+                    .navigationTitle("Mağaza")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Kapat") { magazaAcik = false }
+                        }
+                    }
+                    .background(Theme.coal)
+            }
+            .preferredColorScheme(.dark)
         }
     }
 }
@@ -32,12 +50,19 @@ struct RootView: View {
 /// Üstte sabit para / itibar / seviye barı.
 struct TopBar: View {
     @EnvironmentObject var game: GameStore
+    @Binding var magazaAcik: Bool
 
     var body: some View {
         HStack(spacing: 14) {
             statChip(icon: "dollarsign.circle.fill", value: fmt(game.cash), tint: Theme.gold)
             statChip(icon: "flame.fill", value: fmt(game.respect), tint: Theme.blood)
             Spacer()
+            if game.vipAktif {
+                Image(systemName: "star.circle.fill").foregroundStyle(Theme.gold)
+            }
+            Button { magazaAcik = true } label: {
+                Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
+            }
             VStack(alignment: .trailing, spacing: 1) {
                 Text("PATRON")
                     .font(.system(size: 9, weight: .bold))

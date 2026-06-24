@@ -4,11 +4,14 @@ struct CombatView: View {
     @EnvironmentObject var game: GameStore
     @Environment(\.dismiss) private var dismiss
     let node: RivalNode
+    /// PvP modunda sonuç bu closure'a gider (kazandı mı). nil ise kampanya ödülü uygulanır.
+    var onResult: ((Bool) -> Void)? = nil
 
     @StateObject private var engine: CombatEngine
 
-    init(node: RivalNode) {
+    init(node: RivalNode, onResult: ((Bool) -> Void)? = nil) {
         self.node = node
+        self.onResult = onResult
         _engine = StateObject(wrappedValue: CombatEngine(node: node, squad: []))
     }
 
@@ -170,7 +173,9 @@ struct CombatView: View {
                         .multilineTextAlignment(.center).padding(.horizontal, 30)
                 }
                 Button {
-                    if kazandi {
+                    if let onResult {
+                        onResult(kazandi)
+                    } else if kazandi {
                         game.dovusKazanildi(node: node, hayatta: engine.hayattaOyuncuIDleri)
                     }
                     dismiss()

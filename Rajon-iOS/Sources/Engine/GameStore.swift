@@ -11,6 +11,8 @@ struct SaveState: Codable {
     var rivals: [RivalNode]
     var lastSeen: Date
     var devsirmeCost: Int       // bir sonraki devşirme maliyeti
+    var vipAktif: Bool = false  // Kan Parası VIP (2x gelir)
+    var vipSonBonus: Date = .distantPast
 }
 
 /// Bütün oyun mantığını yöneten gözlemlenebilir depo.
@@ -23,9 +25,11 @@ final class GameStore: ObservableObject {
     @Published var rackets: [Racket] = []
     @Published var rivals: [RivalNode] = []
     @Published var devsirmeCost: Int = 500
+    @Published var vipAktif: Bool = false   // Kan Parası VIP — 2x gelir + günlük bonus
 
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
     private var lastSeen = Date()
+    private var vipSonBonus = Date.distantPast
     private var timer: AnyCancellable?
 
     private let saveURL: URL = {
@@ -73,9 +77,17 @@ final class GameStore: ObservableObject {
             .sink { [weak self] _ in self?.tick() }
     }
 
+    /// VIP aktifse gelir 2 katı.
+    var gelirCarpani: Double { vipAktif ? 2.0 : 1.0 }
+
     private func tick() {
-        let kazanc = ownedRackets.reduce(0.0) { $0 + $1.perSec }
+        let kazanc = ownedRackets.reduce(0.0) { $0 + $1.perSec } * gelirCarpani
         idleKazanc += Int(kazanc.rounded())
+        // VIP günlük bonus
+        if vipAktif, Date().timeIntervalSince(vipSonBonus) >= 86_400 {
+            vipSonBonus = Date()
+            cash += 50_000
+        }
         // periyodik kayıt (her ~15 sn)
         if Int(Date().timeIntervalSince1970) % 15 == 0 { save() }
     }
@@ -85,14 +97,14 @@ final class GameStore: ObservableObject {
         let dt = Date().timeIntervalSince(lastSeen)
         guard dt > 0 else { return }
         let capped = min(dt, 8 * 3600)  // en fazla 8 saat birikir
-        let perSec = ownedRackets.reduce(0.0) { $0 + $1.perSec }
+        let perSec = ownedRackets.reduce(0.0) { $0 + $1.perSec } * gelirCarpani
         idleKazanc += Int(perSec * capped)
     }
 
     // MARK: Ekonomi
 
     var ownedRackets: [Racket] { rackets.filter { $0.owned } }
-    var gelirPerMin: Int { ownedRackets.reduce(0) { $0 + $1.perMin } }
+    var gelirPerMin: Int { Int(Double(ownedRackets.reduce(0) { $0 + $1.perMin }) * gelirCarpani) }
 
     func haracTopla() {
         guard idleKazanc > 0 else { return }
@@ -129,6 +141,17 @@ final class GameStore: ObservableObject {
         // Ekipte yer varsa otomatik sahaya al
         if squad.count < 4 { squad.append(yeni.id) }
         devsirmeCost = Int(Double(devsirmeCost) * 1.25)
+        Haptics.basari()
+        save()
+        return yeni
+    }
+
+    /// Garantili efsane adam (IAP ödülü).
+    @discardableResult
+    func efsaneDevsir() -> Enforcer {
+        let yeni = Factory.makeEnforcer(rarity: .efsane, level: max(1, bossLevel))
+        crew.append(yeni)
+        if squad.count < 4 { squad.append(yeni.id) }
         Haptics.basari()
         save()
         return yeni
@@ -192,7 +215,7 @@ final class GameStore: ObservableObject {
         let state = SaveState(
             cash: cash, respect: respect, crew: crew, squad: squad,
             rackets: rackets, rivals: rivals, lastSeen: Date(),
-            devsirmeCost: devsirmeCost
+            devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -207,6 +230,7 @@ final class GameStore: ObservableObject {
         cash = s.cash; respect = s.respect; crew = s.crew; squad = s.squad
         rackets = s.rackets; rivals = s.rivals; lastSeen = s.lastSeen
         devsirmeCost = s.devsirmeCost
+        vipAktif = s.vipAktif; vipSonBonus = s.vipSonBonus
         return true
     }
 
