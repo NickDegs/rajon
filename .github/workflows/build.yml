@@ -1,0 +1,236 @@
+name: Build Rajon
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # ── iOS (Native SwiftUI) ──────────────────────────────────────
+  ios:
+    runs-on: macos-26
+    outputs:
+      build_no: ${{ steps.bn.outputs.build_no }}
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: Rajon-iOS
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode seç
+        run: |
+          # Apple iOS 26 SDK (Xcode 26) ile derlemeyi ZORUNLU tutuyor — eski SDK upload'ı reddedilir.
+          SEL=$(ls /Applications/ | grep -E "^Xcode_(2[6-9]|[3-9][0-9])(\.|_)" | sort -V | tail -1)
+          [ -z "$SEL" ] && SEL=$(ls /Applications/ | grep -E "^Xcode_[0-9]" | sort -V | tail -1)
+          echo "Seçilen: $SEL"
+          sudo xcode-select -s "/Applications/$SEL/Contents/Developer"
+          xcodebuild -version
+
+      - name: XcodeGen kur
+        run: brew install xcodegen
+
+      - name: Xcodeproj üret
+        id: bn
+        run: |
+          # Benzersiz, monoton artan build numarası (YYMMDDHHMM) — redundant binary'yi önler
+          BUILD_NO=$(date +%y%m%d%H%M)
+          echo "BUILD_NO=$BUILD_NO" >> "$GITHUB_ENV"
+          echo "build_no=$BUILD_NO" >> "$GITHUB_OUTPUT"
+          echo "Build numarası: $BUILD_NO"
+          BUILD_NUMBER=$BUILD_NO xcodegen generate
+          sed -i '' -E "s/CURRENT_PROJECT_VERSION = [0-9]+;/CURRENT_PROJECT_VERSION = $BUILD_NO;/g" Rajon.xcodeproj/project.pbxproj || true
+
+      - name: Sertifika + ASC API anahtarını kur
+        working-directory: .
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APPLE_ASC_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APPLE_ASC_KEY_ID }}.p8
+          chmod 600 ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APPLE_ASC_KEY_ID }}.p8
+          echo "${{ secrets.APPLE_DIST_P12_BASE64 }}" | base64 --decode > /tmp/dist.p12
+          security create-keychain -p "ci-keychain" ci-build.keychain-db
+          security default-keychain -s ci-build.keychain-db
+          security unlock-keychain -p "ci-keychain" ci-build.keychain-db
+          security import /tmp/dist.p12 -k ci-build.keychain-db \
+            -P "${{ secrets.APPLE_P12_PASSWORD }}" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "ci-keychain" ci-build.keychain-db
+          security list-keychain -d user -s ci-build.keychain-db login.keychain-db
+          rm /tmp/dist.p12
+
+      - name: Provisioning profili oluştur/indir
+        working-directory: .
+        run: |
+          pip3 install PyJWT cryptography -q --break-system-packages 2>/dev/null || pip3 install PyJWT cryptography -q
+          python3 - << 'PYEOF'
+          import jwt, time, json, os, base64, urllib.request, urllib.error, sys
+          home = os.path.expanduser('~')
+          key_id = '${{ secrets.APPLE_ASC_KEY_ID }}'
+          iss    = '${{ secrets.APPLE_ASC_ISSUER_ID }}'
+          BID    = 'com.nickdegs.rajon'
+          key    = open(f"{home}/.appstoreconnect/private_keys/AuthKey_{key_id}.p8").read()
+          token  = jwt.encode({'iss':iss,'exp':int(time.time())+600,'aud':'appstoreconnect-v1'},
+                              key, algorithm='ES256', headers={'kid':key_id})
+          hdrs = {'Authorization': f'Bearer {token}'}
+          def get(url):
+              return json.loads(urllib.request.urlopen(urllib.request.Request(url, headers=hdrs)).read())
+          def post(url, body):
+              req = urllib.request.Request(url, data=json.dumps(body).encode(),
+                                           headers={**hdrs,'Content-Type':'application/json'})
+              return json.loads(urllib.request.urlopen(req).read())
+
+          # 1) Bundle ID kaydı — yoksa oluştur
+          resp = get(f'https://api.appstoreconnect.apple.com/v1/bundleIds?filter[identifier]={BID}&limit=5')
+          data = resp.get('data', [])
+          if data:
+              bundle_resource_id = data[0]['id']
+              print(f"Bundle ID mevcut: {bundle_resource_id}")
+          else:
+              print("Bundle ID yok, oluşturuluyor...")
+              created = post('https://api.appstoreconnect.apple.com/v1/bundleIds',
+                  {'data':{'type':'bundleIds','attributes':{
+                      'identifier':BID,'name':'Rajon','platform':'IOS'}}})
+              bundle_resource_id = created['data']['id']
+              print(f"Bundle ID oluşturuldu: {bundle_resource_id}")
+
+          # 2) Profil ara
+          prof = get('https://api.appstoreconnect.apple.com/v1/profiles?filter[profileType]=IOS_APP_STORE&include=bundleId&limit=100').get('data',[])
+          target = None
+          for p in prof:
+              rid = p.get('relationships',{}).get('bundleId',{}).get('data',{}).get('id','')
+              if rid == bundle_resource_id and p['attributes'].get('profileState')=='ACTIVE':
+                  target = p; break
+          if not target:
+              # Distribution sertifikasını bul
+              certs = get('https://api.appstoreconnect.apple.com/v1/certificates?limit=50').get('data',[])
+              cert_id = None
+              for c in certs:
+                  ct = c['attributes'].get('certificateType','').lower()
+                  if 'distribution' in ct:
+                      cert_id = c['id']; break
+              if not cert_id:
+                  print("HATA: Distribution sertifikası yok"); sys.exit(1)
+              target = post('https://api.appstoreconnect.apple.com/v1/profiles',
+                  {'data':{'type':'profiles','attributes':{
+                      'name':'Rajon AppStore','profileType':'IOS_APP_STORE'},
+                   'relationships':{
+                      'bundleId':{'data':{'type':'bundleIds','id':bundle_resource_id}},
+                      'certificates':{'data':[{'type':'certificates','id':cert_id}]},
+                      'devices':{'data':[]}}}})['data']
+              print("Yeni profil oluşturuldu")
+
+          uuid = target['attributes']['uuid']
+          dest = os.path.expanduser(f"~/Library/MobileDevice/Provisioning Profiles/{uuid}.mobileprovision")
+          os.makedirs(os.path.dirname(dest), exist_ok=True)
+          open(dest,'wb').write(base64.b64decode(target['attributes']['profileContent']))
+          print(f"Profil kuruldu: {uuid}")
+          if os.environ.get('GITHUB_ENV'):
+              open(os.environ['GITHUB_ENV'],'a').write(f'PROFILE_UUID={uuid}\n')
+          PYEOF
+
+      - name: ExportOptions.plist oluştur
+        run: |
+          DEST=export
+          [ "${{ github.event_name }}" = "workflow_dispatch" ] && DEST=upload
+          echo "ExportOptions destination=$DEST"
+          cat > ExportOptions.plist << PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+              <key>method</key><string>app-store</string>
+              <key>destination</key><string>$DEST</string>
+              <key>teamID</key><string>SZF4T3P583</string>
+              <key>signingStyle</key><string>automatic</string>
+              <key>uploadBitcode</key><false/>
+              <key>uploadSymbols</key><true/>
+          </dict></plist>
+          PLIST
+
+      - name: Archive
+        run: |
+          xcodebuild \
+            -project Rajon.xcodeproj \
+            -scheme Rajon \
+            -destination 'generic/platform=iOS' \
+            -configuration Release \
+            -archivePath Rajon.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APPLE_ASC_KEY_ID }}.p8 \
+            -authenticationKeyID ${{ secrets.APPLE_ASC_KEY_ID }} \
+            -authenticationKeyIssuerID ${{ secrets.APPLE_ASC_ISSUER_ID }} \
+            DEVELOPMENT_TEAM=SZF4T3P583 \
+            CURRENT_PROJECT_VERSION=$BUILD_NO \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE="$PROFILE_UUID" \
+            archive
+
+      - name: Export / TestFlight'a yükle
+        run: |
+          set -eo pipefail
+          xcodebuild -exportArchive \
+            -archivePath Rajon.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath ./ipa-out \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APPLE_ASC_KEY_ID }}.p8 \
+            -authenticationKeyID ${{ secrets.APPLE_ASC_KEY_ID }} \
+            -authenticationKeyIssuerID ${{ secrets.APPLE_ASC_ISSUER_ID }}
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'workflow_dispatch'
+        with:
+          name: rajon-ios-ipa
+          path: Rajon-iOS/ipa-out/*.ipa
+          retention-days: 30
+
+  # ── TestFlight build doğrula (workflow_dispatch'ta) ───────────
+  publish-ios:
+    needs: ios
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: ASC API anahtarını kur
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APPLE_ASC_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APPLE_ASC_KEY_ID }}.p8
+          chmod 600 ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APPLE_ASC_KEY_ID }}.p8
+      - name: Build işlenmesini bekle + beta grubuna ekle
+        continue-on-error: true
+        run: |
+          pip3 install PyJWT cryptography -q --break-system-packages 2>/dev/null || pip3 install PyJWT cryptography -q
+          python3 - << 'PYEOF'
+          import jwt, time, json, os, urllib.request, urllib.error
+          home = os.path.expanduser('~')
+          key_id = '${{ secrets.APPLE_ASC_KEY_ID }}'
+          iss = '${{ secrets.APPLE_ASC_ISSUER_ID }}'
+          want = '${{ needs.ios.outputs.build_no }}'
+          BID = 'com.nickdegs.rajon'
+          key = open(f"{home}/.appstoreconnect/private_keys/AuthKey_{key_id}.p8").read()
+          def tok():
+              return jwt.encode({'iss':iss,'exp':int(time.time())+600,'aud':'appstoreconnect-v1'},
+                                key,algorithm='ES256',headers={'kid':key_id})
+          def get(url):
+              r=urllib.request.Request(url,headers={'Authorization':f'Bearer {tok()}'})
+              return json.loads(urllib.request.urlopen(r).read())
+          # App ID'yi bundle id'den bul
+          apps = get('https://api.appstoreconnect.apple.com/v1/apps?filter%5BbundleId%5D='+BID+'&limit=1').get('data',[])
+          if not apps:
+              print(f"ASC'de {BID} uygulaması yok — TestFlight için önce App Store Connect'te uygulama oluşturulmalı."); raise SystemExit(0)
+          app_id = apps[0]['id']
+          print(f"App ID: {app_id}")
+          build_id=None
+          for i in range(40):
+              d=get(f'https://api.appstoreconnect.apple.com/v1/builds?filter%5Bapp%5D={app_id}&sort=-uploadedDate&limit=5&fields%5Bbuilds%5D=version,processingState')
+              for b in d.get('data',[]):
+                  if b['attributes']['version']==want:
+                      build_id=b['id']; print(f"Build {want} bulundu: {build_id} ({b['attributes']['processingState']})"); break
+              if build_id: break
+              print(f"Build {want} henüz görünmedi... ({i+1}/40)"); time.sleep(15)
+          if not build_id:
+              print("Build zamanında görünmedi; TestFlight'ta işleniyor olabilir."); raise SystemExit(0)
+          print(f"Build TestFlight'a yüklendi: {want} (id {build_id})")
+          PYEOF

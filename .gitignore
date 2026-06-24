@@ -1,0 +1,16 @@
+# Xcode / XcodeGen
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+*.xcarchive
+ipa-out/
+ExportOptions.plist
+.DS_Store
+
+# Secrets — repo'ya ASLA girmez
+*.p8
+*.p12
+*.mobileprovision
+*.keystore
