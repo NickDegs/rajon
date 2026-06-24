@@ -118,9 +118,9 @@ struct BolgeDetay: View {
                 Text(b.ad).font(.system(size: 24, weight: .black)).foregroundStyle(.white)
                 Text("Bölge · ele geçirince dk/₺\(fmt(b.gelirDk)) sürekli gelir")
                     .font(.system(size: 13)).foregroundStyle(Theme.smoke)
-                fetihButon(alindi: b.eleGecirildi, fetihte: b.fetihte, fiyat: b.maliyet,
-                           sure: game.binaSure(Bina(tip: .karargah, seviye: 0)) == 0 ? b.sure : b.sure * game.insaatHizCarpani,
-                           bitis: b.fetihBitis) { game.bolgeFethet(b.id) }
+                FetihButton(alindi: b.eleGecirildi, fetihte: b.fetihte, fiyat: b.maliyet,
+                            sure: b.sure * game.insaatHizCarpani,
+                            bitis: b.fetihBitis) { game.bolgeFethet(b.id) }
             }.padding(16)
         }
         .background(Theme.bg).presentationDetents([.medium])
@@ -142,28 +142,35 @@ struct VahaDetay: View {
                 Text(v.ad).font(.system(size: 24, weight: .black)).foregroundStyle(.white)
                 Text("Kaçak noktası · ele geçirince dk +\(fmt(v.bonusDk)) \(v.tip.ad) üretir")
                     .font(.system(size: 13)).foregroundStyle(Theme.smoke).multilineTextAlignment(.center)
-                fetihButon(alindi: v.eleGecirildi, fetihte: v.fetihte, fiyat: v.maliyet,
-                           sure: v.sure * game.insaatHizCarpani, bitis: v.fetihBitis) { game.vahaFethet(v.id) }
+                FetihButton(alindi: v.eleGecirildi, fetihte: v.fetihte, fiyat: v.maliyet,
+                            sure: v.sure * game.insaatHizCarpani, bitis: v.fetihBitis) { game.vahaFethet(v.id) }
             }.padding(16)
         }
         .background(Theme.bg).presentationDetents([.medium])
     }
 }
 
-/// Ortak fetih butonu (bölge/vaha).
-@ViewBuilder
-func fetihButon(alindi: Bool, fetihte: Bool, fiyat: Int, sure: Double, bitis: Date?, eylem: @escaping () -> Void) -> some View {
-    if alindi {
-        Label("Ele geçirildi — senin", systemImage: "checkmark.seal.fill")
-            .font(.system(size: 16, weight: .black)).foregroundStyle(Theme.gold)
-    } else if fetihte {
-        TimelineView(.periodic(from: .now, by: 1)) { _ in
-            let kalan = max(0, Int(bitis?.timeIntervalSinceNow ?? 0))
-            Label("Fethediliyor · \(sureMetni(kalan))", systemImage: "flag.fill")
+/// Ortak fetih butonu (bölge/vaha). View struct → @MainActor, game'e güvenle erişir.
+struct FetihButton: View {
+    @EnvironmentObject var game: GameStore
+    let alindi: Bool
+    let fetihte: Bool
+    let fiyat: Int
+    let sure: Double
+    let bitis: Date?
+    let eylem: () -> Void
+
+    var body: some View {
+        if alindi {
+            Label("Ele geçirildi — senin", systemImage: "checkmark.seal.fill")
                 .font(.system(size: 16, weight: .black)).foregroundStyle(Theme.gold)
-        }
-    } else {
-        EnvReader { game in
+        } else if fetihte {
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                let kalan = max(0, Int(bitis?.timeIntervalSinceNow ?? 0))
+                Label("Fethediliyor · \(sureMetni(kalan))", systemImage: "flag.fill")
+                    .font(.system(size: 16, weight: .black)).foregroundStyle(Theme.gold)
+            }
+        } else {
             let yeter = game.cash >= fiyat
             let engel = game.fetihMesgul || !game.nufuzVarMi
             Button { eylem() } label: {
@@ -180,11 +187,4 @@ func fetihButon(alindi: Bool, fetihte: Bool, fiyat: Int, sure: Double, bitis: Da
             .disabled(!yeter || engel)
         }
     }
-}
-
-/// GameStore'a erişen küçük yardımcı.
-struct EnvReader<C: View>: View {
-    @EnvironmentObject var game: GameStore
-    @ViewBuilder let content: (GameStore) -> C
-    var body: some View { content(game) }
 }
