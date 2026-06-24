@@ -92,13 +92,24 @@ struct RivalCard: View {
         Button(action: { if !kilit { onTap() } }) {
             HStack(spacing: 12) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(node.cleared ? Theme.bloodDim.opacity(0.4) : Theme.panelHi)
-                    Image(systemName: kilit ? "lock.fill" : (node.cleared ? "checkmark.seal.fill" : "person.2.slash.fill"))
-                        .font(.system(size: 22))
-                        .foregroundStyle(node.cleared ? Theme.gold : (kilit ? Theme.smoke : Theme.blood))
+                    if let g = node.gorsel {
+                        Image(g).resizable().scaledToFill()
+                            .frame(width: 54, height: 54)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .saturation(kilit ? 0 : 1)
+                            .opacity(kilit ? 0.45 : 1)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12).fill(Theme.panelHi)
+                    }
+                    if kilit {
+                        Image(systemName: "lock.fill").font(.system(size: 20)).foregroundStyle(.white)
+                    } else if node.cleared {
+                        Image(systemName: "checkmark.seal.fill").font(.system(size: 20)).foregroundStyle(Theme.gold)
+                            .shadow(radius: 3)
+                    }
                 }
                 .frame(width: 54, height: 54)
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(.white.opacity(0.08), lineWidth: 1))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(node.ad)

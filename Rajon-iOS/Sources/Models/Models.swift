@@ -125,6 +125,16 @@ struct Enforcer: Identifiable, Codable, Equatable {
     static func == (l: Enforcer, r: Enforcer) -> Bool { l.id == r.id }
 }
 
+// MARK: - Rapor (akın/baskın/savunma sonuçları)
+
+struct Rapor: Identifiable, Codable {
+    var id = UUID()
+    var baslik: String
+    var detay: String
+    var kazandi: Bool
+    var tarih: Date = Date()
+}
+
 // MARK: - Asker (kitle birlik) ve sefer/akın
 
 enum AskerTip: String, Codable, CaseIterable {
@@ -315,4 +325,5 @@ struct RivalNode: Identifiable, Codable {
     var oduuncash: Int
     var odulRespect: Int
     var cleared: Bool = false
+    var gorsel: String? = nil         // Flux çete amblemi (cete_N)
 }

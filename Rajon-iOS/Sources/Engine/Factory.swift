@@ -55,7 +55,8 @@ enum Factory {
                 power: teamGuc,
                 crew: crew,
                 oduuncash: 400 + zorluk * zorluk * 650,
-                odulRespect: 20 + zorluk * 25
+                odulRespect: 20 + zorluk * 25,
+                gorsel: "cete_\(idx)"
             )
         }
     }

@@ -25,18 +25,21 @@ struct SaveState: Codable {
     var egitim: EgitimIs? = nil                  // eğitim kuyruğu
     var seferler: [Sefer] = []                   // aktif akınlar
     var cephane: Int = 200                       // mühimmat
+    var raporlar: [Rapor] = []                   // raporlar
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
          gorevler: [Gorev], gorevTarih: Date, binalar: [Bina],
-         ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer], cephane: Int) {
+         ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer], cephane: Int,
+         raporlar: [Rapor]) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
         self.gunlukBonusTarih = gunlukBonusTarih; self.gunlukSeri = gunlukSeri; self.envanter = envanter
         self.gorevler = gorevler; self.gorevTarih = gorevTarih; self.binalar = binalar
         self.ordu = ordu; self.egitim = egitim; self.seferler = seferler
+        self.cephane = cephane; self.raporlar = raporlar
     }
 
     init(from dec: Decoder) throws {
@@ -61,6 +64,7 @@ struct SaveState: Codable {
         egitim = try c.decodeIfPresent(EgitimIs.self, forKey: .egitim)
         seferler = try c.decodeIfPresent([Sefer].self, forKey: .seferler) ?? []
         cephane = try c.decodeIfPresent(Int.self, forKey: .cephane) ?? 200
+        raporlar = try c.decodeIfPresent([Rapor].self, forKey: .raporlar) ?? []
     }
 }
 
@@ -82,6 +86,7 @@ final class GameStore: ObservableObject {
     @Published var ordu: [String: Int] = [:]   // AskerTip.rawValue -> sayı
     @Published var egitim: EgitimIs? = nil     // asker eğitim kuyruğu
     @Published var seferler: [Sefer] = []      // aktif akınlar
+    @Published var raporlar: [Rapor] = []      // akın/baskın/savunma raporları
     @Published var gorevler: [Gorev] = []   // günlük görevler
     private var gorevTarih = Date.distantPast
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
@@ -297,6 +302,12 @@ final class GameStore: ObservableObject {
         save()
     }
 
+    func raporEkle(_ baslik: String, _ detay: String, kazandi: Bool) {
+        raporlar.insert(Rapor(baslik: baslik, detay: detay, kazandi: kazandi), at: 0)
+        if raporlar.count > 40 { raporlar = Array(raporlar.prefix(40)) }
+        save()
+    }
+
     private func egitimVeSeferleriKontrolEt() {
         var degisti = false
         // eğitim bitti mi
@@ -311,15 +322,22 @@ final class GameStore: ObservableObject {
                 $0 + (s.gonderilen[$1.rawValue] ?? 0) * $1.saldiri
             }
             let kazandi = gonderilenSaldiri >= s.hedefGuc
+            let gonderilenSayi = s.gonderilen.values.reduce(0, +)
             if kazandi {
                 cash += s.oduuncash
                 respect += 10
                 // birliklerin çoğu döner (küçük kayıp)
-                for (k, v) in s.gonderilen { ordu[k, default: 0] += Int(Double(v) * 0.92) }
+                var donen = 0
+                for (k, v) in s.gonderilen { let d = Int(Double(v) * 0.92); ordu[k, default: 0] += d; donen += d }
                 gorevIlerlet(.baskin)
+                raporEkle("Akın başarılı: \(s.hedefAd)",
+                          "₺\(s.oduuncash) yağma · \(donen)/\(gonderilenSayi) adam döndü", kazandi: true)
             } else {
                 // yenilgi: yarısı döner
-                for (k, v) in s.gonderilen { ordu[k, default: 0] += v / 2 }
+                var donen = 0
+                for (k, v) in s.gonderilen { let d = v / 2; ordu[k, default: 0] += d; donen += d }
+                raporEkle("Akın başarısız: \(s.hedefAd)",
+                          "Yağma yok · \(donen)/\(gonderilenSayi) adam döndü, gerisi kaldı", kazandi: false)
             }
             degisti = true
         }
@@ -545,7 +563,8 @@ final class GameStore: ObservableObject {
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
             gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar,
-            ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane
+            ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane,
+            raporlar: raporlar
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -569,7 +588,7 @@ final class GameStore: ObservableObject {
             binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
         }
         ordu = s.ordu; egitim = s.egitim; seferler = s.seferler
-        cephane = s.cephane
+        cephane = s.cephane; raporlar = s.raporlar
         return true
     }
 

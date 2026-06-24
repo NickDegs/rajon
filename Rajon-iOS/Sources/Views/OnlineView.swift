@@ -219,9 +219,11 @@ struct OnlineView: View {
             game.cash += h.loot
             game.respect += 15
             game.gorevIlerlet(.baskin)
+            game.raporEkle("Baskın: \(h.ad)", "₺\(fmt(h.loot)) yağma + 15 itibar", kazandi: true)
             game.save()
             bilgi = "Baskın başarılı! ₺\(fmt(h.loot)) yağma + itibar."
         } else {
+            game.raporEkle("Baskın: \(h.ad)", "Savunma sağlam çıktı, eli boş döndün", kazandi: false)
             bilgi = "Baskın patladı. Ekibini güçlendir, tekrar dene."
         }
         await online.liderTablosu()

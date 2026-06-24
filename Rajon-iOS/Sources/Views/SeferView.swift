@@ -7,11 +7,11 @@ struct SeferView: View {
     @State private var adet = 5
 
     // Akın hedefleri (özgün NPC kampları)
-    private let hedefler: [(ad: String, guc: Int, sure: Double, yagma: Int)] = [
-        ("Sıçan Sokağı Deposu", 180, 60, 9_000),
-        ("Liman Antreposu", 650, 180, 34_000),
-        ("Rakip Kerhane", 1_300, 300, 78_000),
-        ("Kaçak Mazot Rafinerisi", 2_600, 600, 180_000),
+    private let hedefler: [(ad: String, guc: Int, sure: Double, yagma: Int, gorsel: String)] = [
+        ("Sıçan Sokağı Deposu", 180, 60, 9_000, "hedef_0"),
+        ("Liman Antreposu", 650, 180, 34_000, "hedef_1"),
+        ("Rakip Kerhane", 1_300, 300, 78_000, "hedef_2"),
+        ("Kaçak Mazot Rafinerisi", 2_600, 600, 180_000, "hedef_3"),
     ]
 
     var body: some View {
@@ -22,9 +22,29 @@ struct SeferView: View {
                 egitimKart
                 if !game.seferler.isEmpty { aktifSeferler }
                 hedeflerKart
+                if !game.raporlar.isEmpty { raporlarKart }
             }
             .padding(16)
         }
+    }
+
+    private var raporlarKart: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("RAPORLAR").font(.system(size: 13, weight: .black)).foregroundStyle(Theme.smoke)
+            ForEach(game.raporlar.prefix(8)) { r in
+                HStack(spacing: 10) {
+                    Image(systemName: r.kazandi ? "checkmark.seal.fill" : "xmark.octagon.fill")
+                        .foregroundStyle(r.kazandi ? Color.green : Theme.blood)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(r.baslik).font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
+                        Text(r.detay).font(.system(size: 11)).foregroundStyle(Theme.smoke).lineLimit(1)
+                    }
+                    Spacer()
+                }
+                .padding(.vertical, 3)
+            }
+        }
+        .cardStyle(14)
     }
 
     // MARK: Ordu
@@ -159,10 +179,10 @@ struct SeferView: View {
             }
             ForEach(Array(hedefler.enumerated()), id: \.offset) { _, h in
                 HStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10).fill(Theme.panelHi)
-                        Image(systemName: "shippingbox.fill").foregroundStyle(Theme.blood)
-                    }.frame(width: 46, height: 46)
+                    Image(h.gorsel).resizable().scaledToFill()
+                        .frame(width: 54, height: 54)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.white.opacity(0.08), lineWidth: 1))
                     VStack(alignment: .leading, spacing: 2) {
                         Text(h.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
                         Text("Savunma \(fmt(h.guc)) · Yağma ₺\(fmt(h.yagma)) · \(sureMetni(Int(h.sure)))")
