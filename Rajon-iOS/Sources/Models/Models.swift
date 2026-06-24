@@ -79,6 +79,8 @@ enum Klas: String, Codable, CaseIterable {
         case .beyin:  return "brain.head.profile"
         }
     }
+    /// Flux ile üretilen sınıf portresi (asset kataloğu adı).
+    var gorsel: String { "klas_\(rawValue)" }
 
     /// rol → (can, saldırı, hız) ağırlığı
     var bias: (hp: Double, atk: Double, spd: Double) {

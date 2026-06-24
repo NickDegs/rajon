@@ -218,10 +218,13 @@ struct FighterCell: View {
         Button(action: { if hedeflenebilir { onTap() } }) {
             VStack(spacing: 5) {
                 ZStack {
-                    Circle().fill(Theme.panelHi)
-                    Image(systemName: c.klas.icon)
-                        .font(.system(size: 22))
-                        .foregroundStyle(c.alive ? c.rarity.color : Theme.smoke.opacity(0.4))
+                    Image(c.klas.gorsel)
+                        .resizable().scaledToFill()
+                        .frame(width: 54, height: 54)
+                        .background(Theme.panelHi)
+                        .clipShape(Circle())
+                        .saturation(c.alive ? 1 : 0)
+                        .opacity(c.alive ? 1 : 0.4)
                     if !c.alive {
                         Image(systemName: "xmark")
                             .font(.system(size: 26, weight: .black))

@@ -139,18 +139,17 @@ struct RarityTag: View {
     }
 }
 
-/// Adam avatar dairesi (sınıf ikonu + nadirlik halkası).
+/// Adam avatar dairesi (Flux sınıf portresi + nadirlik halkası).
 struct AvatarCircle: View {
     var enforcer: Enforcer
     var size: CGFloat = 52
     var body: some View {
-        ZStack {
-            Circle().fill(Theme.panelHi)
-            Image(systemName: enforcer.klas.icon)
-                .font(.system(size: size * 0.42))
-                .foregroundStyle(enforcer.rarity.color)
-        }
-        .frame(width: size, height: size)
-        .overlay(Circle().stroke(enforcer.rarity.color, lineWidth: 2))
+        Image(enforcer.klas.gorsel)
+            .resizable()
+            .scaledToFill()
+            .frame(width: size, height: size)
+            .background(Theme.panelHi)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(enforcer.rarity.color, lineWidth: 2.5))
     }
 }
