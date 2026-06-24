@@ -21,16 +21,21 @@ struct SaveState: Codable {
     var gorevler: [Gorev] = []                   // günlük görevler
     var gorevTarih: Date = .distantPast          // görevlerin üretildiği gün
     var binalar: [Bina] = []                     // mahalle binaları
+    var ordu: [String: Int] = [:]                // asker sayıları
+    var egitim: EgitimIs? = nil                  // eğitim kuyruğu
+    var seferler: [Sefer] = []                   // aktif akınlar
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
-         gorevler: [Gorev], gorevTarih: Date, binalar: [Bina]) {
+         gorevler: [Gorev], gorevTarih: Date, binalar: [Bina],
+         ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer]) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
         self.gunlukBonusTarih = gunlukBonusTarih; self.gunlukSeri = gunlukSeri; self.envanter = envanter
         self.gorevler = gorevler; self.gorevTarih = gorevTarih; self.binalar = binalar
+        self.ordu = ordu; self.egitim = egitim; self.seferler = seferler
     }
 
     init(from dec: Decoder) throws {
@@ -51,6 +56,9 @@ struct SaveState: Codable {
         gorevler = try c.decodeIfPresent([Gorev].self, forKey: .gorevler) ?? []
         gorevTarih = try c.decodeIfPresent(Date.self, forKey: .gorevTarih) ?? .distantPast
         binalar = try c.decodeIfPresent([Bina].self, forKey: .binalar) ?? []
+        ordu = try c.decodeIfPresent([String: Int].self, forKey: .ordu) ?? [:]
+        egitim = try c.decodeIfPresent(EgitimIs.self, forKey: .egitim)
+        seferler = try c.decodeIfPresent([Sefer].self, forKey: .seferler) ?? []
     }
 }
 
@@ -68,6 +76,9 @@ final class GameStore: ObservableObject {
 
     @Published var envanter: [Gear] = []    // takılı olmayan teçhizat
     @Published var binalar: [Bina] = []     // mahalle binaları
+    @Published var ordu: [String: Int] = [:]   // AskerTip.rawValue -> sayı
+    @Published var egitim: EgitimIs? = nil     // asker eğitim kuyruğu
+    @Published var seferler: [Sefer] = []      // aktif akınlar
     @Published var gorevler: [Gorev] = []   // günlük görevler
     private var gorevTarih = Date.distantPast
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
@@ -136,6 +147,7 @@ final class GameStore: ObservableObject {
             cash += 50_000
         }
         insaatlariKontrolEt()
+        egitimVeSeferleriKontrolEt()
         // birikim kapasitesini aşma
         let cap = depoKapasite
         if idleKazanc > cap { idleKazanc = cap }
@@ -216,6 +228,71 @@ final class GameStore: ObservableObject {
                 degisti = true
             }
         }
+        if degisti { save() }
+    }
+
+    // MARK: Asker eğitimi + sefer/akın
+
+    func orduSayi(_ tip: AskerTip) -> Int { ordu[tip.rawValue] ?? 0 }
+    var orduToplam: Int { ordu.values.reduce(0, +) }
+    var orduSaldiri: Int { AskerTip.allCases.reduce(0) { $0 + orduSayi($1) * $1.saldiri } }
+    var orduSavunma: Int { AskerTip.allCases.reduce(0) { $0 + orduSayi($1) * $1.savunma } }
+    var orduYagmaKap: Int { AskerTip.allCases.reduce(0) { $0 + orduSayi($1) * $1.yagma } }
+    var seferdeMi: Bool { !seferler.isEmpty }
+
+    /// Kışla seviyesi eğitimi hızlandırır.
+    private var egitimHiz: Double { 1.0 / (1.0 + 0.05 * Double(binaSeviye(.kisla))) }
+
+    func askerEgit(_ tip: AskerTip, sayi: Int) {
+        guard egitim == nil, sayi > 0 else { return }
+        let fiyat = tip.maliyet * sayi
+        guard cash >= fiyat else { return }
+        cash -= fiyat
+        let sure = tip.egitimSure * Double(sayi) * egitimHiz
+        egitim = EgitimIs(tip: tip, sayi: sayi, bitis: Date().addingTimeInterval(sure))
+        Haptics.tik()
+        save()
+    }
+
+    /// Tüm orduyu bir hedefe akına gönder.
+    func seferGonder(hedefAd: String, hedefGuc: Int, sure: Double, taliMax: Int) {
+        guard orduToplam > 0 else { return }
+        let yagma = min(taliMax, orduYagmaKap)
+        let s = Sefer(hedefAd: hedefAd, hedefGuc: hedefGuc, gonderilen: ordu,
+                      donus: Date().addingTimeInterval(sure), oduuncash: yagma)
+        seferler.append(s)
+        ordu = [:]   // birlikler yola çıktı
+        Haptics.tik()
+        save()
+    }
+
+    private func egitimVeSeferleriKontrolEt() {
+        var degisti = false
+        // eğitim bitti mi
+        if let e = egitim, e.bitis <= Date() {
+            ordu[e.tip.rawValue, default: 0] += e.sayi
+            egitim = nil
+            degisti = true
+        }
+        // dönen seferler
+        for s in seferler where s.dondu {
+            let gonderilenSaldiri = AskerTip.allCases.reduce(0) {
+                $0 + (s.gonderilen[$1.rawValue] ?? 0) * $1.saldiri
+            }
+            let kazandi = gonderilenSaldiri >= s.hedefGuc
+            if kazandi {
+                cash += s.oduuncash
+                respect += 10
+                // birliklerin çoğu döner (küçük kayıp)
+                for (k, v) in s.gonderilen { ordu[k, default: 0] += Int(Double(v) * 0.92) }
+                gorevIlerlet(.baskin)
+            } else {
+                // yenilgi: yarısı döner
+                for (k, v) in s.gonderilen { ordu[k, default: 0] += v / 2 }
+            }
+            degisti = true
+        }
+        seferler.removeAll { $0.dondu }
         if degisti { save() }
     }
 
@@ -436,7 +513,8 @@ final class GameStore: ObservableObject {
             rackets: rackets, rivals: rivals, lastSeen: Date(),
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
-            gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar
+            gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar,
+            ordu: ordu, egitim: egitim, seferler: seferler
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -459,6 +537,7 @@ final class GameStore: ObservableObject {
         if binalar.isEmpty {   // eski kayıt → binaları kur
             binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
         }
+        ordu = s.ordu; egitim = s.egitim; seferler = s.seferler
         return true
     }
 

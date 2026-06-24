@@ -123,6 +123,55 @@ struct Enforcer: Identifiable, Codable, Equatable {
     static func == (l: Enforcer, r: Enforcer) -> Bool { l.id == r.id }
 }
 
+// MARK: - Asker (kitle birlik) ve sefer/akın
+
+enum AskerTip: String, Codable, CaseIterable {
+    case tetikci    // saldırı
+    case kabadayi   // savunma
+    case sofor      // yağma kapasitesi + hız
+
+    var ad: String {
+        switch self {
+        case .tetikci:  return "Tetikçi"
+        case .kabadayi: return "Kabadayı"
+        case .sofor:    return "Şoför"
+        }
+    }
+    var aciklama: String {
+        switch self {
+        case .tetikci:  return "Yüksek saldırı"
+        case .kabadayi: return "Sağlam savunma"
+        case .sofor:    return "Bol yağma taşır, sefer hızlı"
+        }
+    }
+    var gorsel: String { "asker_\(rawValue)" }
+
+    var saldiri: Int  { self == .tetikci ? 14 : (self == .kabadayi ? 5 : 6) }
+    var savunma: Int  { self == .kabadayi ? 16 : (self == .tetikci ? 5 : 6) }
+    var yagma: Int    { self == .sofor ? 220 : 40 }      // taşıma kapasitesi
+    var maliyet: Int  { self == .sofor ? 900 : (self == .kabadayi ? 700 : 600) }
+    var egitimSure: Double { 8 }                          // birim başına sn
+}
+
+/// Devam eden akın/sefer.
+struct Sefer: Identifiable, Codable {
+    var id = UUID()
+    var hedefAd: String
+    var hedefGuc: Int                 // hedef savunma gücü
+    var gonderilen: [String: Int]     // AskerTip.rawValue -> sayı
+    var donus: Date                   // birliklerin döneceği an
+    var oduuncash: Int                // başarı yağması
+
+    var dondu: Bool { donus <= Date() }
+}
+
+/// Asker eğitim kuyruğu öğesi.
+struct EgitimIs: Codable {
+    var tip: AskerTip
+    var sayi: Int
+    var bitis: Date
+}
+
 // MARK: - Mahalle binaları (Travian tarzı zamanlı inşaat)
 
 enum BinaTip: String, Codable, CaseIterable {

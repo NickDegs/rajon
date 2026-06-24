@@ -4,11 +4,13 @@ import SwiftUI
 struct SokakView: View {
     @EnvironmentObject var game: GameStore
     @State private var secilen: RivalNode?
+    @State private var seferAcik = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 14) {
                 baslik
+                seferButon
                 if game.squadEnforcers.isEmpty {
                     Text("⚠️ Sahada adamın yok. Önce 'Ekip'ten sahaya adam koy.")
                         .font(.system(size: 12, weight: .bold))
@@ -28,6 +30,37 @@ struct SokakView: View {
             CombatView(node: node)
                 .environmentObject(game)
         }
+        .fullScreenCover(isPresented: $seferAcik) {
+            NavigationStack {
+                SeferView()
+                    .navigationTitle("Ordu & Sefer")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { seferAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+        }
+    }
+
+    private var seferButon: some View {
+        Button { seferAcik = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "car.2.fill").font(.system(size: 24)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ORDU & SEFER").font(.system(size: 15, weight: .black)).foregroundStyle(.white)
+                    if game.seferdeMi {
+                        Text("\(game.seferler.count) sefer yolda").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
+                    } else {
+                        Text("Asker eğit, akına çık, yağma getir").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+            }
+            .cardStyle(14)
+        }
+        .buttonStyle(.plain)
     }
 
     /// Önceki düğüm temizlenmeden sonraki açılmaz.
