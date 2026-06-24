@@ -7,6 +7,7 @@ struct UsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                if game.gunlukBonusVar { gunlukBonusKart }
                 idleKart
                 gelirOzet
                 Text("İŞLETMELER")
@@ -20,6 +21,29 @@ struct UsView: View {
             }
             .padding(16)
         }
+    }
+
+    private var gunlukBonusKart: some View {
+        Button {
+            _ = game.gunlukBonusAl()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "gift.fill").font(.system(size: 26)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("GÜNLÜK BONUS HAZIR").font(.system(size: 13, weight: .black)).foregroundStyle(.white)
+                    Text("₺\(fmt(game.gunlukBonusTutar)) · seri \(game.gunlukSeri + 1). gün")
+                        .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
+                }
+                Spacer()
+                Text("AL").font(.system(size: 14, weight: .black))
+                    .padding(.horizontal, 16).padding(.vertical, 8)
+                    .background(Theme.blood).foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 9))
+            }
+            .cardStyle(14)
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.gold.opacity(0.5), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
     }
 
     private var idleKart: some View {

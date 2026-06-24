@@ -13,6 +13,8 @@ struct SaveState: Codable {
     var devsirmeCost: Int       // bir sonraki devşirme maliyeti
     var vipAktif: Bool = false  // Kan Parası VIP (2x gelir)
     var vipSonBonus: Date = .distantPast
+    var gunlukBonusTarih: Date = .distantPast   // son alınan günlük bonus
+    var gunlukSeri: Int = 0                      // ardışık gün serisi
 }
 
 /// Bütün oyun mantığını yöneten gözlemlenebilir depo.
@@ -28,8 +30,10 @@ final class GameStore: ObservableObject {
     @Published var vipAktif: Bool = false   // Kan Parası VIP — 2x gelir + günlük bonus
 
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
+    @Published var gunlukSeri: Int = 0      // ardışık giriş günü serisi
     private var lastSeen = Date()
     private var vipSonBonus = Date.distantPast
+    private var gunlukBonusTarih = Date.distantPast
     private var timer: AnyCancellable?
 
     private let saveURL: URL = {
@@ -112,6 +116,38 @@ final class GameStore: ObservableObject {
         idleKazanc = 0
         Haptics.tik()
         save()
+    }
+
+    // MARK: Günlük bonus
+
+    /// Bugün günlük bonus alınabilir mi.
+    var gunlukBonusVar: Bool {
+        !Calendar.current.isDate(gunlukBonusTarih, inSameDayAs: Date())
+    }
+
+    /// Günlük bonus tutarı (seri + patron seviyesiyle artar, VIP 2x).
+    var gunlukBonusTutar: Int {
+        let taban = 5_000 + bossLevel * 2_000
+        let seriCarpan = 1.0 + Double(min(gunlukSeri, 6)) * 0.25   // 7. günde ~2.5x
+        return Int(Double(taban) * seriCarpan * gelirCarpani)
+    }
+
+    @discardableResult
+    func gunlukBonusAl() -> Int {
+        guard gunlukBonusVar else { return 0 }
+        // Seri: dün alındıysa devam, değilse sıfırla
+        let dun = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        if Calendar.current.isDate(gunlukBonusTarih, inSameDayAs: dun) {
+            gunlukSeri = min(gunlukSeri + 1, 6)
+        } else {
+            gunlukSeri = 0
+        }
+        let tutar = gunlukBonusTutar
+        cash += tutar
+        gunlukBonusTarih = Date()
+        Haptics.basari()
+        save()
+        return tutar
     }
 
     func racketSatinAlVeyaYukselt(_ id: UUID) {
@@ -215,7 +251,8 @@ final class GameStore: ObservableObject {
         let state = SaveState(
             cash: cash, respect: respect, crew: crew, squad: squad,
             rackets: rackets, rivals: rivals, lastSeen: Date(),
-            devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus
+            devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
+            gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -231,6 +268,7 @@ final class GameStore: ObservableObject {
         rackets = s.rackets; rivals = s.rivals; lastSeen = s.lastSeen
         devsirmeCost = s.devsirmeCost
         vipAktif = s.vipAktif; vipSonBonus = s.vipSonBonus
+        gunlukBonusTarih = s.gunlukBonusTarih; gunlukSeri = s.gunlukSeri
         return true
     }
 

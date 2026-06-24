@@ -4,12 +4,13 @@ struct RootView: View {
     @EnvironmentObject var game: GameStore
     @State private var tab = 0
     @State private var magazaAcik = false
+    @State private var ayarAcik = false
 
     var body: some View {
         ZStack {
             Theme.bg
             VStack(spacing: 0) {
-                TopBar(magazaAcik: $magazaAcik)
+                TopBar(magazaAcik: $magazaAcik, ayarAcik: $ayarAcik)
                 TabView(selection: $tab) {
                     UsView()
                         .tag(0)
@@ -44,6 +45,20 @@ struct RootView: View {
             }
             .preferredColorScheme(.dark)
         }
+        .sheet(isPresented: $ayarAcik) {
+            NavigationStack {
+                AyarlarView()
+                    .navigationTitle("Ayarlar")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Kapat") { ayarAcik = false }
+                        }
+                    }
+                    .background(Theme.coal)
+            }
+            .preferredColorScheme(.dark)
+        }
     }
 }
 
@@ -51,9 +66,10 @@ struct RootView: View {
 struct TopBar: View {
     @EnvironmentObject var game: GameStore
     @Binding var magazaAcik: Bool
+    @Binding var ayarAcik: Bool
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             statChip(icon: "dollarsign.circle.fill", value: fmt(game.cash), tint: Theme.gold)
             statChip(icon: "flame.fill", value: fmt(game.respect), tint: Theme.blood)
             Spacer()
@@ -63,10 +79,10 @@ struct TopBar: View {
             Button { magazaAcik = true } label: {
                 Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
             }
+            Button { ayarAcik = true } label: {
+                Image(systemName: "gearshape.fill").font(.system(size: 16)).foregroundStyle(Theme.smoke)
+            }
             VStack(alignment: .trailing, spacing: 1) {
-                Text("PATRON")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(Theme.smoke)
                 Text("Sv. \(game.bossLevel)")
                     .font(.system(size: 15, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
