@@ -14,11 +14,13 @@ final class OnlineService: ObservableObject {
     @Published var clanListesi: [ClanOzet] = []
     @Published var clanSavas: ClanSavas?
     @Published var gelenBaskinlar: [GelenBaskin] = []
+    @Published var smsGirisli = false      // telefon hesabıyla giriş yapıldı mı
     @Published var hata: String?
     @Published var mesgul = false
 
+    /// Önce iCloud Keychain'deki SMS token'ı (varsa), yoksa anonim cihaz token'ı.
     private var token: String? {
-        get { UserDefaults.standard.string(forKey: "rajon_online_token") }
+        get { AuthService.token ?? UserDefaults.standard.string(forKey: "rajon_online_token") }
         set { UserDefaults.standard.set(newValue, forKey: "rajon_online_token") }
     }
     private var deviceID: String {
@@ -46,9 +48,58 @@ final class OnlineService: ObservableObject {
     }
 
     func otomatikGiris() async {
-        guard token != nil else { return }
-        // token varsa profili tazele (register idempotent, aynı token döner)
+        // iCloud Keychain'de SMS token'ı varsa onunla gir (telefon hesabı)
+        if AuthService.girisli {
+            if let r: MeResp = try? await get("/rajon/me") {
+                me = r.player; ad = r.player.ad; girisli = true; smsGirisli = true; hata = nil
+                return
+            }
+        }
+        guard UserDefaults.standard.string(forKey: "rajon_online_token") != nil else { return }
         await girisYap(ad: ad.isEmpty ? "Patron" : ad)
+    }
+
+    // MARK: SMS giriş + telefona hesap yedeği
+
+    func smsKodGonder(phone: String) async -> Bool {
+        mesgul = true; defer { mesgul = false }
+        do {
+            let _: OkResp = try await post("/rajon/auth/sms/start", body: ["phone": phone], auth: false)
+            return true
+        } catch { hata = "SMS gönderilemedi"; return false }
+    }
+
+    /// Kodu doğrula. Başarılıysa telefon hesabına geçer; sunucuda kayıt varsa `onState` ile döner.
+    func smsDogrula(phone: String, code: String, game: GameStore) async -> Bool {
+        mesgul = true; defer { mesgul = false }
+        do {
+            let r: SmsVerifyResp = try await post("/rajon/auth/sms/verify",
+                body: ["phone": phone, "code": code, "device_id": deviceID], auth: false)
+            AuthService.kaydet(token: r.token, phone: phone)   // iCloud Keychain
+            me = r.player; ad = r.player.ad; girisli = true; smsGirisli = true; hata = nil
+            // Sunucuda kayıtlı durum varsa geri yükle, yoksa mevcut durumu yedekle
+            if !r.state.isEmpty {
+                game.durumYukle(r.state)
+            } else {
+                await durumYedekle(game.durumBlobu())
+            }
+            game.bulutaYedek = { [weak self] blob in
+                guard let self else { return }
+                Task { await self.durumYedekle(blob) }
+            }
+            return true
+        } catch { hata = "Kod yanlış veya süresi doldu"; return false }
+    }
+
+    func smsCikis(game: GameStore) {
+        AuthService.sil()
+        smsGirisli = false
+        game.bulutaYedek = nil
+    }
+
+    func durumYedekle(_ blob: String) async {
+        guard !blob.isEmpty else { return }
+        _ = try? await postRaw("/rajon/state/push", body: ["blob": blob])
     }
 
     // MARK: Sync
@@ -191,6 +242,9 @@ struct OnlinePlayer: Codable {
 }
 
 struct RegisterResp: Codable { let token: String; let player: OnlinePlayer }
+struct MeResp: Codable { let player: OnlinePlayer }
+struct OkResp: Codable { let ok: Bool }
+struct SmsVerifyResp: Codable { let token: String; let player: OnlinePlayer; let state: String }
 struct AttackResp: Codable { let ok: Bool; let won: Bool; let loot: Int; let player: OnlinePlayer }
 
 struct PvpTarget: Codable, Identifiable {

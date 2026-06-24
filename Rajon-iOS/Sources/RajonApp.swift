@@ -29,6 +29,9 @@ struct RajonApp: App {
             .onAppear {
                 game.bootstrap()
                 store.basla(game: game)
+                if AuthService.girisli {
+                    game.bulutaYedek = { blob in Task { await online.durumYedekle(blob) } }
+                }
             }
         }
     }

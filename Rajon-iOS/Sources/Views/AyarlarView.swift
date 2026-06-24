@@ -10,6 +10,7 @@ struct AyarlarView: View {
     @State private var adDuzenle = ""
     @State private var sifirlaUyari = false
     @State private var bilgi: String?
+    @State private var smsAcik = false
 
     var body: some View {
         ScrollView {
@@ -38,6 +39,27 @@ struct AyarlarView: View {
                         Text("Online moda 'Online' sekmesinden giriş yap.")
                             .font(.system(size: 12)).foregroundStyle(Theme.smoke)
                     }
+                }
+                .cardStyle(14)
+
+                // Telefon yedek / SMS giriş
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("TELEFON YEDEK").sectionHeader()
+                    Button { smsAcik = true } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: online.smsGirisli ? "checkmark.icloud.fill" : "icloud.and.arrow.up.fill")
+                                .foregroundStyle(online.smsGirisli ? Color.green : Theme.blood)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(online.smsGirisli ? "Telefonla yedek aktif" : "Telefonla Yedekle / Giriş")
+                                    .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                                Text("SMS ile bağla; iCloud + telefonuna otomatik yedek")
+                                    .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                        }
+                    }
+                    .buttonStyle(.plain)
                 }
                 .cardStyle(14)
 
@@ -99,6 +121,18 @@ struct AyarlarView: View {
             .padding(16)
         }
         .onAppear { adDuzenle = online.me?.ad ?? online.ad }
+        .sheet(isPresented: $smsAcik) {
+            NavigationStack {
+                SmsLoginView()
+                    .navigationTitle("Telefon Yedek")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { smsAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+            .environmentObject(online)
+        }
         .alert("Emin misin?", isPresented: $sifirlaUyari) {
             Button("Vazgeç", role: .cancel) {}
             Button("Sıfırla", role: .destructive) { game.sifirla(); bilgi = "Oyun sıfırlandı." }

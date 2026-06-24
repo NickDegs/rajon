@@ -79,6 +79,10 @@ def init_db():
             c.execute("ALTER TABLE players ADD COLUMN clan_id TEXT DEFAULT ''")
         if "savunma" not in cols:
             c.execute("ALTER TABLE players ADD COLUMN savunma INTEGER DEFAULT 0")
+        if "phone" not in cols:
+            c.execute("ALTER TABLE players ADD COLUMN phone TEXT DEFAULT ''")
+        if "state_blob" not in cols:
+            c.execute("ALTER TABLE players ADD COLUMN state_blob TEXT DEFAULT ''")
 
 
 def new_token() -> str:
@@ -127,6 +131,23 @@ def incoming_attacks(pid: str, limit: int = 20):
             (pid, limit),
         ).fetchall()
         return [dict(r) for r in rows]
+
+
+def get_by_phone(phone: str):
+    with conn() as c:
+        r = c.execute("SELECT * FROM players WHERE phone=? AND phone!=''", (phone,)).fetchone()
+        return dict(r) if r else None
+
+
+def link_phone(pid: str, phone: str):
+    """Mevcut cihaz hesabını bir telefona bağla (telefon başka hesapta değilse)."""
+    with conn() as c:
+        c.execute("UPDATE players SET phone=? WHERE id=?", (phone, pid))
+
+
+def set_state_blob(pid: str, blob: str):
+    with conn() as c:
+        c.execute("UPDATE players SET state_blob=? WHERE id=?", (blob, pid))
 
 
 def find_target(pid: str, power: int):

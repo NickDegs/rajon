@@ -5,9 +5,38 @@ Saldırı çözümü istemcide (saldıranın ekibi vs savunanın snapshot'ı), s
 """
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-import json, time
+import json, time, os, base64, urllib.request, urllib.parse, urllib.error, re
 import db
+
+# Twilio Verify (DayRide/hush ile paylaşılan hesap)
+TW_KEY = os.environ.get("TWILIO_API_KEY", "")
+TW_SECRET = os.environ.get("TWILIO_API_SECRET", "")
+TW_VERIFY = os.environ.get("TWILIO_VERIFY_SID", "")
+
+
+def _phone_norm(p: str) -> str:
+    """E.164'e yakın normalize: sadece rakam, baştaki 00/0 düzelt."""
+    d = re.sub(r"[^\d+]", "", p or "")
+    if d.startswith("+"):
+        return d
+    if d.startswith("00"):
+        return "+" + d[2:]
+    if d.startswith("0"):
+        d = d[1:]
+    return "+" + d if d else ""
+
+
+def _tw(path: str, data: dict):
+    url = f"https://verify.twilio.com/v2/Services/{TW_VERIFY}/{path}"
+    body = urllib.parse.urlencode(data).encode()
+    auth = base64.b64encode(f"{TW_KEY}:{TW_SECRET}".encode()).decode()
+    req = urllib.request.Request(url, data=body,
+                                 headers={"Authorization": f"Basic {auth}",
+                                          "Content-Type": "application/x-www-form-urlencoded"})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return json.loads(r.read())
 
 app = FastAPI(title="Rajon Online")
 app.add_middleware(
@@ -67,10 +96,76 @@ class WarDeclareBody(BaseModel):
     target_clan_id: str
 
 
+class SmsStartBody(BaseModel):
+    phone: str
+
+
+class SmsVerifyBody(BaseModel):
+    phone: str
+    code: str
+    device_id: str = ""
+
+
+class StatePushBody(BaseModel):
+    blob: str
+
+
 # ── Uçlar ──────────────────────────────────────────────────
 @app.get("/rajon/health")
 def health():
     return {"ok": True, "ts": int(time.time())}
+
+
+PRIVACY_HTML = """<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rajon — Gizlilik Politikası / Privacy Policy</title>
+<style>body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:760px;margin:0 auto;padding:24px;
+background:#0d0d0f;color:#e8e8ea;line-height:1.6}h1{color:#d9b04d}h2{color:#c7170f;margin-top:28px}
+a{color:#d9b04d}small{color:#9a9aa2}</style></head><body>
+<h1>Rajon — Gizlilik Politikası</h1>
+<small>Son güncelleme: 24 Haziran 2026</small>
+<p>Rajon, sokak/mafya temalı bir strateji oyunudur. Gizliliğine önem veriyoruz. Bu politika hangi verileri
+topladığımızı ve nasıl kullandığımızı açıklar.</p>
+<h2>Topladığımız veriler</h2>
+<ul>
+<li><b>Anonim hesap kimliği:</b> Online özellikler için cihazında rastgele üretilen bir kimlik (UUID). Bu, cihazının
+donanım kimliği DEĞİLDİR; sadece oyun hesabını tanımlar.</li>
+<li><b>Takma ad:</b> Online'da görünmesi için kendi seçtiğin bir patron adı. Gerçek adını kullanmak zorunda değilsin.</li>
+<li><b>Oyun ilerlemesi:</b> Güç, itibar gibi oyun istatistikleri — yalnızca online özellikleri (PvP eşleştirme, lider
+tablosu, sendika) çalıştırmak için sunucumuzla eşitlenir.</li>
+</ul>
+<h2>Toplamadığımız veriler</h2>
+<p>E-posta, telefon, gerçek ad, konum, rehber, fotoğraf, reklam kimliği (IDFA) <b>toplanmaz</b>. Reklam yoktur,
+uygulamalar/siteler arası takip yapılmaz, üçüncü taraf analiz/reklam SDK'sı yoktur.</p>
+<h2>Satın almalar</h2>
+<p>Tüm satın almalar Apple üzerinden yapılır; ödeme bilgini biz görmeyiz. Satın almalar yalnızca KOZMETİKTİR
+(profil avatarı, isim rengi, rozet) ve oyunu güçlendirmez — pay-to-win yoktur.</p>
+<h2>Paylaşım</h2>
+<p>Veriler yalnızca oyunun online işlevlerini çalıştırmak için kendi sunucumuzda saklanır. Üçüncü taraflara
+satılmaz veya paylaşılmaz.</p>
+<h2>Çocuklar</h2>
+<p>Uygulama 17+ içindir, çocuklara yönelik değildir.</p>
+<h2>Veri silme</h2>
+<p>Online oynamayı istediğin an bırakabilirsin. Hesap verilerinin silinmesini istersen aşağıdaki e-postadan bize
+ulaş; talebini en geç 30 gün içinde işleriz.</p>
+<h2>İletişim</h2>
+<p>E-posta: <a href="mailto:destek@nickdegs.com">destek@nickdegs.com</a></p>
+<hr>
+<h1>Rajon — Privacy Policy (English)</h1>
+<p>Rajon is a street/mafia-themed strategy game. We collect: a randomly generated anonymous account ID (a UUID created
+on your device, not your hardware identifier), a display name you choose (no real name required), and in-game progress
+(power, respect) synced solely to run online features (PvP matchmaking, leaderboard, clans).</p>
+<p>We do NOT collect email, phone, real name, location, contacts, photos, or advertising identifiers (IDFA). There are
+no ads, no cross-app/website tracking, and no third-party analytics/ad SDKs. Purchases are handled by Apple (we never
+see your payment info) and are PURELY COSMETIC — no pay-to-win. Data is stored only on our own server to run online
+features and is never sold or shared. The app is rated 17+. To request deletion of your account data, contact
+<a href="mailto:destek@nickdegs.com">destek@nickdegs.com</a>.</p>
+</body></html>"""
+
+
+@app.get("/rajon/privacy", response_class=HTMLResponse)
+def privacy():
+    return PRIVACY_HTML
 
 
 @app.post("/rajon/register")
@@ -81,6 +176,67 @@ def register(b: RegisterBody):
         return {"token": existing["token"], "player": _public(existing)}
     p = db.create_player(b.device_id, b.ad.strip()[:24] or "İsimsiz")
     return {"token": p["token"], "player": _public(p)}
+
+
+@app.post("/rajon/auth/sms/start")
+def sms_start(b: SmsStartBody):
+    """Telefona doğrulama kodu gönder."""
+    phone = _phone_norm(b.phone)
+    if len(phone) < 8:
+        raise HTTPException(400, "geçersiz telefon")
+    try:
+        _tw("Verifications", {"To": phone, "Channel": "sms"})
+        return {"ok": True}
+    except urllib.error.HTTPError as e:
+        raise HTTPException(400, f"sms gönderilemedi: {e.read().decode()[:120]}")
+
+
+@app.post("/rajon/auth/sms/verify")
+def sms_verify(b: SmsVerifyBody):
+    """Kodu doğrula → telefon hesabının token'ı + tam oyun durumu (geri yükleme)."""
+    phone = _phone_norm(b.phone)
+    try:
+        r = _tw("VerificationCheck", {"To": phone, "Code": b.code})
+    except urllib.error.HTTPError:
+        raise HTTPException(401, "kod yanlış")
+    if r.get("status") != "approved":
+        raise HTTPException(401, "kod onaylanmadı")
+
+    # Telefonun hesabı var mı?
+    acc = db.get_by_phone(phone)
+    if acc:
+        # Var olan telefon hesabı → giriş/geri yükleme
+        return {"token": acc["token"], "player": _public(acc), "state": acc.get("state_blob", "")}
+    # Yok → mevcut cihaz hesabını bu telefona bağla (ilerlemeyi telefona taşı)
+    me = db.get_by_id(b.device_id) if b.device_id else None
+    if not me:
+        me = db.create_player(b.device_id or phone.replace("+", "dev"), "Patron")
+    db.link_phone(me["id"], phone)
+    me = db.get_by_id(me["id"])
+    return {"token": me["token"], "player": _public(me), "state": me.get("state_blob", "")}
+
+
+@app.get("/rajon/me")
+def me(authorization: str = Header(None)):
+    """Token'a karşılık gelen oyuncu profili (SMS token'ı ile giriş için)."""
+    p = auth(authorization)
+    return {"player": _public(p)}
+
+
+@app.post("/rajon/state/push")
+def state_push(b: StatePushBody, authorization: str = Header(None)):
+    """Tüm oyun durumunu (kayıt blob'u) hesaba yedekle."""
+    p = auth(authorization)
+    db.set_state_blob(p["id"], b.blob[:500_000])  # ~500KB sınır
+    return {"ok": True}
+
+
+@app.get("/rajon/state/pull")
+def state_pull(authorization: str = Header(None)):
+    """Hesabın yedeklenmiş oyun durumunu getir."""
+    p = auth(authorization)
+    me = db.get_by_id(p["id"])
+    return {"state": (me or {}).get("state_blob", "")}
 
 
 @app.post("/rajon/sync")

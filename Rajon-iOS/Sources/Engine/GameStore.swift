@@ -590,8 +590,9 @@ final class GameStore: ObservableObject {
 
     // MARK: Kalıcılık
 
-    func save() {
-        let state = SaveState(
+    /// Mevcut oyun durumunu SaveState olarak topla.
+    private func mevcutDurum() -> SaveState {
+        SaveState(
             cash: cash, respect: respect, crew: crew, squad: squad,
             rackets: rackets, rivals: rivals, lastSeen: Date(),
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
@@ -600,16 +601,33 @@ final class GameStore: ObservableObject {
             ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane,
             raporlar: raporlar, bolgeler: bolgeler
         )
-        if let data = try? JSONEncoder().encode(state) {
-            try? data.write(to: saveURL, options: .atomic)
-        }
     }
 
-    @discardableResult
-    private func load() -> Bool {
-        guard let data = try? Data(contentsOf: saveURL),
-              let s = try? JSONDecoder().decode(SaveState.self, from: data)
-        else { return false }
+    func save() {
+        guard let data = try? JSONEncoder().encode(mevcutDurum()) else { return }
+        try? data.write(to: saveURL, options: .atomic)
+        // Otomatik iCloud yedeği (iCloud Key-Value Store)
+        let kv = NSUbiquitousKeyValueStore.default
+        kv.set(data, forKey: "rajon_save")
+        kv.synchronize()
+        // Telefon hesabı varsa sunucuya tam-durum yedeği (debounced)
+        bulutaYedekDebounce()
+    }
+
+    /// Tüm durumu JSON string olarak (sunucu yedeği için).
+    func durumBlobu() -> String {
+        (try? JSONEncoder().encode(mevcutDurum())).flatMap { String(data: $0, encoding: .utf8) } ?? ""
+    }
+
+    /// Sunucudan/iCloud'dan gelen durumu uygula (geri yükleme).
+    func durumYukle(_ blob: String) {
+        guard let data = blob.data(using: .utf8),
+              let s = try? JSONDecoder().decode(SaveState.self, from: data) else { return }
+        uygula(s)
+        try? data.write(to: saveURL, options: .atomic)
+    }
+
+    private func uygula(_ s: SaveState) {
         cash = s.cash; respect = s.respect; crew = s.crew; squad = s.squad
         rackets = s.rackets; rivals = s.rivals; lastSeen = s.lastSeen
         devsirmeCost = s.devsirmeCost
@@ -618,14 +636,40 @@ final class GameStore: ObservableObject {
         envanter = s.envanter
         gorevler = s.gorevler; gorevTarih = s.gorevTarih
         binalar = s.binalar
-        if binalar.isEmpty {   // eski kayıt → binaları kur
-            binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
-        }
+        if binalar.isEmpty { binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) } }
         ordu = s.ordu; egitim = s.egitim; seferler = s.seferler
         cephane = s.cephane; raporlar = s.raporlar
         bolgeler = s.bolgeler
-        if bolgeler.isEmpty { bolgeler = Factory.makeBolgeler() }  // eski kayıt
+        if bolgeler.isEmpty { bolgeler = Factory.makeBolgeler() }
+    }
+
+    @discardableResult
+    private func load() -> Bool {
+        // En yeni kaydı seç: yerel vs iCloud (lastSeen'e göre)
+        let yerel = (try? Data(contentsOf: saveURL)).flatMap { try? JSONDecoder().decode(SaveState.self, from: $0) }
+        let bulut = (NSUbiquitousKeyValueStore.default.data(forKey: "rajon_save")).flatMap { try? JSONDecoder().decode(SaveState.self, from: $0) }
+        let secilen: SaveState?
+        switch (yerel, bulut) {
+        case let (y?, b?): secilen = b.lastSeen > y.lastSeen ? b : y
+        case let (y?, nil): secilen = y
+        case let (nil, b?): secilen = b
+        default: secilen = nil
+        }
+        guard let s = secilen else { return false }
+        uygula(s)
         return true
+    }
+
+    // Sunucuya tam-durum yedeği (telefon hesabı için). OnlineService set eder.
+    var bulutaYedek: ((String) -> Void)?
+    private var yedekTimer: Timer?
+    private func bulutaYedekDebounce() {
+        guard bulutaYedek != nil else { return }
+        yedekTimer?.invalidate()
+        yedekTimer = Timer.scheduledTimer(withTimeInterval: 8, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in self.bulutaYedek?(self.durumBlobu()) }
+        }
     }
 
     func sifirla() {
