@@ -108,7 +108,7 @@ struct OnlineWorldView: View {
         HStack(spacing: 12) {
             Image(systemName: Self.binaIkon[b.tip] ?? "building.2.fill").font(.system(size: 22)).foregroundStyle(Theme.gold).frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(Self.binaAd[b.tip] ?? b.tip) · Sv.\(b.seviye)").font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                (Text(LocalizedStringKey(Self.binaAd[b.tip] ?? b.tip)) + Text(" · Sv.\(b.seviye)")).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
                 if b.insaatta {
                     Text("İnşaatta · \(sureMetni(b.kalan))").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 } else {
@@ -133,7 +133,7 @@ struct OnlineWorldView: View {
             Image(systemName: r.owned ? "storefront.fill" : "lock.fill").font(.system(size: 18))
                 .foregroundStyle(r.owned ? Theme.gold : Theme.smoke).frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text(r.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                Text(LocalizedStringKey(r.ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
                 Text(r.owned ? "Sv.\(r.tier) · dk/₺\(fmt(r.perMin))" : "dk/₺\(fmt(r.perMin)) üretir")
                     .font(.system(size: 12)).foregroundStyle(r.owned ? Theme.gold : Theme.smoke)
             }
@@ -181,7 +181,7 @@ struct OnlineWorldView: View {
             Image(systemName: owned ? "checkmark.seal.fill" : (fetihte ? "flag.fill" : "mappin.and.ellipse"))
                 .font(.system(size: 20)).foregroundStyle(owned || fetihte ? renk : Theme.smoke).frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text(ad).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                Text(LocalizedStringKey(ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
                 Text(owned ? alt : (fetihte ? "Fethediliyor · \(sureMetni(kalan))" : "₺\(fmt(fiyat)) · \(sureMetni(sure))"))
                     .font(.system(size: 12)).foregroundStyle(owned ? renk : Theme.smoke)
             }
@@ -224,7 +224,7 @@ struct OnlineWorldView: View {
                 ForEach(["tetikci", "kabadayi", "sofor"], id: \.self) { tip in
                     Button { Task { await online.dunyaAsker(tip, 5) } } label: {
                         HStack {
-                            Text("\(Self.askerAd[tip] ?? tip) ×5 eğit").font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                            (Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)) + Text(" ×5")).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
                             Spacer()
                             Image(systemName: "plus.circle.fill").foregroundStyle(Theme.gold)
                         }.cardStyle(12)
@@ -255,7 +255,7 @@ struct OnlineWorldView: View {
     private func orduKutu(_ tip: String, _ sayi: Int) -> some View {
         VStack(spacing: 4) {
             Text("\(sayi)").font(.system(size: 22, weight: .heavy, design: .rounded)).foregroundStyle(Theme.gold)
-            Text(Self.askerAd[tip] ?? tip).font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.smoke)
+            Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)).font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.smoke)
         }.frame(maxWidth: .infinity).cardStyle(12)
     }
 

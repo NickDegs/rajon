@@ -36,5 +36,18 @@
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Şehir haritasını göstermek için kullanılır. Uygulama konumunuzu takip etmez veya toplamaz.</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>tr</string>
+        <string>en</string>
+        <string>de</string>
+        <string>es</string>
+        <string>fr</string>
+        <string>it</string>
+        <string>pt-BR</string>
+        <string>ru</string>
+        <string>ar</string>
+        <string>ja</string>
+    </array>
 </dict>
 </plist>
