@@ -34,5 +34,7 @@
         <key>UIApplicationSupportsMultipleScenes</key>
         <false/>
     </dict>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Şehir haritasını göstermek için kullanılır. Uygulama konumunuzu takip etmez veya toplamaz.</string>
 </dict>
 </plist>
