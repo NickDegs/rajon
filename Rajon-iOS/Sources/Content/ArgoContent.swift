@@ -87,7 +87,24 @@ enum Argo {
         ("Son Tabut Ailesi", "Buraya kadar geldiysen vasiyetini yaz.")
     ]
 
+    // Teçhizat / silah isimleri (ikon, isim havuzu)
+    static let silahlar: [(String, String)] = [
+        ("Paslı Kelebek Bıçak", "bolt.fill"),
+        ("Sustalı", "bolt.fill"),
+        ("Beyzbol Sopası", "figure.boxing"),
+        ("Pirinç Muşta", "figure.boxing"),
+        ("Av Tüfeği", "scope"),
+        ("Toplu Tabanca", "scope"),
+        ("Susturuculu", "scope"),
+        ("Pompalı", "scope"),
+        ("Kalashnikov", "scope"),
+        ("Kurşun Geçirmez Yelek", "shield.lefthalf.filled"),
+        ("Deri Mont", "shield.lefthalf.filled"),
+        ("Altın Saat", "crown.fill"),
+    ]
+
     static func rastlakap() -> String { lakaplar.randomElement()! }
+    static func rastSilah() -> (String, String) { silahlar.randomElement()! }
 
     static func taunt(for r: Rarity) -> String {
         switch r {

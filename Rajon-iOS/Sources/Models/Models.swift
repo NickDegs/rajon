@@ -101,15 +101,16 @@ struct Enforcer: Identifiable, Codable, Equatable {
     var level: Int = 1
     var xp: Int = 0
     var taunt: String         // dövüşte basacağı laf
+    var equippedGear: Gear? = nil   // takılı teçhizat (opsiyonel → eski kayıt uyumlu)
 
-    // Türetilmiş istatistikler
+    // Türetilmiş istatistikler (teçhizat bonusu dahil)
     var maxHP: Int {
         let base = 80.0 * rarity.powerMult * klas.bias.hp
-        return Int(base * (1.0 + Double(level - 1) * 0.12))
+        return Int(base * (1.0 + Double(level - 1) * 0.12)) + (equippedGear?.hpBonus ?? 0)
     }
     var atk: Int {
         let base = 18.0 * rarity.powerMult * klas.bias.atk
-        return Int(base * (1.0 + Double(level - 1) * 0.12))
+        return Int(base * (1.0 + Double(level - 1) * 0.12)) + (equippedGear?.atkBonus ?? 0)
     }
     var spd: Int {
         Int(10.0 * klas.bias.spd * (1.0 + Double(rarity.rawValue) * 0.08))
@@ -120,6 +121,19 @@ struct Enforcer: Identifiable, Codable, Equatable {
     var xpToNext: Int { 60 + (level - 1) * 45 }
 
     static func == (l: Enforcer, r: Enforcer) -> Bool { l.id == r.id }
+}
+
+// MARK: - Teçhizat / silah (gear)
+
+struct Gear: Identifiable, Codable, Equatable {
+    var id = UUID()
+    var ad: String
+    var rarity: Rarity
+    var atkBonus: Int
+    var hpBonus: Int
+    var ikon: String
+
+    var guc: Int { atkBonus * 3 + hpBonus / 4 }
 }
 
 // MARK: - Haraç / işletme (racket)

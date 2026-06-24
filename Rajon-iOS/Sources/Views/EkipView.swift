@@ -73,8 +73,11 @@ struct EkipView: View {
 struct EnforcerRow: View {
     @EnvironmentObject var game: GameStore
     let enforcer: Enforcer
+    @State private var gearSheet = false
 
     private var sahada: Bool { game.squad.contains(enforcer.id) }
+    /// Bu adamın güncel hali (envanterden tak/çıkar sonrası tazelensin).
+    private var current: Enforcer { game.crew.first { $0.id == enforcer.id } ?? enforcer }
 
     var body: some View {
         VStack(spacing: 10) {
@@ -97,10 +100,28 @@ struct EnforcerRow: View {
                 Spacer()
             }
             HStack(spacing: 10) {
-                statMini("CAN", fmt(enforcer.maxHP), "heart.fill")
-                statMini("VURUŞ", fmt(enforcer.atk), "burst.fill")
-                statMini("HIZ", "\(enforcer.spd)", "hare.fill")
+                statMini("CAN", fmt(current.maxHP), "heart.fill")
+                statMini("VURUŞ", fmt(current.atk), "burst.fill")
+                statMini("HIZ", "\(current.spd)", "hare.fill")
             }
+            // Takılı teçhizat / tak butonu
+            Button { gearSheet = true } label: {
+                HStack(spacing: 8) {
+                    if let g = current.equippedGear {
+                        Image(systemName: g.ikon).font(.system(size: 13)).foregroundStyle(g.rarity.color)
+                        Text(g.ad).font(.system(size: 12, weight: .bold)).foregroundStyle(.white).lineLimit(1)
+                        Text("+\(g.atkBonus) vuruş").font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.gold)
+                    } else {
+                        Image(systemName: "wrench.and.screwdriver.fill").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                        Text("Teçhizat tak").font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.smoke)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                }
+                .padding(.horizontal, 10).padding(.vertical, 8)
+                .background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
             HStack(spacing: 10) {
                 Button {
                     game.toggleSquad(enforcer.id)
@@ -115,7 +136,7 @@ struct EnforcerRow: View {
                 Button {
                     game.adamYukselt(enforcer.id)
                 } label: {
-                    let f = game.yukseltMaliyet(enforcer)
+                    let f = game.yukseltMaliyet(current)
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.up.circle.fill")
                         Text("₺\(fmt(f))").font(.system(size: 12, weight: .heavy, design: .rounded))
@@ -126,7 +147,7 @@ struct EnforcerRow: View {
                     .foregroundStyle(game.cash >= f ? .black : Theme.smoke)
                     .clipShape(RoundedRectangle(cornerRadius: 9))
                 }
-                .disabled(game.cash < game.yukseltMaliyet(enforcer))
+                .disabled(game.cash < game.yukseltMaliyet(current))
             }
         }
         .cardStyle(14)
@@ -134,6 +155,16 @@ struct EnforcerRow: View {
             RoundedRectangle(cornerRadius: 14)
                 .stroke(sahada ? Theme.blood.opacity(0.6) : .clear, lineWidth: 1.5)
         )
+        .sheet(isPresented: $gearSheet) {
+            NavigationStack {
+                GearSheet(enforcerID: enforcer.id)
+                    .navigationTitle("Teçhizat")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { gearSheet = false } } }
+                    .background(Theme.coal)
+            }
+            .preferredColorScheme(.dark)
+        }
     }
 
     private func statMini(_ ad: String, _ deger: String, _ icon: String) -> some View {
@@ -148,5 +179,83 @@ struct EnforcerRow: View {
         .padding(.horizontal, 8).padding(.vertical, 6)
         .background(Theme.panelHi)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+/// Bir adamın teçhizatını yönetme sayfası.
+struct GearSheet: View {
+    @EnvironmentObject var game: GameStore
+    let enforcerID: UUID
+
+    private var enforcer: Enforcer? { game.crew.first { $0.id == enforcerID } }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 14) {
+                if let e = enforcer {
+                    // Takılı
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("TAKILI").sectionHeader()
+                        if let g = e.equippedGear {
+                            GearCard(gear: g, aksiyon: "ÇIKAR") { game.gearCikar(from: enforcerID) }
+                        } else {
+                            Text("Takılı teçhizat yok.").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                        }
+                    }
+                    .cardStyle(14)
+                }
+                // Envanter
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("ENVANTER (\(game.envanter.count))").sectionHeader()
+                    if game.envanter.isEmpty {
+                        Text("Envanter boş. Dövüş kazanınca teçhizat düşer.")
+                            .font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    }
+                    ForEach(game.envanter.sorted { $0.guc > $1.guc }) { g in
+                        GearCard(gear: g, aksiyon: "TAK", sat: { game.gearSat(g) }) {
+                            game.gearTak(g, to: enforcerID)
+                        }
+                    }
+                }
+                .cardStyle(14)
+            }
+            .padding(16)
+        }
+    }
+}
+
+struct GearCard: View {
+    let gear: Gear
+    let aksiyon: String
+    var sat: (() -> Void)? = nil
+    let onTap: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 9).fill(Theme.panelHi)
+                Image(systemName: gear.ikon).font(.system(size: 18)).foregroundStyle(gear.rarity.color)
+            }
+            .frame(width: 42, height: 42)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(gear.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(.white).lineLimit(1)
+                Text("+\(gear.atkBonus) vuruş · +\(gear.hpBonus) can")
+                    .font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.gold)
+            }
+            Spacer()
+            if let sat {
+                Button { sat() } label: {
+                    Image(systemName: "dollarsign.circle").font(.system(size: 18)).foregroundStyle(Theme.smoke)
+                }
+                .buttonStyle(.plain)
+            }
+            Button { onTap() } label: {
+                Text(aksiyon).font(.system(size: 12, weight: .black))
+                    .padding(.horizontal, 12).padding(.vertical, 7)
+                    .background(Theme.blood).foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
+        }
     }
 }

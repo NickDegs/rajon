@@ -60,6 +60,20 @@ enum Factory {
         }
     }
 
+    /// Rasgele teçhizat üret (nadirlik verilmezse ağırlıklı çekiliş).
+    static func makeGear(rarity: Rarity? = nil) -> Gear {
+        let r = rarity ?? rollRarity()
+        let (ad, ikon) = Argo.rastSilah()
+        let taban = 6.0 * r.powerMult
+        return Gear(
+            ad: ad,
+            rarity: r,
+            atkBonus: Int(taban * Double.random(in: 0.8...1.3)),
+            hpBonus: Int(taban * 6 * Double.random(in: 0.7...1.2)),
+            ikon: ikon
+        )
+    }
+
     static func makeRackets() -> [Racket] {
         Argo.racketIsimleri.enumerated().map { idx, info in
             let (ad, perMin, cost) = info

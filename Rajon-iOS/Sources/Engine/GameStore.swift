@@ -2,6 +2,8 @@ import SwiftUI
 import Combine
 
 /// Diske kaydedilen oyun durumu.
+/// Decodable manuel: yeni alanlar `decodeIfPresent` ile okunur → eski kayıt güncellemede
+/// silinmez (ilerleme korunur). Yeni alan eklerken aynı kalıbı kullan.
 struct SaveState: Codable {
     var cash: Int
     var respect: Int            // toplam itibar = seviye/ilerleme
@@ -15,6 +17,33 @@ struct SaveState: Codable {
     var vipSonBonus: Date = .distantPast
     var gunlukBonusTarih: Date = .distantPast   // son alınan günlük bonus
     var gunlukSeri: Int = 0                      // ardışık gün serisi
+    var envanter: [Gear] = []                    // takılı olmayan teçhizat
+
+    init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
+         rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
+         vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear]) {
+        self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
+        self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
+        self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
+        self.gunlukBonusTarih = gunlukBonusTarih; self.gunlukSeri = gunlukSeri; self.envanter = envanter
+    }
+
+    init(from dec: Decoder) throws {
+        let c = try dec.container(keyedBy: CodingKeys.self)
+        cash = try c.decode(Int.self, forKey: .cash)
+        respect = try c.decode(Int.self, forKey: .respect)
+        crew = try c.decode([Enforcer].self, forKey: .crew)
+        squad = try c.decode([UUID].self, forKey: .squad)
+        rackets = try c.decode([Racket].self, forKey: .rackets)
+        rivals = try c.decode([RivalNode].self, forKey: .rivals)
+        lastSeen = try c.decode(Date.self, forKey: .lastSeen)
+        devsirmeCost = try c.decode(Int.self, forKey: .devsirmeCost)
+        vipAktif = try c.decodeIfPresent(Bool.self, forKey: .vipAktif) ?? false
+        vipSonBonus = try c.decodeIfPresent(Date.self, forKey: .vipSonBonus) ?? .distantPast
+        gunlukBonusTarih = try c.decodeIfPresent(Date.self, forKey: .gunlukBonusTarih) ?? .distantPast
+        gunlukSeri = try c.decodeIfPresent(Int.self, forKey: .gunlukSeri) ?? 0
+        envanter = try c.decodeIfPresent([Gear].self, forKey: .envanter) ?? []
+    }
 }
 
 /// Bütün oyun mantığını yöneten gözlemlenebilir depo.
@@ -29,6 +58,7 @@ final class GameStore: ObservableObject {
     @Published var devsirmeCost: Int = 500
     @Published var vipAktif: Bool = false   // Kan Parası VIP — 2x gelir + günlük bonus
 
+    @Published var envanter: [Gear] = []    // takılı olmayan teçhizat
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
     @Published var gunlukSeri: Int = 0      // ardışık giriş günü serisi
     private var lastSeen = Date()
@@ -182,6 +212,38 @@ final class GameStore: ObservableObject {
         return yeni
     }
 
+    // MARK: Teçhizat
+
+    /// Bir adama envanterden teçhizat tak (varsa eskisini envantere geri koy).
+    func gearTak(_ gear: Gear, to enforcerID: UUID) {
+        guard let ci = crew.firstIndex(where: { $0.id == enforcerID }),
+              let gi = envanter.firstIndex(where: { $0.id == gear.id }) else { return }
+        if let eski = crew[ci].equippedGear { envanter.append(eski) }
+        crew[ci].equippedGear = gear
+        envanter.remove(at: gi)
+        Haptics.tik()
+        save()
+    }
+
+    /// Takılı teçhizatı çıkar, envantere geri koy.
+    func gearCikar(from enforcerID: UUID) {
+        guard let ci = crew.firstIndex(where: { $0.id == enforcerID }),
+              let g = crew[ci].equippedGear else { return }
+        envanter.append(g)
+        crew[ci].equippedGear = nil
+        Haptics.tik()
+        save()
+    }
+
+    /// Teçhizatı sat (nadirliğe göre nakit).
+    func gearSat(_ gear: Gear) {
+        guard let gi = envanter.firstIndex(where: { $0.id == gear.id }) else { return }
+        cash += 500 + gear.guc * 20
+        envanter.remove(at: gi)
+        Haptics.tik()
+        save()
+    }
+
     /// Garantili efsane adam (IAP ödülü).
     @discardableResult
     func efsaneDevsir() -> Enforcer {
@@ -241,6 +303,10 @@ final class GameStore: ObservableObject {
             let dusen = Factory.makeEnforcer(level: max(1, bossLevel - 1))
             crew.append(dusen)
         }
+        // Sık sık teçhizat düşür (ganimet)
+        if Double.random(in: 0...1) < 0.55 {
+            envanter.append(Factory.makeGear())
+        }
         Haptics.basari()
         save()
     }
@@ -252,7 +318,7 @@ final class GameStore: ObservableObject {
             cash: cash, respect: respect, crew: crew, squad: squad,
             rackets: rackets, rivals: rivals, lastSeen: Date(),
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
-            gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri
+            gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -269,6 +335,7 @@ final class GameStore: ObservableObject {
         devsirmeCost = s.devsirmeCost
         vipAktif = s.vipAktif; vipSonBonus = s.vipSonBonus
         gunlukBonusTarih = s.gunlukBonusTarih; gunlukSeri = s.gunlukSeri
+        envanter = s.envanter
         return true
     }
 
