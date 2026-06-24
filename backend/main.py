@@ -49,6 +49,15 @@ class AttackResultBody(BaseModel):
     loot: int = 0
 
 
+class ClanCreateBody(BaseModel):
+    ad: str
+    aciklama: str = ""
+
+
+class ClanJoinBody(BaseModel):
+    clan_id: str
+
+
 # ── Uçlar ──────────────────────────────────────────────────
 @app.get("/rajon/health")
 def health():
@@ -109,6 +118,68 @@ def leaderboard(authorization: str = Header(None)):
     top = db.leaderboard(50)
     my_rank = next((i + 1 for i, r in enumerate(top) if r["id"] == me["id"]), None)
     return {"top": top, "me": me["id"], "my_rank": my_rank}
+
+
+# ── Çete / Sendika ─────────────────────────────────────────
+import uuid as _uuid
+
+
+@app.post("/rajon/clan/create")
+def clan_create(b: ClanCreateBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    ad = b.ad.strip()[:24]
+    if len(ad) < 3:
+        raise HTTPException(400, "çete adı çok kısa")
+    if db.clan_by_name(ad):
+        raise HTTPException(409, "bu isimde çete var")
+    cid = _uuid.uuid4().hex[:12]
+    db.create_clan(cid, ad, p["id"], b.aciklama.strip()[:120])
+    return clan_mine(authorization)
+
+
+@app.post("/rajon/clan/join")
+def clan_join(b: ClanJoinBody, authorization: str = Header(None)):
+    p = auth(authorization)
+    if not db.clan_by_id(b.clan_id):
+        raise HTTPException(404, "çete bulunamadı")
+    db.join_clan(p["id"], b.clan_id)
+    return clan_mine(authorization)
+
+
+@app.post("/rajon/clan/leave")
+def clan_leave(authorization: str = Header(None)):
+    p = auth(authorization)
+    db.leave_clan(p["id"])
+    return {"ok": True, "clan": None}
+
+
+@app.get("/rajon/clan/list")
+def clan_list(authorization: str = Header(None)):
+    auth(authorization)
+    return {"clans": db.clan_list(50)}
+
+
+@app.get("/rajon/clan/mine")
+def clan_mine(authorization: str = Header(None)):
+    p = auth(authorization)
+    me = db.get_by_id(p["id"])
+    cid = (me or {}).get("clan_id") or ""
+    if not cid:
+        return {"clan": None}
+    clan = db.clan_by_id(cid)
+    if not clan:
+        return {"clan": None}
+    members = db.clan_members(cid)
+    return {
+        "clan": {
+            "id": clan["id"], "ad": clan["ad"], "aciklama": clan["aciklama"],
+            "lider": clan["lider"], "lider_mi": clan["lider"] == p["id"],
+            "uye": len(members),
+            "toplam_respect": sum(m["respect"] for m in members),
+            "toplam_guc": sum(m["power"] for m in members),
+            "members": members,
+        }
+    }
 
 
 def _public(p: dict):

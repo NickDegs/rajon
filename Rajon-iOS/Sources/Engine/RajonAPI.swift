@@ -10,6 +10,8 @@ final class OnlineService: ObservableObject {
     @Published var me: OnlinePlayer?
     @Published var lider: [LiderSatir] = []
     @Published var myRank: Int?
+    @Published var clanim: Clan?
+    @Published var clanListesi: [ClanOzet] = []
     @Published var hata: String?
     @Published var mesgul = false
 
@@ -86,6 +88,36 @@ final class OnlineService: ObservableObject {
             lider = r.top
             myRank = r.my_rank
         } catch { hata = "Lider tablosu alınamadı" }
+    }
+
+    // MARK: Çete / sendika
+
+    func clanGetir() async {
+        if let r: MineResp = try? await get("/rajon/clan/mine") { clanim = r.clan }
+    }
+
+    func clanListele() async {
+        if let r: ClanListResp = try? await get("/rajon/clan/list") { clanListesi = r.clans }
+    }
+
+    func clanKur(ad: String, aciklama: String) async {
+        mesgul = true; defer { mesgul = false }
+        do {
+            let r: MineResp = try await post("/rajon/clan/create", body: ["ad": ad, "aciklama": aciklama])
+            clanim = r.clan; hata = nil
+        } catch { hata = "Çete kurulamadı (isim alınmış olabilir)" }
+    }
+
+    func clanKatil(id: String) async {
+        mesgul = true; defer { mesgul = false }
+        if let r: MineResp = try? await post("/rajon/clan/join", body: ["clan_id": id]) {
+            clanim = r.clan
+        }
+    }
+
+    func clanCik() async {
+        _ = try? await postRaw("/rajon/clan/leave", body: [:])
+        clanim = nil
     }
 
     // MARK: HTTP yardımcıları
@@ -176,3 +208,38 @@ struct LiderSatir: Codable, Identifiable {
 }
 
 struct LeaderResp: Codable { let top: [LiderSatir]; let me: String; let my_rank: Int? }
+
+// MARK: Çete
+
+struct ClanMember: Codable, Identifiable {
+    let id: String
+    let ad: String
+    let power: Int
+    let respect: Int
+    let wins: Int
+}
+
+struct Clan: Codable {
+    let id: String
+    let ad: String
+    let aciklama: String
+    let lider: String
+    let lider_mi: Bool
+    let uye: Int
+    let toplam_respect: Int
+    let toplam_guc: Int
+    let members: [ClanMember]
+}
+
+struct ClanOzet: Codable, Identifiable {
+    let id: String
+    let ad: String
+    let aciklama: String
+    let lider: String
+    let uye: Int
+    let toplam_respect: Int
+    let toplam_guc: Int
+}
+
+struct MineResp: Codable { let clan: Clan? }
+struct ClanListResp: Codable { let clans: [ClanOzet] }

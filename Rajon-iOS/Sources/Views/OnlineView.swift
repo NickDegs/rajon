@@ -10,6 +10,7 @@ struct OnlineView: View {
     @State private var pvpNode: RivalNode?
     @State private var sonPvpHedef: PvpTarget?
     @State private var bilgi: String?
+    @State private var clanAcik = false
 
     var body: some View {
         ScrollView {
@@ -18,6 +19,7 @@ struct OnlineView: View {
                     girisKart
                 } else {
                     profilKart
+                    sendikaButon
                     baskinKart
                     liderKart
                 }
@@ -41,6 +43,38 @@ struct OnlineView: View {
             }
             .environmentObject(game)
         }
+        .sheet(isPresented: $clanAcik) {
+            NavigationStack {
+                ClanView()
+                    .navigationTitle("Sendika")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { clanAcik = false } } }
+                    .background(Theme.coal)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+            .environmentObject(online)
+        }
+    }
+
+    private var sendikaButon: some View {
+        Button { clanAcik = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "shield.lefthalf.filled").font(.system(size: 22)).foregroundStyle(Theme.blood)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(online.clanim?.ad ?? "ÇETE / SENDİKA")
+                        .font(.system(size: 15, weight: .black)).foregroundStyle(.white)
+                    Text(online.clanim == nil ? "Çete kur ya da katıl, birlikte yüksel."
+                                              : "\(online.clanim!.uye) üye · ★\(fmt(online.clanim!.toplam_respect))")
+                        .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+            }
+            .cardStyle(14)
+        }
+        .buttonStyle(.plain)
+        .task { await online.clanGetir() }
     }
 
     // MARK: Giriş
