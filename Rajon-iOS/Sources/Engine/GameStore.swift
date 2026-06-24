@@ -20,16 +20,17 @@ struct SaveState: Codable {
     var envanter: [Gear] = []                    // takılı olmayan teçhizat
     var gorevler: [Gorev] = []                   // günlük görevler
     var gorevTarih: Date = .distantPast          // görevlerin üretildiği gün
+    var binalar: [Bina] = []                     // mahalle binaları
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
-         gorevler: [Gorev], gorevTarih: Date) {
+         gorevler: [Gorev], gorevTarih: Date, binalar: [Bina]) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
         self.gunlukBonusTarih = gunlukBonusTarih; self.gunlukSeri = gunlukSeri; self.envanter = envanter
-        self.gorevler = gorevler; self.gorevTarih = gorevTarih
+        self.gorevler = gorevler; self.gorevTarih = gorevTarih; self.binalar = binalar
     }
 
     init(from dec: Decoder) throws {
@@ -49,6 +50,7 @@ struct SaveState: Codable {
         envanter = try c.decodeIfPresent([Gear].self, forKey: .envanter) ?? []
         gorevler = try c.decodeIfPresent([Gorev].self, forKey: .gorevler) ?? []
         gorevTarih = try c.decodeIfPresent(Date.self, forKey: .gorevTarih) ?? .distantPast
+        binalar = try c.decodeIfPresent([Bina].self, forKey: .binalar) ?? []
     }
 }
 
@@ -65,6 +67,7 @@ final class GameStore: ObservableObject {
     @Published var vipAktif: Bool = false   // Kan Parası VIP — 2x gelir + günlük bonus
 
     @Published var envanter: [Gear] = []    // takılı olmayan teçhizat
+    @Published var binalar: [Bina] = []     // mahalle binaları
     @Published var gorevler: [Gorev] = []   // günlük görevler
     private var gorevTarih = Date.distantPast
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
@@ -101,6 +104,7 @@ final class GameStore: ObservableObject {
         respect = 0
         rackets = Factory.makeRackets()
         rivals = Factory.makeRivalLadder()
+        binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
         devsirmeCost = 500
         // Başlangıç ekibi: 3 adam
         let baslangic = [
@@ -124,13 +128,17 @@ final class GameStore: ObservableObject {
     var gelirCarpani: Double { vipAktif ? 2.0 : 1.0 }
 
     private func tick() {
-        let kazanc = ownedRackets.reduce(0.0) { $0 + $1.perSec } * gelirCarpani
+        let kazanc = saniyelikGelir
         idleKazanc += Int(kazanc.rounded())
         // VIP günlük bonus
         if vipAktif, Date().timeIntervalSince(vipSonBonus) >= 86_400 {
             vipSonBonus = Date()
             cash += 50_000
         }
+        insaatlariKontrolEt()
+        // birikim kapasitesini aşma
+        let cap = depoKapasite
+        if idleKazanc > cap { idleKazanc = cap }
         // periyodik kayıt (her ~15 sn)
         if Int(Date().timeIntervalSince1970) % 15 == 0 { save() }
     }
@@ -139,15 +147,77 @@ final class GameStore: ObservableObject {
     private func accrueIdle() {
         let dt = Date().timeIntervalSince(lastSeen)
         guard dt > 0 else { return }
-        let capped = min(dt, 8 * 3600)  // en fazla 8 saat birikir
-        let perSec = ownedRackets.reduce(0.0) { $0 + $1.perSec } * gelirCarpani
-        idleKazanc += Int(perSec * capped)
+        let capped = min(dt, depoCapSaat * 3600)
+        idleKazanc += Int(saniyelikGelir * capped)
+        if idleKazanc > depoKapasite { idleKazanc = depoKapasite }
     }
 
     // MARK: Ekonomi
 
     var ownedRackets: [Racket] { rackets.filter { $0.owned } }
-    var gelirPerMin: Int { Int(Double(ownedRackets.reduce(0) { $0 + $1.perMin }) * gelirCarpani) }
+    /// Saniyelik toplam gelir (haraç + Kasa binası, VIP çarpanıyla).
+    var saniyelikGelir: Double {
+        let racket = ownedRackets.reduce(0.0) { $0 + $1.perSec }
+        let kasa = Double(kasaBonusPerMin) / 60.0
+        return (racket + kasa) * gelirCarpani
+    }
+    var gelirPerMin: Int {
+        Int((Double(ownedRackets.reduce(0) { $0 + $1.perMin }) + Double(kasaBonusPerMin)) * gelirCarpani)
+    }
+
+    // MARK: Mahalle / inşaat (Travian tarzı)
+
+    func binaSeviye(_ tip: BinaTip) -> Int { binalar.first { $0.tip == tip }?.seviye ?? 0 }
+
+    var kasaBonusPerMin: Int { 80 * binaSeviye(.kasa) }
+    var depoCapSaat: Double { 8 + 3 * Double(binaSeviye(.depo)) }       // birikim süresi
+    var depoKapasite: Int { 200_000 + binaSeviye(.depo) * 250_000 }     // tavan nakit
+    var maxKadro: Int { min(6, 4 + binaSeviye(.kisla) / 2) }            // saha kadrosu
+    var cephanelikBonus: Double { 1.0 + 0.07 * Double(binaSeviye(.cephanelik)) } // saldırı çarpanı
+    var korunakSavunma: Int { 60 * binaSeviye(.korunak) }
+    /// Karargah inşaatları hızlandırır.
+    var insaatHizCarpani: Double { 1.0 / (1.0 + 0.07 * Double(binaSeviye(.karargah))) }
+    var insaatMesgul: Bool { binalar.contains { $0.insaatta } }
+    var insaattakiBina: Bina? { binalar.first { $0.insaatta } }
+
+    func binaSure(_ bina: Bina) -> Double { bina.temelSure * insaatHizCarpani }
+
+    /// Bir binayı inşa et / bir seviye yükselt (tek kuyruk).
+    func binaYukselt(_ id: UUID) {
+        guard !insaatMesgul, let i = binalar.firstIndex(where: { $0.id == id }) else { return }
+        let fiyat = binalar[i].yukseltmeMaliyet
+        guard cash >= fiyat else { return }
+        cash -= fiyat
+        binalar[i].insaatBitis = Date().addingTimeInterval(binaSure(binalar[i]))
+        Haptics.tik()
+        save()
+    }
+
+    /// İnşaatı nakitle anında bitir (hızlandır).
+    func binaHizlandir(_ id: UUID) {
+        guard let i = binalar.firstIndex(where: { $0.id == id }),
+              let bitis = binalar[i].insaatBitis else { return }
+        let kalan = max(0, bitis.timeIntervalSinceNow)
+        let fiyat = Int(kalan * 50) + 500
+        guard cash >= fiyat else { return }
+        cash -= fiyat
+        binalar[i].seviye += 1
+        binalar[i].insaatBitis = nil
+        Haptics.basari()
+        save()
+    }
+
+    private func insaatlariKontrolEt() {
+        var degisti = false
+        for i in binalar.indices {
+            if let b = binalar[i].insaatBitis, b <= Date() {
+                binalar[i].seviye += 1
+                binalar[i].insaatBitis = nil
+                degisti = true
+            }
+        }
+        if degisti { save() }
+    }
 
     func haracTopla() {
         guard idleKazanc > 0 else { return }
@@ -217,7 +287,7 @@ final class GameStore: ObservableObject {
         let yeni = Factory.makeEnforcer()
         crew.append(yeni)
         // Ekipte yer varsa otomatik sahaya al
-        if squad.count < 4 { squad.append(yeni.id) }
+        if squad.count < maxKadro { squad.append(yeni.id) }
         devsirmeCost = Int(Double(devsirmeCost) * 1.25)
         gorevIlerlet(.devsir)
         Haptics.basari()
@@ -295,7 +365,7 @@ final class GameStore: ObservableObject {
     func efsaneDevsir() -> Enforcer {
         let yeni = Factory.makeEnforcer(rarity: .efsane, level: max(1, bossLevel))
         crew.append(yeni)
-        if squad.count < 4 { squad.append(yeni.id) }
+        if squad.count < maxKadro { squad.append(yeni.id) }
         Haptics.basari()
         save()
         return yeni
@@ -306,7 +376,7 @@ final class GameStore: ObservableObject {
     func toggleSquad(_ id: UUID) {
         if let idx = squad.firstIndex(of: id) {
             squad.remove(at: idx)
-        } else if squad.count < 4 {
+        } else if squad.count < maxKadro {
             squad.append(id)
         }
         save()
@@ -366,7 +436,7 @@ final class GameStore: ObservableObject {
             rackets: rackets, rivals: rivals, lastSeen: Date(),
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
-            gorevler: gorevler, gorevTarih: gorevTarih
+            gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -385,6 +455,10 @@ final class GameStore: ObservableObject {
         gunlukBonusTarih = s.gunlukBonusTarih; gunlukSeri = s.gunlukSeri
         envanter = s.envanter
         gorevler = s.gorevler; gorevTarih = s.gorevTarih
+        binalar = s.binalar
+        if binalar.isEmpty {   // eski kayıt → binaları kur
+            binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
+        }
         return true
     }
 

@@ -73,7 +73,18 @@ final class StoreManager: ObservableObject {
 
     func basla(game: GameStore) {
         self.game = game
-        Task { await urunleriYukle(); await vipDurumGuncelle() }
+        Task {
+            await urunleriYukle()
+            // Tamamlanmamış işlemleri yakala (Ask to Buy, Family Sharing, çökme sonrası).
+            // iPad'de currentEntitlements cache'i gecikebildiği için hakkı DİREKT veriyoruz.
+            for await sonuc in Transaction.unfinished {
+                if case .verified(let t) = sonuc {
+                    await odulVer(t)
+                    await t.finish()
+                }
+            }
+            await vipDurumGuncelle()
+        }
     }
 
     func urunleriYukle() async {
@@ -121,8 +132,10 @@ final class StoreManager: ObservableObject {
         case .efsaneAdam:
             game?.efsaneDevsir()
         case .vip:
-            vipAktif = true
-            game?.vipAktif = true
+            // Abonelik iptal/iade edilmediyse hakkı DİREKT ver (cache bekleme — iPad race fix).
+            let gecerli = t.revocationDate == nil
+            vipAktif = gecerli
+            game?.vipAktif = gecerli
             game?.save()
         }
         Haptics.basari()

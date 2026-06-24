@@ -123,6 +123,70 @@ struct Enforcer: Identifiable, Codable, Equatable {
     static func == (l: Enforcer, r: Enforcer) -> Bool { l.id == r.id }
 }
 
+// MARK: - Mahalle binaları (Travian tarzı zamanlı inşaat)
+
+enum BinaTip: String, Codable, CaseIterable {
+    case karargah    // inşaat hızı
+    case kasa        // nakit/dk
+    case depo        // birikim kapasitesi (saat)
+    case cephanelik  // ekip saldırı %
+    case kisla       // kadro slotu
+    case korunak     // savunma
+
+    var ad: String {
+        switch self {
+        case .karargah:   return "Karargah"
+        case .kasa:       return "Kasa Dairesi"
+        case .depo:       return "Depo"
+        case .cephanelik: return "Cephanelik"
+        case .kisla:      return "Kışla"
+        case .korunak:    return "Korunak"
+        }
+    }
+    var aciklama: String {
+        switch self {
+        case .karargah:   return "İnşaatları hızlandırır"
+        case .kasa:       return "Dakikalık nakit üretir"
+        case .depo:       return "Kasada birikim sınırını artırır"
+        case .cephanelik: return "Ekibin saldırı gücünü artırır"
+        case .kisla:      return "Sahaya daha çok adam çıkarırsın"
+        case .korunak:    return "Baskınlarda savunmanı artırır"
+        }
+    }
+    /// SF Symbol (Flux görseli yoksa yedek).
+    var sembol: String {
+        switch self {
+        case .karargah:   return "building.columns.fill"
+        case .kasa:       return "banknote.fill"
+        case .depo:       return "shippingbox.fill"
+        case .cephanelik: return "scope"
+        case .kisla:      return "person.3.fill"
+        case .korunak:    return "shield.lefthalf.filled"
+        }
+    }
+    /// Asset kataloğundaki Flux görsel adı.
+    var gorsel: String { "bina_\(rawValue)" }
+
+    /// Başlangıç seviyesi (karargah ve kasa hazır gelir).
+    var baslangic: Int { (self == .karargah || self == .kasa) ? 1 : 0 }
+}
+
+struct Bina: Identifiable, Codable {
+    var id = UUID()
+    var tip: BinaTip
+    var seviye: Int
+    var insaatBitis: Date? = nil   // inşaat bitiş zamanı (nil = boşta)
+
+    var insaatta: Bool {
+        guard let b = insaatBitis else { return false }
+        return b > Date()
+    }
+    /// Bir sonraki seviye için maliyet.
+    var yukseltmeMaliyet: Int { Int(220.0 * pow(1.7, Double(seviye))) }
+    /// Temel inşaat süresi (sn) — karargah ayrıca hızlandırır.
+    var temelSure: Double { 30.0 * pow(1.45, Double(seviye)) }
+}
+
 // MARK: - Günlük görev
 
 enum GorevTip: String, Codable, CaseIterable {

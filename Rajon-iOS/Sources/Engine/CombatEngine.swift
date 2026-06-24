@@ -16,9 +16,9 @@ struct Combatant: Identifiable {
     var energy: Int = 0          // 0..100, 100'de özel hamle
     var alive: Bool { hp > 0 }
 
-    init(from e: Enforcer, isPlayer: Bool) {
+    init(from e: Enforcer, isPlayer: Bool, atkCarpani: Double = 1.0) {
         id = e.id; ad = e.ad; rarity = e.rarity; klas = e.klas
-        maxHP = e.maxHP; hp = e.maxHP; atk = e.atk; spd = e.spd
+        maxHP = e.maxHP; hp = e.maxHP; atk = Int(Double(e.atk) * atkCarpani); spd = e.spd
         taunt = e.taunt; self.isPlayer = isPlayer
     }
 }
@@ -57,11 +57,11 @@ final class CombatEngine: ObservableObject {
     }
 
     /// Ekibi yerleştirip dövüşü başlatır. environmentObject init'te erişilemediği
-    /// için CombatView bunu onAppear'da çağırır.
-    func kur(squad: [Enforcer]) {
+    /// için CombatView bunu onAppear'da çağırır. `atkCarpani` = Cephanelik bonusu.
+    func kur(squad: [Enforcer], atkCarpani: Double = 1.0) {
         guard !kuruldu, !squad.isEmpty else { return }
         kuruldu = true
-        player = squad.map { Combatant(from: $0, isPlayer: true) }
+        player = squad.map { Combatant(from: $0, isPlayer: true, atkCarpani: atkCarpani) }
         enemy = node.crew.map { Combatant(from: $0, isPlayer: false) }
         rebuildOrder()
         ekle("Çatışma başladı: \(node.ad)", .info)

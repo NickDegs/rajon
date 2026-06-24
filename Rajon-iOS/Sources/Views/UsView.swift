@@ -3,12 +3,14 @@ import SwiftUI
 /// Üs / karargah — haraç toplama ve işletmeler.
 struct UsView: View {
     @EnvironmentObject var game: GameStore
+    @State private var mahalleAcik = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 if game.gunlukBonusVar { gunlukBonusKart }
                 idleKart
+                mahalleButon
                 gelirOzet
                 gorevlerKart
                 Text("İŞLETMELER")
@@ -22,6 +24,37 @@ struct UsView: View {
             }
             .padding(16)
         }
+        .fullScreenCover(isPresented: $mahalleAcik) {
+            NavigationStack {
+                MahalleView()
+                    .navigationTitle("Mahalle")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { mahalleAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+        }
+    }
+
+    private var mahalleButon: some View {
+        Button { mahalleAcik = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "building.2.fill").font(.system(size: 26)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("MAHALLE — İNŞAAT").font(.system(size: 15, weight: .black)).foregroundStyle(.white)
+                    if let b = game.insaattakiBina {
+                        Text("İnşaatta: \(b.tip.ad)").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
+                    } else {
+                        Text("Bina kur/yükselt, mahalleni büyüt").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+            }
+            .cardStyle(14)
+        }
+        .buttonStyle(.plain)
     }
 
     private var gorevlerKart: some View {

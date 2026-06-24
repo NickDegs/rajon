@@ -40,7 +40,7 @@ struct EkipView: View {
                     .foregroundStyle(Theme.gold)
             }
             HStack(spacing: 10) {
-                ForEach(0..<4, id: \.self) { i in
+                ForEach(0..<game.maxKadro, id: \.self) { i in
                     if i < game.squadEnforcers.count {
                         let e = game.squadEnforcers[i]
                         VStack(spacing: 4) {

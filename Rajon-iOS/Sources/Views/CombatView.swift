@@ -34,7 +34,7 @@ struct CombatView: View {
             }
         }
         .lensFlareSweep(trigger: flare, tint: Theme.gold)
-        .onAppear { engine.kur(squad: game.squadEnforcers) }
+        .onAppear { engine.kur(squad: game.squadEnforcers, atkCarpani: game.cephanelikBonus) }
         .onChange(of: engine.result) { _, r in
             if r == .kazandi { DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { flare += 1 } }
         }
