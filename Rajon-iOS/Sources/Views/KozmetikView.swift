@@ -38,7 +38,18 @@ struct KozmetikView: View {
                     }
                 }
 
-                if !store.destekciMi {
+                bolum("VIP HAYVAN 👑") {
+                    if !store.vipAktif {
+                        Text("VIP'e özel: bir hayvan sahiplen, profilinde sergile. Mağaza'dan VIP edin.")
+                            .font(.system(size: 11)).foregroundStyle(Theme.gold)
+                    }
+                    LazyVGrid(columns: grid, spacing: 12) {
+                        petHucre("")   // "yok"
+                        ForEach(CosmeticStore.petler, id: \.self) { p in petHucre(p) }
+                    }
+                }
+
+                if !store.premiumAcik {
                     Text("⭐️ işaretli kozmetikler Destekçi paketiyle açılır. Hepsi sadece görünümdür, oyunu güçlendirmez.")
                         .font(.system(size: 11)).foregroundStyle(Theme.smoke)
                         .multilineTextAlignment(.center).padding(.top, 4)
@@ -46,19 +57,27 @@ struct KozmetikView: View {
             }
             .padding(16)
         }
-        .alert("Destekçi gerekli", isPresented: $premiumUyari) {
+        .alert("Kilitli kozmetik", isPresented: $premiumUyari) {
             Button("Tamam", role: .cancel) {}
         } message: {
-            Text("Bu kozmetik Destekçi paketiyle açılır. Mağaza'dan edinebilirsin — tamamen kozmetiktir.")
+            Text("Bu kozmetik VIP (veya Destekçi) ile açılır. Hayvanlar VIP'e özeldir. Mağaza'dan edinebilirsin — hepsi sadece görünümdür, oyunu güçlendirmez.")
         }
     }
 
     // MARK: Önizleme
     private var onizleme: some View {
         VStack(spacing: 10) {
-            Image(kozmetik.avatar).resizable().scaledToFill()
-                .frame(width: 110, height: 110).clipShape(Circle())
-                .overlay(Circle().stroke(kozmetik.seciliRenk, lineWidth: 4))
+            ZStack(alignment: .bottomTrailing) {
+                Image(kozmetik.avatar).resizable().scaledToFill()
+                    .frame(width: 110, height: 110).clipShape(Circle())
+                    .overlay(Circle().stroke(kozmetik.seciliRenk, lineWidth: 4))
+                if !kozmetik.pet.isEmpty {
+                    Image(kozmetik.pet).resizable().scaledToFill()
+                        .frame(width: 44, height: 44).clipShape(Circle())
+                        .overlay(Circle().stroke(Theme.gold, lineWidth: 2))
+                        .offset(x: 6, y: 6)
+                }
+            }
             HStack(spacing: 6) {
                 if !kozmetik.unvan.isEmpty {
                     Text(kozmetik.unvan).font(.system(size: 12, weight: .black))
@@ -84,7 +103,7 @@ struct KozmetikView: View {
     // MARK: Hücreler
     private func avatarHucre(_ a: String) -> some View {
         let premium = kozmetik.avatarPremiumMi(a)
-        let kilit = premium && !store.destekciMi
+        let kilit = premium && !store.premiumAcik
         let secili = kozmetik.avatar == a
         return Button {
             if kilit { premiumUyari = true } else { kozmetik.avatar = a }
@@ -102,7 +121,7 @@ struct KozmetikView: View {
     }
 
     private func renkHucre(_ id: String, _ renk: Color, _ premium: Bool) -> some View {
-        let kilit = premium && !store.destekciMi
+        let kilit = premium && !store.premiumAcik
         let secili = kozmetik.renk == id
         return Button {
             if kilit { premiumUyari = true } else { kozmetik.renk = id }
@@ -118,9 +137,34 @@ struct KozmetikView: View {
         .buttonStyle(.plain)
     }
 
+    private func petHucre(_ p: String) -> some View {
+        let kilit = !p.isEmpty && !store.vipAktif
+        let secili = kozmetik.pet == p
+        return Button {
+            if kilit { premiumUyari = true } else { kozmetik.pet = p }
+        } label: {
+            ZStack(alignment: .topTrailing) {
+                if p.isEmpty {
+                    RoundedRectangle(cornerRadius: 14).fill(Theme.panelHi)
+                        .frame(width: 84, height: 84)
+                        .overlay(Text("Yok").font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.smoke))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(secili ? Theme.gold : .clear, lineWidth: 3))
+                } else {
+                    Image(p).resizable().scaledToFill()
+                        .frame(width: 84, height: 84).clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(secili ? Theme.gold : .white.opacity(0.1), lineWidth: secili ? 3 : 1))
+                        .saturation(kilit ? 0.3 : 1).opacity(kilit ? 0.7 : 1)
+                    Text("👑").font(.system(size: 14)).padding(4)
+                    if kilit { Image(systemName: "lock.fill").font(.system(size: 12)).foregroundStyle(.white).padding(6) }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
     private func unvanHucre(_ u: String) -> some View {
         let premium = kozmetik.unvanPremiumMi(u)
-        let kilit = premium && !store.destekciMi
+        let kilit = premium && !store.premiumAcik
         let secili = kozmetik.unvan == u
         return Button {
             if kilit { premiumUyari = true } else { kozmetik.unvan = u }

@@ -7,13 +7,21 @@ final class CosmeticStore: ObservableObject {
     @Published var avatar: String { didSet { kaydet("kozmetik_avatar", avatar) } }
     @Published var renk: String   { didSet { kaydet("kozmetik_renk", renk) } }
     @Published var unvan: String  { didSet { kaydet("kozmetik_unvan", unvan) } }
+    @Published var pet: String    { didSet { kaydet("kozmetik_pet", pet) } }   // VIP'e özel
 
     init() {
         let d = UserDefaults.standard
         avatar = d.string(forKey: "kozmetik_avatar") ?? "avatar_kopek"
         renk = d.string(forKey: "kozmetik_renk") ?? "beyaz"
         unvan = d.string(forKey: "kozmetik_unvan") ?? ""
+        pet = d.string(forKey: "kozmetik_pet") ?? ""
     }
+
+    /// VIP'e özel hayvanlar (profilde sergilenir). Sadece VIP açabilir.
+    static let petler: [String] = [
+        "pet_bulldog", "pet_panter", "pet_piton", "pet_papagan",
+        "pet_kaplan", "pet_sahin", "pet_kurt", "pet_kobra",
+    ]
     private func kaydet(_ k: String, _ v: String) { UserDefaults.standard.set(v, forKey: k) }
 
     // MARK: Katalog

@@ -174,6 +174,31 @@ def privacy():
     return PRIVACY_HTML
 
 
+SUPPORT_HTML = """<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Rajon — Destek / Support</title>
+<style>body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:680px;margin:0 auto;padding:24px;
+background:#0d0d0f;color:#e8e8ea;line-height:1.6}h1{color:#d9b04d}a{color:#d9b04d}</style></head><body>
+<h1>Rajon — Destek</h1>
+<p>Rajon, sokak/mafya temalı strateji oyunudur. Soru, hata bildirimi veya hesap/veri silme talepleri için:</p>
+<p><b>E-posta:</b> <a href="mailto:support@nickdegs.com">support@nickdegs.com</a></p>
+<p>Genelde 1–2 iş günü içinde yanıt veririz.</p>
+<p><b>Sık sorulanlar:</b></p>
+<ul>
+<li><b>İlerlemem nasıl yedeklenir?</b> Ayarlar → "Telefonla Yedekle / Giriş" ile numaranı bağla; ilerlemen
+telefonuna ve iCloud'a kaydedilir, yeni cihazda aynı numarayla geri yüklenir.</li>
+<li><b>Satın almalar oyunu güçlendirir mi?</b> Hayır — tüm satın almalar kozmetiktir, pay-to-win yoktur.</li>
+<li><b>Hesabımı sil:</b> Yukarıdaki e-postadan ulaş, 30 gün içinde sileriz.</li>
+</ul>
+<p><a href="/privacy">Gizlilik Politikası</a></p>
+<hr><p><small>Rajon — Support. Contact: <a href="mailto:support@nickdegs.com">support@nickdegs.com</a></small></p>
+</body></html>"""
+
+
+@app.get("/rajon/support", response_class=HTMLResponse)
+def support():
+    return SUPPORT_HTML
+
+
 @app.post("/rajon/register")
 def register(b: RegisterBody):
     """Cihaz id ile anonim hesap. Varsa mevcut token'ı döner."""

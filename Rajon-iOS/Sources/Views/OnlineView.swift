@@ -135,10 +135,18 @@ struct OnlineView: View {
     private var profilKart: some View {
         VStack(spacing: 10) {
             HStack(spacing: 12) {
-                Image(kozmetik.avatar).resizable().scaledToFill()
-                    .frame(width: 64, height: 64).clipShape(Circle())
-                    .overlay(Circle().stroke(kozmetik.seciliRenk, lineWidth: 3))
-                    .onTapGesture { kozmetikAcik = true }
+                ZStack(alignment: .bottomTrailing) {
+                    Image(kozmetik.avatar).resizable().scaledToFill()
+                        .frame(width: 64, height: 64).clipShape(Circle())
+                        .overlay(Circle().stroke(kozmetik.seciliRenk, lineWidth: 3))
+                    if store.vipAktif, !kozmetik.pet.isEmpty {
+                        Image(kozmetik.pet).resizable().scaledToFill()
+                            .frame(width: 30, height: 30).clipShape(Circle())
+                            .overlay(Circle().stroke(Theme.gold, lineWidth: 2))
+                            .offset(x: 4, y: 4)
+                    }
+                }
+                .onTapGesture { kozmetikAcik = true }
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
                         if !kozmetik.unvan.isEmpty {
