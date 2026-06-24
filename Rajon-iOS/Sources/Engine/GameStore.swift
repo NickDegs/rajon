@@ -18,14 +18,18 @@ struct SaveState: Codable {
     var gunlukBonusTarih: Date = .distantPast   // son alınan günlük bonus
     var gunlukSeri: Int = 0                      // ardışık gün serisi
     var envanter: [Gear] = []                    // takılı olmayan teçhizat
+    var gorevler: [Gorev] = []                   // günlük görevler
+    var gorevTarih: Date = .distantPast          // görevlerin üretildiği gün
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
-         vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear]) {
+         vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
+         gorevler: [Gorev], gorevTarih: Date) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
         self.gunlukBonusTarih = gunlukBonusTarih; self.gunlukSeri = gunlukSeri; self.envanter = envanter
+        self.gorevler = gorevler; self.gorevTarih = gorevTarih
     }
 
     init(from dec: Decoder) throws {
@@ -43,6 +47,8 @@ struct SaveState: Codable {
         gunlukBonusTarih = try c.decodeIfPresent(Date.self, forKey: .gunlukBonusTarih) ?? .distantPast
         gunlukSeri = try c.decodeIfPresent(Int.self, forKey: .gunlukSeri) ?? 0
         envanter = try c.decodeIfPresent([Gear].self, forKey: .envanter) ?? []
+        gorevler = try c.decodeIfPresent([Gorev].self, forKey: .gorevler) ?? []
+        gorevTarih = try c.decodeIfPresent(Date.self, forKey: .gorevTarih) ?? .distantPast
     }
 }
 
@@ -59,6 +65,8 @@ final class GameStore: ObservableObject {
     @Published var vipAktif: Bool = false   // Kan Parası VIP — 2x gelir + günlük bonus
 
     @Published var envanter: [Gear] = []    // takılı olmayan teçhizat
+    @Published var gorevler: [Gorev] = []   // günlük görevler
+    private var gorevTarih = Date.distantPast
     @Published var idleKazanc: Int = 0      // toplanmayı bekleyen nakit
     @Published var gunlukSeri: Int = 0      // ardışık giriş günü serisi
     private var lastSeen = Date()
@@ -84,6 +92,7 @@ final class GameStore: ObservableObject {
     func bootstrap() {
         if !load() { newGame() }
         accrueIdle()
+        gorevleriTazele()
         startTimer()
     }
 
@@ -144,6 +153,8 @@ final class GameStore: ObservableObject {
         guard idleKazanc > 0 else { return }
         cash += idleKazanc
         idleKazanc = 0
+        gorevIlerlet(.harac)
+        SoundManager.shared.cal(.coin)
         Haptics.tik()
         save()
     }
@@ -175,6 +186,7 @@ final class GameStore: ObservableObject {
         let tutar = gunlukBonusTutar
         cash += tutar
         gunlukBonusTarih = Date()
+        SoundManager.shared.cal(.coin)
         Haptics.basari()
         save()
         return tutar
@@ -207,10 +219,44 @@ final class GameStore: ObservableObject {
         // Ekipte yer varsa otomatik sahaya al
         if squad.count < 4 { squad.append(yeni.id) }
         devsirmeCost = Int(Double(devsirmeCost) * 1.25)
+        gorevIlerlet(.devsir)
         Haptics.basari()
         save()
         return yeni
     }
+
+    // MARK: Günlük görevler
+
+    /// Gün değiştiyse görevleri yenile.
+    func gorevleriTazele() {
+        if gorevler.isEmpty || !Calendar.current.isDate(gorevTarih, inSameDayAs: Date()) {
+            gorevler = Factory.makeDailyMissions(bossLevel: bossLevel)
+            gorevTarih = Date()
+            save()
+        }
+    }
+
+    /// Bir görev tipinde ilerleme kaydet.
+    func gorevIlerlet(_ tip: GorevTip, _ miktar: Int = 1) {
+        var degisti = false
+        for i in gorevler.indices where gorevler[i].tip == tip && !gorevler[i].tamam {
+            gorevler[i].ilerleme = min(gorevler[i].hedef, gorevler[i].ilerleme + miktar)
+            degisti = true
+        }
+        if degisti { save() }
+    }
+
+    func gorevOdulAl(_ id: UUID) {
+        guard let i = gorevler.firstIndex(where: { $0.id == id }),
+              gorevler[i].tamam, !gorevler[i].alindi else { return }
+        cash += gorevler[i].odul
+        gorevler[i].alindi = true
+        SoundManager.shared.cal(.coin)
+        Haptics.basari()
+        save()
+    }
+
+    var alinabilirGorevSayisi: Int { gorevler.filter { $0.tamam && !$0.alindi }.count }
 
     // MARK: Teçhizat
 
@@ -298,6 +344,7 @@ final class GameStore: ObservableObject {
         if let i = rivals.firstIndex(where: { $0.id == node.id }) {
             rivals[i].cleared = true
         }
+        gorevIlerlet(.dovus)
         // Ara sıra bedava adam düşür
         if Double.random(in: 0...1) < 0.30 {
             let dusen = Factory.makeEnforcer(level: max(1, bossLevel - 1))
@@ -318,7 +365,8 @@ final class GameStore: ObservableObject {
             cash: cash, respect: respect, crew: crew, squad: squad,
             rackets: rackets, rivals: rivals, lastSeen: Date(),
             devsirmeCost: devsirmeCost, vipAktif: vipAktif, vipSonBonus: vipSonBonus,
-            gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter
+            gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
+            gorevler: gorevler, gorevTarih: gorevTarih
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -336,6 +384,7 @@ final class GameStore: ObservableObject {
         vipAktif = s.vipAktif; vipSonBonus = s.vipSonBonus
         gunlukBonusTarih = s.gunlukBonusTarih; gunlukSeri = s.gunlukSeri
         envanter = s.envanter
+        gorevler = s.gorevler; gorevTarih = s.gorevTarih
         return true
     }
 

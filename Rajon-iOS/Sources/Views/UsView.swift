@@ -10,6 +10,7 @@ struct UsView: View {
                 if game.gunlukBonusVar { gunlukBonusKart }
                 idleKart
                 gelirOzet
+                gorevlerKart
                 Text("İŞLETMELER")
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(Theme.smoke)
@@ -21,6 +22,46 @@ struct UsView: View {
             }
             .padding(16)
         }
+    }
+
+    private var gorevlerKart: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("GÜNLÜK GÖREVLER").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                Spacer()
+                if game.alinabilirGorevSayisi > 0 {
+                    Text("\(game.alinabilirGorevSayisi) ödül hazır")
+                        .font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.gold)
+                }
+            }
+            ForEach(game.gorevler) { g in
+                HStack(spacing: 10) {
+                    Image(systemName: g.tip.ikon).font(.system(size: 15))
+                        .foregroundStyle(g.tamam ? Theme.gold : Theme.blood).frame(width: 22)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("\(g.tip.label) (\(min(g.ilerleme, g.hedef))/\(g.hedef))")
+                            .font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
+                        HealthBar(hp: g.ilerleme, maxHP: g.hedef, color: g.tamam ? Theme.gold : Theme.blood)
+                            .frame(height: 5)
+                    }
+                    Spacer()
+                    if g.alindi {
+                        Image(systemName: "checkmark.circle.fill").foregroundStyle(Theme.smoke)
+                    } else if g.tamam {
+                        Button { game.gorevOdulAl(g.id) } label: {
+                            Text("₺\(fmt(g.odul))").font(.system(size: 12, weight: .black))
+                                .padding(.horizontal, 10).padding(.vertical, 6)
+                                .background(Theme.blood).foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        Text("₺\(fmt(g.odul))").font(.system(size: 11, weight: .semibold)).foregroundStyle(Theme.smoke)
+                    }
+                }
+            }
+        }
+        .cardStyle(14)
     }
 
     private var gunlukBonusKart: some View {

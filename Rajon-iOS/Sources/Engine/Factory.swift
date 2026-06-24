@@ -74,6 +74,20 @@ enum Factory {
         )
     }
 
+    /// Günlük 3 görev üret (patron seviyesine göre ölçekli ödül).
+    static func makeDailyMissions(bossLevel: Int) -> [Gorev] {
+        let odulTaban = 4_000 + bossLevel * 1_500
+        let tanim: [(GorevTip, Int)] = [
+            (.dovus, 3),
+            (.devsir, 2),
+            (.baskin, 2),
+            (.harac, 4),
+        ]
+        return tanim.shuffled().prefix(3).map { tip, hedef in
+            Gorev(tip: tip, hedef: hedef, odul: odulTaban + Int.random(in: 0...2000))
+        }
+    }
+
     static func makeRackets() -> [Racket] {
         Argo.racketIsimleri.enumerated().map { idx, info in
             let (ad, perMin, cost) = info

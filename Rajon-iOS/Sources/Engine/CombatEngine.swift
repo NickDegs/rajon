@@ -202,6 +202,12 @@ final class CombatEngine: ObservableObject {
         ekle(mesaj, ozel ? .ozel : .hasar)
 
         sallananID = to
+        // Nişancı/özel vuruş silah sesi, diğerleri yumruk
+        if ozel || attacker.klas == .tetik || kritik {
+            SoundManager.shared.cal(.gun, volume: ozel ? 0.85 : 0.6)
+        } else {
+            SoundManager.shared.cal(.punch, volume: 0.6)
+        }
         Haptics.vurus()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             if self?.sallananID == to { self?.sallananID = nil }
@@ -226,6 +232,7 @@ final class CombatEngine: ObservableObject {
         if enemy.allSatisfy({ !$0.alive }) {
             result = .kazandi
             ekle(Argo.zaferLaf.randomElement()!, .zafer)
+            SoundManager.shared.cal(.win, volume: 0.8)
             return true
         }
         if player.allSatisfy({ !$0.alive }) {

@@ -123,6 +123,43 @@ struct Enforcer: Identifiable, Codable, Equatable {
     static func == (l: Enforcer, r: Enforcer) -> Bool { l.id == r.id }
 }
 
+// MARK: - Günlük görev
+
+enum GorevTip: String, Codable, CaseIterable {
+    case baskin      // online PvP baskını kazan
+    case dovus       // kampanya dövüşü kazan
+    case devsir      // adam devşir
+    case harac       // haraç topla (kez)
+
+    var label: String {
+        switch self {
+        case .baskin: return "Baskın kazan"
+        case .dovus:  return "Çeteyi dağıt"
+        case .devsir: return "Adam devşir"
+        case .harac:  return "Haraç topla"
+        }
+    }
+    var ikon: String {
+        switch self {
+        case .baskin: return "scope"
+        case .dovus:  return "person.2.slash.fill"
+        case .devsir: return "dice.fill"
+        case .harac:  return "dollarsign.circle.fill"
+        }
+    }
+}
+
+struct Gorev: Identifiable, Codable {
+    var id = UUID()
+    var tip: GorevTip
+    var hedef: Int
+    var ilerleme: Int = 0
+    var odul: Int
+    var alindi: Bool = false
+
+    var tamam: Bool { ilerleme >= hedef }
+}
+
 // MARK: - Teçhizat / silah (gear)
 
 struct Gear: Identifiable, Codable, Equatable {

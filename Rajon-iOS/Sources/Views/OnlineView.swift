@@ -184,6 +184,7 @@ struct OnlineView: View {
         if kazandi {
             game.cash += h.loot
             game.respect += 15
+            game.gorevIlerlet(.baskin)
             game.save()
             bilgi = "Baskın başarılı! ₺\(fmt(h.loot)) yağma + itibar."
         } else {

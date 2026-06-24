@@ -6,6 +6,7 @@ struct AyarlarView: View {
     @EnvironmentObject var store: StoreManager
     @EnvironmentObject var online: OnlineService
 
+    @ObservedObject private var sound = SoundManager.shared
     @State private var adDuzenle = ""
     @State private var sifirlaUyari = false
     @State private var bilgi: String?
@@ -55,6 +56,17 @@ struct AyarlarView: View {
                             .frame(maxWidth: .infinity).padding(.vertical, 11)
                             .background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 10))
                     }
+                }
+                .cardStyle(14)
+
+                // Ses
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("SES").sectionHeader()
+                    Toggle(isOn: $sound.acik) {
+                        Label("Ses efektleri", systemImage: sound.acik ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                            .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                    }
+                    .tint(Theme.blood)
                 }
                 .cardStyle(14)
 
