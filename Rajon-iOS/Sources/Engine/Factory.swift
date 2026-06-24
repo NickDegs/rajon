@@ -89,6 +89,27 @@ enum Factory {
         }
     }
 
+    /// Şehir bölgeleri (Flux semt görselleriyle). İlki bedava başlar (ele geçirilmiş).
+    static func makeBolgeler() -> [Bolge] {
+        let tanim: [(String, String, Int)] = [
+            ("Çarşı", "bolge_carsi", 120),
+            ("Liman", "bolge_liman", 280),
+            ("Yokuş", "bolge_yokus", 520),
+            ("Meydan", "bolge_meydan", 900),
+            ("Sanayi", "bolge_sanayi", 1_500),
+            ("Kordon", "bolge_kordon", 2_400),
+        ]
+        return tanim.enumerated().map { idx, t in
+            let (ad, gorsel, gelir) = t
+            return Bolge(
+                ad: ad, gorsel: gorsel, gelirDk: gelir,
+                maliyet: Int(2_500.0 * pow(2.4, Double(idx))),
+                sure: 60.0 * pow(1.8, Double(idx)),
+                eleGecirildi: idx == 0
+            )
+        }
+    }
+
     static func makeRackets() -> [Racket] {
         Argo.racketIsimleri.enumerated().map { idx, info in
             let (ad, perMin, cost) = info

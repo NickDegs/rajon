@@ -4,6 +4,7 @@ import SwiftUI
 struct UsView: View {
     @EnvironmentObject var game: GameStore
     @State private var mahalleAcik = false
+    @State private var sehirAcik = false
 
     var body: some View {
         ScrollView {
@@ -11,6 +12,7 @@ struct UsView: View {
                 if game.gunlukBonusVar { gunlukBonusKart }
                 idleKart
                 mahalleButon
+                sehirButon
                 gelirOzet
                 gorevlerKart
                 Text("İŞLETMELER")
@@ -47,6 +49,38 @@ struct UsView: View {
                         Text("İnşaatta: \(b.tip.ad)").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                     } else {
                         Text("Bina kur/yükselt, mahalleni büyüt").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+            }
+            .cardStyle(14)
+        }
+        .buttonStyle(.plain)
+        .fullScreenCover(isPresented: $sehirAcik) {
+            NavigationStack {
+                BolgelerView()
+                    .navigationTitle("Şehir")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { sehirAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+        }
+    }
+
+    private var sehirButon: some View {
+        Button { sehirAcik = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "map.fill").font(.system(size: 26)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ŞEHİR — BÖLGELER").font(.system(size: 15, weight: .black)).foregroundStyle(.white)
+                    if let b = game.fetihtekiBolge {
+                        Text("Fethediliyor: \(b.ad)").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
+                    } else {
+                        Text("\(game.eleGecirilen)/\(game.bolgeler.count) bölge · dk/₺\(fmt(game.bolgeGeliriDk))")
+                            .font(.system(size: 12)).foregroundStyle(Theme.smoke)
                     }
                 }
                 Spacer()

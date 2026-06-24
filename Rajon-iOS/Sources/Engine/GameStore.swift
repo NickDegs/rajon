@@ -26,20 +26,21 @@ struct SaveState: Codable {
     var seferler: [Sefer] = []                   // aktif akınlar
     var cephane: Int = 200                       // mühimmat
     var raporlar: [Rapor] = []                   // raporlar
+    var bolgeler: [Bolge] = []                   // şehir bölgeleri
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
          gorevler: [Gorev], gorevTarih: Date, binalar: [Bina],
          ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer], cephane: Int,
-         raporlar: [Rapor]) {
+         raporlar: [Rapor], bolgeler: [Bolge]) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
         self.gunlukBonusTarih = gunlukBonusTarih; self.gunlukSeri = gunlukSeri; self.envanter = envanter
         self.gorevler = gorevler; self.gorevTarih = gorevTarih; self.binalar = binalar
         self.ordu = ordu; self.egitim = egitim; self.seferler = seferler
-        self.cephane = cephane; self.raporlar = raporlar
+        self.cephane = cephane; self.raporlar = raporlar; self.bolgeler = bolgeler
     }
 
     init(from dec: Decoder) throws {
@@ -65,6 +66,7 @@ struct SaveState: Codable {
         seferler = try c.decodeIfPresent([Sefer].self, forKey: .seferler) ?? []
         cephane = try c.decodeIfPresent(Int.self, forKey: .cephane) ?? 200
         raporlar = try c.decodeIfPresent([Rapor].self, forKey: .raporlar) ?? []
+        bolgeler = try c.decodeIfPresent([Bolge].self, forKey: .bolgeler) ?? []
     }
 }
 
@@ -83,6 +85,7 @@ final class GameStore: ObservableObject {
 
     @Published var envanter: [Gear] = []    // takılı olmayan teçhizat
     @Published var binalar: [Bina] = []     // mahalle binaları
+    @Published var bolgeler: [Bolge] = []   // şehir bölgeleri
     @Published var ordu: [String: Int] = [:]   // AskerTip.rawValue -> sayı
     @Published var egitim: EgitimIs? = nil     // asker eğitim kuyruğu
     @Published var seferler: [Sefer] = []      // aktif akınlar
@@ -125,6 +128,7 @@ final class GameStore: ObservableObject {
         rackets = Factory.makeRackets()
         rivals = Factory.makeRivalLadder()
         binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
+        bolgeler = Factory.makeBolgeler()
         devsirmeCost = 500
         // Başlangıç ekibi: 3 adam
         let baslangic = [
@@ -151,6 +155,7 @@ final class GameStore: ObservableObject {
         let kazanc = saniyelikGelir
         idleKazanc += Int(kazanc.rounded())
         insaatlariKontrolEt()
+        fetihleriKontrolEt()
         egitimVeSeferleriKontrolEt()
         cephaneUret()
         // birikim kapasitesini aşma
@@ -172,14 +177,48 @@ final class GameStore: ObservableObject {
     // MARK: Ekonomi
 
     var ownedRackets: [Racket] { rackets.filter { $0.owned } }
-    /// Saniyelik toplam gelir (haraç + Kasa binası, VIP çarpanıyla).
+    /// Ele geçirilmiş bölgelerin dakikalık geliri.
+    var bolgeGeliriDk: Int { bolgeler.filter { $0.eleGecirildi }.reduce(0) { $0 + $1.gelirDk } }
+
+    /// Saniyelik toplam gelir (haraç + Kasa binası + bölgeler).
     var saniyelikGelir: Double {
         let racket = ownedRackets.reduce(0.0) { $0 + $1.perSec }
-        let kasa = Double(kasaBonusPerMin) / 60.0
-        return (racket + kasa) * gelirCarpani
+        let kasaVeBolge = Double(kasaBonusPerMin + bolgeGeliriDk) / 60.0
+        return (racket + kasaVeBolge) * gelirCarpani
     }
     var gelirPerMin: Int {
-        Int((Double(ownedRackets.reduce(0) { $0 + $1.perMin }) + Double(kasaBonusPerMin)) * gelirCarpani)
+        Int((Double(ownedRackets.reduce(0) { $0 + $1.perMin }) + Double(kasaBonusPerMin + bolgeGeliriDk)) * gelirCarpani)
+    }
+
+    // MARK: Bölge fethi (çoklu mahalle)
+    var fetihMesgul: Bool { bolgeler.contains { $0.fetihte } }
+    var fetihtekiBolge: Bolge? { bolgeler.first { $0.fetihte } }
+    var eleGecirilen: Int { bolgeler.filter { $0.eleGecirildi }.count }
+
+    func bolgeFethet(_ id: UUID) {
+        guard !fetihMesgul, let i = bolgeler.firstIndex(where: { $0.id == id }),
+              !bolgeler[i].eleGecirildi else { return }
+        let fiyat = bolgeler[i].maliyet
+        guard cash >= fiyat else { return }
+        cash -= fiyat
+        // Karargah fethi de hızlandırır
+        bolgeler[i].fetihBitis = Date().addingTimeInterval(bolgeler[i].sure * insaatHizCarpani)
+        Haptics.tik()
+        save()
+    }
+
+    private func fetihleriKontrolEt() {
+        var degisti = false
+        for i in bolgeler.indices {
+            if let b = bolgeler[i].fetihBitis, b <= Date() {
+                bolgeler[i].eleGecirildi = true
+                bolgeler[i].fetihBitis = nil
+                degisti = true
+                raporEkle("Bölge ele geçirildi: \(bolgeler[i].ad)",
+                          "Artık dk/₺\(bolgeler[i].gelirDk) gelir getiriyor", kazandi: true)
+            }
+        }
+        if degisti { save() }
     }
 
     // MARK: Mahalle / inşaat (Travian tarzı)
@@ -559,7 +598,7 @@ final class GameStore: ObservableObject {
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
             gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar,
             ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane,
-            raporlar: raporlar
+            raporlar: raporlar, bolgeler: bolgeler
         )
         if let data = try? JSONEncoder().encode(state) {
             try? data.write(to: saveURL, options: .atomic)
@@ -584,6 +623,8 @@ final class GameStore: ObservableObject {
         }
         ordu = s.ordu; egitim = s.egitim; seferler = s.seferler
         cephane = s.cephane; raporlar = s.raporlar
+        bolgeler = s.bolgeler
+        if bolgeler.isEmpty { bolgeler = Factory.makeBolgeler() }  // eski kayıt
         return true
     }
 

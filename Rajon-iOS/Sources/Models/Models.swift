@@ -125,6 +125,21 @@ struct Enforcer: Identifiable, Codable, Equatable {
     static func == (l: Enforcer, r: Enforcer) -> Bool { l.id == r.id }
 }
 
+// MARK: - Bölge (çoklu mahalle / şehir ele geçirme)
+
+struct Bolge: Identifiable, Codable {
+    var id = UUID()
+    var ad: String
+    var gorsel: String              // Flux semt görseli
+    var gelirDk: Int                // ele geçirilince dk başına gelir
+    var maliyet: Int                // ele geçirme maliyeti
+    var sure: Double                // ele geçirme süresi (sn)
+    var eleGecirildi: Bool = false
+    var fetihBitis: Date? = nil     // fetih bitiş zamanı
+
+    var fetihte: Bool { (fetihBitis ?? .distantPast) > Date() }
+}
+
 // MARK: - Rapor (akın/baskın/savunma sonuçları)
 
 struct Rapor: Identifiable, Codable {
