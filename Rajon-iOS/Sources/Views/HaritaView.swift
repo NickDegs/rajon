@@ -23,13 +23,13 @@ struct HaritaView: View {
         VStack(spacing: 0) {
             ustBar
             Map(initialViewport: .camera(center: Self.sehirMerkezi, zoom: 12.4, bearing: 0, pitch: 38)) {
-                ForEach(game.bolgeler) { b in
+                ForEvery(game.bolgeler) { b in
                     MapViewAnnotation(coordinate: Self.koord(b.hx, b.hy)) {
                         BolgePin(bolge: b) { seciliBolge = b }
                     }
                     .allowOverlap(true)
                 }
-                ForEach(game.vahalar) { v in
+                ForEvery(game.vahalar) { v in
                     MapViewAnnotation(coordinate: Self.koord(v.hx, v.hy)) {
                         VahaPin(vaha: v) { seciliVaha = v }
                     }
