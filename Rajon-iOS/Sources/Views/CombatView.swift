@@ -8,6 +8,7 @@ struct CombatView: View {
     var onResult: ((Bool) -> Void)? = nil
 
     @StateObject private var engine: CombatEngine
+    @State private var flare = 0
 
     init(node: RivalNode, onResult: ((Bool) -> Void)? = nil) {
         self.node = node
@@ -32,7 +33,11 @@ struct CombatView: View {
                 sonucEkrani
             }
         }
+        .lensFlareSweep(trigger: flare, tint: Theme.gold)
         .onAppear { engine.kur(squad: game.squadEnforcers) }
+        .onChange(of: engine.result) { _, r in
+            if r == .kazandi { DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { flare += 1 } }
+        }
     }
 
     // MARK: Üst başlık

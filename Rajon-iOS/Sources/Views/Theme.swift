@@ -20,16 +20,38 @@ enum Theme {
 }
 
 extension View {
-    /// Standart panel kartı görünümü.
+    /// Standart panel kartı — iOS 26'da Liquid Glass, öncesinde panel fallback.
+    @ViewBuilder
     func cardStyle(_ pad: CGFloat = 14) -> some View {
-        self
-            .padding(pad)
-            .background(Theme.panel)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
+        if #available(iOS 26.0, *) {
+            self
+                .padding(pad)
+                .glassEffect(.regular.tint(Theme.panel.opacity(0.55)),
+                             in: .rect(cornerRadius: 18))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.white.opacity(0.10), lineWidth: 0.8)
+                )
+        } else {
+            self
+                .padding(pad)
+                .background(Theme.panel)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                )
+        }
+    }
+
+    /// Birincil cam buton (CTA). iOS 26 glass, öncesinde renkli dolgu.
+    @ViewBuilder
+    func glassCTA(tint: Color = Theme.blood) -> some View {
+        if #available(iOS 26.0, *) {
+            self.glassEffect(.regular.tint(tint).interactive(), in: .rect(cornerRadius: 14))
+        } else {
+            self.background(tint).clipShape(RoundedRectangle(cornerRadius: 14))
+        }
     }
 }
 

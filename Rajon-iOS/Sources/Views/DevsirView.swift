@@ -5,6 +5,7 @@ struct DevsirView: View {
     @EnvironmentObject var game: GameStore
     @State private var sonGelen: Enforcer?
     @State private var aciliyor = false
+    @State private var flare = 0
 
     var body: some View {
         ScrollView {
@@ -35,6 +36,7 @@ struct DevsirView: View {
                     }
                 }
                 .padding(.horizontal, 4)
+                .lensFlareSweep(trigger: flare, tint: sonGelen?.rarity.color ?? Theme.gold)
 
                 Button {
                     devsir()
@@ -64,6 +66,10 @@ struct DevsirView: View {
         sonGelen = nil
         withAnimation(.spring(response: 0.45, dampingFraction: 0.6).delay(0.15)) {
             sonGelen = yeni
+        }
+        // Patron/Efsane çıkınca mercek yanması
+        if yeni.rarity >= .patron {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { flare += 1 }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { aciliyor = false }
     }
