@@ -27,13 +27,14 @@ struct SaveState: Codable {
     var cephane: Int = 200                       // mühimmat
     var raporlar: [Rapor] = []                   // raporlar
     var bolgeler: [Bolge] = []                   // şehir bölgeleri
+    var vahalar: [Vaha] = []                     // kaçak noktaları
 
     init(cash: Int, respect: Int, crew: [Enforcer], squad: [UUID], rackets: [Racket],
          rivals: [RivalNode], lastSeen: Date, devsirmeCost: Int, vipAktif: Bool,
          vipSonBonus: Date, gunlukBonusTarih: Date, gunlukSeri: Int, envanter: [Gear],
          gorevler: [Gorev], gorevTarih: Date, binalar: [Bina],
          ordu: [String: Int], egitim: EgitimIs?, seferler: [Sefer], cephane: Int,
-         raporlar: [Rapor], bolgeler: [Bolge]) {
+         raporlar: [Rapor], bolgeler: [Bolge], vahalar: [Vaha]) {
         self.cash = cash; self.respect = respect; self.crew = crew; self.squad = squad
         self.rackets = rackets; self.rivals = rivals; self.lastSeen = lastSeen
         self.devsirmeCost = devsirmeCost; self.vipAktif = vipAktif; self.vipSonBonus = vipSonBonus
@@ -41,6 +42,7 @@ struct SaveState: Codable {
         self.gorevler = gorevler; self.gorevTarih = gorevTarih; self.binalar = binalar
         self.ordu = ordu; self.egitim = egitim; self.seferler = seferler
         self.cephane = cephane; self.raporlar = raporlar; self.bolgeler = bolgeler
+        self.vahalar = vahalar
     }
 
     init(from dec: Decoder) throws {
@@ -67,6 +69,7 @@ struct SaveState: Codable {
         cephane = try c.decodeIfPresent(Int.self, forKey: .cephane) ?? 200
         raporlar = try c.decodeIfPresent([Rapor].self, forKey: .raporlar) ?? []
         bolgeler = try c.decodeIfPresent([Bolge].self, forKey: .bolgeler) ?? []
+        vahalar = try c.decodeIfPresent([Vaha].self, forKey: .vahalar) ?? []
     }
 }
 
@@ -86,6 +89,7 @@ final class GameStore: ObservableObject {
     @Published var envanter: [Gear] = []    // takılı olmayan teçhizat
     @Published var binalar: [Bina] = []     // mahalle binaları
     @Published var bolgeler: [Bolge] = []   // şehir bölgeleri
+    @Published var vahalar: [Vaha] = []     // kaçak noktaları (harita)
     @Published var ordu: [String: Int] = [:]   // AskerTip.rawValue -> sayı
     @Published var egitim: EgitimIs? = nil     // asker eğitim kuyruğu
     @Published var seferler: [Sefer] = []      // aktif akınlar
@@ -129,6 +133,7 @@ final class GameStore: ObservableObject {
         rivals = Factory.makeRivalLadder()
         binalar = BinaTip.allCases.map { Bina(tip: $0, seviye: $0.baslangic) }
         bolgeler = Factory.makeBolgeler()
+        vahalar = Factory.makeVahalar()
         devsirmeCost = 500
         // Başlangıç ekibi: 3 adam
         let baslangic = [
@@ -177,45 +182,65 @@ final class GameStore: ObservableObject {
     // MARK: Ekonomi
 
     var ownedRackets: [Racket] { rackets.filter { $0.owned } }
-    /// Ele geçirilmiş bölgelerin dakikalık geliri.
+    /// Ele geçirilmiş bölgelerin + nakit vahaların dakikalık geliri.
     var bolgeGeliriDk: Int { bolgeler.filter { $0.eleGecirildi }.reduce(0) { $0 + $1.gelirDk } }
+    var vahaNakitDk: Int { vahalar.filter { $0.eleGecirildi && $0.tip == .nakit }.reduce(0) { $0 + $1.bonusDk } }
+    var vahaCephaneDk: Int { vahalar.filter { $0.eleGecirildi && $0.tip == .cephane }.reduce(0) { $0 + $1.bonusDk } }
 
-    /// Saniyelik toplam gelir (haraç + Kasa binası + bölgeler).
+    /// Saniyelik toplam gelir (haraç + Kasa binası + bölgeler + nakit vahalar).
     var saniyelikGelir: Double {
         let racket = ownedRackets.reduce(0.0) { $0 + $1.perSec }
-        let kasaVeBolge = Double(kasaBonusPerMin + bolgeGeliriDk) / 60.0
-        return (racket + kasaVeBolge) * gelirCarpani
+        let bonus = Double(kasaBonusPerMin + bolgeGeliriDk + vahaNakitDk) / 60.0
+        return (racket + bonus) * gelirCarpani
     }
     var gelirPerMin: Int {
-        Int((Double(ownedRackets.reduce(0) { $0 + $1.perMin }) + Double(kasaBonusPerMin + bolgeGeliriDk)) * gelirCarpani)
+        Int((Double(ownedRackets.reduce(0) { $0 + $1.perMin }) + Double(kasaBonusPerMin + bolgeGeliriDk + vahaNakitDk)) * gelirCarpani)
     }
 
-    // MARK: Bölge fethi (çoklu mahalle)
-    var fetihMesgul: Bool { bolgeler.contains { $0.fetihte } }
+    // MARK: Bölge + vaha fethi (harita) + nüfuz
+    var fetihMesgul: Bool { bolgeler.contains { $0.fetihte } || vahalar.contains { $0.fetihte } }
     var fetihtekiBolge: Bolge? { bolgeler.first { $0.fetihte } }
+    var fetihtekiVaha: Vaha? { vahalar.first { $0.fetihte } }
     var eleGecirilen: Int { bolgeler.filter { $0.eleGecirildi }.count }
+    var eleGecirilenVaha: Int { vahalar.filter { $0.eleGecirildi }.count }
+
+    /// Nüfuz kapasitesi (Karargah + patron seviyesiyle artar) — kaç bölge+vaha tutabilirsin.
+    var nufuzKapasite: Int { 2 + binaSeviye(.karargah) + bossLevel }
+    /// Kullanılan nüfuz (ilk bölge bedava).
+    var nufuzKullanim: Int { max(0, eleGecirilen - 1) + eleGecirilenVaha }
+    var nufuzVarMi: Bool { nufuzKullanim < nufuzKapasite }
 
     func bolgeFethet(_ id: UUID) {
-        guard !fetihMesgul, let i = bolgeler.firstIndex(where: { $0.id == id }),
-              !bolgeler[i].eleGecirildi else { return }
-        let fiyat = bolgeler[i].maliyet
-        guard cash >= fiyat else { return }
-        cash -= fiyat
-        // Karargah fethi de hızlandırır
+        guard !fetihMesgul, nufuzVarMi, let i = bolgeler.firstIndex(where: { $0.id == id }),
+              !bolgeler[i].eleGecirildi, cash >= bolgeler[i].maliyet else { return }
+        cash -= bolgeler[i].maliyet
         bolgeler[i].fetihBitis = Date().addingTimeInterval(bolgeler[i].sure * insaatHizCarpani)
-        Haptics.tik()
-        save()
+        Haptics.tik(); save()
+    }
+
+    func vahaFethet(_ id: UUID) {
+        guard !fetihMesgul, nufuzVarMi, let i = vahalar.firstIndex(where: { $0.id == id }),
+              !vahalar[i].eleGecirildi, cash >= vahalar[i].maliyet else { return }
+        cash -= vahalar[i].maliyet
+        vahalar[i].fetihBitis = Date().addingTimeInterval(vahalar[i].sure * insaatHizCarpani)
+        Haptics.tik(); save()
     }
 
     private func fetihleriKontrolEt() {
         var degisti = false
         for i in bolgeler.indices {
             if let b = bolgeler[i].fetihBitis, b <= Date() {
-                bolgeler[i].eleGecirildi = true
-                bolgeler[i].fetihBitis = nil
-                degisti = true
+                bolgeler[i].eleGecirildi = true; bolgeler[i].fetihBitis = nil; degisti = true
                 raporEkle("Bölge ele geçirildi: \(bolgeler[i].ad)",
                           "Artık dk/₺\(bolgeler[i].gelirDk) gelir getiriyor", kazandi: true)
+            }
+        }
+        for i in vahalar.indices {
+            if let b = vahalar[i].fetihBitis, b <= Date() {
+                vahalar[i].eleGecirildi = true; vahalar[i].fetihBitis = nil; degisti = true
+                let v = vahalar[i]
+                raporEkle("Vaha ele geçirildi: \(v.ad)",
+                          "dk +\(v.bonusDk) \(v.tip.ad) üretiyor", kazandi: true)
             }
         }
         if degisti { save() }
@@ -232,8 +257,8 @@ final class GameStore: ObservableObject {
     var cephanelikBonus: Double { 1.0 + 0.07 * Double(binaSeviye(.cephanelik)) } // saldırı çarpanı
     var korunakSavunma: Int { 60 * binaSeviye(.korunak) }
 
-    // Mühimmat (2. kaynak) — Cephanelik üretir
-    var cephaneUretimDk: Int { 30 * binaSeviye(.cephanelik) }
+    // Mühimmat (2. kaynak) — Cephanelik + cephane vahaları üretir
+    var cephaneUretimDk: Int { 30 * binaSeviye(.cephanelik) + vahaCephaneDk }
     var cephaneMax: Int { 1_500 + 700 * binaSeviye(.cephanelik) }
     private func cephaneUret() {
         guard cephaneUretimDk > 0, cephane < cephaneMax else { return }
@@ -599,7 +624,7 @@ final class GameStore: ObservableObject {
             gunlukBonusTarih: gunlukBonusTarih, gunlukSeri: gunlukSeri, envanter: envanter,
             gorevler: gorevler, gorevTarih: gorevTarih, binalar: binalar,
             ordu: ordu, egitim: egitim, seferler: seferler, cephane: cephane,
-            raporlar: raporlar, bolgeler: bolgeler
+            raporlar: raporlar, bolgeler: bolgeler, vahalar: vahalar
         )
     }
 
@@ -641,6 +666,8 @@ final class GameStore: ObservableObject {
         cephane = s.cephane; raporlar = s.raporlar
         bolgeler = s.bolgeler
         if bolgeler.isEmpty { bolgeler = Factory.makeBolgeler() }
+        vahalar = s.vahalar
+        if vahalar.isEmpty { vahalar = Factory.makeVahalar() }
     }
 
     @discardableResult

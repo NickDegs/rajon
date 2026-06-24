@@ -136,7 +136,31 @@ struct Bolge: Identifiable, Codable {
     var sure: Double                // ele geçirme süresi (sn)
     var eleGecirildi: Bool = false
     var fetihBitis: Date? = nil     // fetih bitiş zamanı
+    var hx: Int = 0                 // harita koordinatı
+    var hy: Int = 0
 
+    var fetihte: Bool { (fetihBitis ?? .distantPast) > Date() }
+}
+
+// MARK: - Vaha (kaçak noktası — haritada ele geçip üretim artırır)
+
+enum VahaTip: String, Codable {
+    case nakit, cephane
+    var ad: String { self == .nakit ? "Nakit" : "Mühimmat" }
+}
+
+struct Vaha: Identifiable, Codable {
+    var id = UUID()
+    var ad: String
+    var gorsel: String
+    var tip: VahaTip
+    var bonusDk: Int                // dk başına bonus üretim
+    var maliyet: Int
+    var sure: Double
+    var hx: Int = 0
+    var hy: Int = 0
+    var eleGecirildi: Bool = false
+    var fetihBitis: Date? = nil
     var fetihte: Bool { (fetihBitis ?? .distantPast) > Date() }
 }
 

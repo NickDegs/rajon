@@ -91,21 +91,44 @@ enum Factory {
 
     /// Şehir bölgeleri (Flux semt görselleriyle). İlki bedava başlar (ele geçirilmiş).
     static func makeBolgeler() -> [Bolge] {
-        let tanim: [(String, String, Int)] = [
-            ("Çarşı", "bolge_carsi", 120),
-            ("Liman", "bolge_liman", 280),
-            ("Yokuş", "bolge_yokus", 520),
-            ("Meydan", "bolge_meydan", 900),
-            ("Sanayi", "bolge_sanayi", 1_500),
-            ("Kordon", "bolge_kordon", 2_400),
+        // (ad, görsel, gelir, harita x, harita y)
+        let tanim: [(String, String, Int, Int, Int)] = [
+            ("Çarşı", "bolge_carsi", 120, 1, 1),
+            ("Liman", "bolge_liman", 280, 3, 0),
+            ("Yokuş", "bolge_yokus", 520, 0, 3),
+            ("Meydan", "bolge_meydan", 900, 2, 3),
+            ("Sanayi", "bolge_sanayi", 1_500, 4, 2),
+            ("Kordon", "bolge_kordon", 2_400, 4, 4),
         ]
         return tanim.enumerated().map { idx, t in
-            let (ad, gorsel, gelir) = t
+            let (ad, gorsel, gelir, hx, hy) = t
             return Bolge(
                 ad: ad, gorsel: gorsel, gelirDk: gelir,
                 maliyet: Int(2_500.0 * pow(2.4, Double(idx))),
                 sure: 60.0 * pow(1.8, Double(idx)),
-                eleGecirildi: idx == 0
+                eleGecirildi: idx == 0, fetihBitis: nil, hx: hx, hy: hy
+            )
+        }
+    }
+
+    /// Vahalar (kaçak noktaları) — haritada ele geçip üretim artırır.
+    static func makeVahalar() -> [Vaha] {
+        // (ad, görsel, tip, bonus/dk, x, y)
+        let tanim: [(String, String, VahaTip, Int, Int, Int)] = [
+            ("Mazot Kuyusu", "vaha_mazot", .nakit, 200, 2, 1),
+            ("Cephane Deposu", "vaha_cephane", .cephane, 18, 0, 1),
+            ("Kumar Çadırı", "vaha_kumar", .nakit, 380, 3, 2),
+            ("Tefeci Köşesi", "vaha_tefeci", .nakit, 600, 1, 4),
+            ("Kaçak İskele", "vaha_iskele", .nakit, 950, 4, 0),
+            ("Silah Atölyesi", "vaha_atolye", .cephane, 40, 3, 4),
+        ]
+        return tanim.enumerated().map { idx, t in
+            let (ad, gorsel, tip, bonus, hx, hy) = t
+            return Vaha(
+                ad: ad, gorsel: gorsel, tip: tip, bonusDk: bonus,
+                maliyet: Int(4_000.0 * pow(2.2, Double(idx))),
+                sure: 90.0 * pow(1.7, Double(idx)),
+                hx: hx, hy: hy
             )
         }
     }

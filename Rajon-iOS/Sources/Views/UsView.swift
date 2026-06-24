@@ -59,8 +59,8 @@ struct UsView: View {
         .buttonStyle(.plain)
         .fullScreenCover(isPresented: $sehirAcik) {
             NavigationStack {
-                BolgelerView()
-                    .navigationTitle("Şehir")
+                HaritaView()
+                    .navigationTitle("Şehir Haritası")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { sehirAcik = false } } }
                     .background(Theme.bg)
