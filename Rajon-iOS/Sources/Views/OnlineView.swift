@@ -166,7 +166,7 @@ struct OnlineView: View {
                     Text("#\(i + 1)").font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundStyle(i < 3 ? Theme.gold : Theme.smoke).frame(width: 34, alignment: .leading)
                     Text(s.ad).font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(s.id == online.me ? Theme.gold : .white).lineLimit(1)
+                        .foregroundStyle(s.id == online.me?.id ? Theme.gold : .white).lineLimit(1)
                     Spacer()
                     Text("⚔︎\(s.wins)  ★\(fmt(s.respect))")
                         .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.smoke)
