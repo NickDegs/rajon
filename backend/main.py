@@ -133,9 +133,12 @@ donanım kimliği DEĞİLDİR; sadece oyun hesabını tanımlar.</li>
 <li><b>Takma ad:</b> Online'da görünmesi için kendi seçtiğin bir patron adı. Gerçek adını kullanmak zorunda değilsin.</li>
 <li><b>Oyun ilerlemesi:</b> Güç, itibar gibi oyun istatistikleri — yalnızca online özellikleri (PvP eşleştirme, lider
 tablosu, sendika) çalıştırmak için sunucumuzla eşitlenir.</li>
+<li><b>Telefon numarası (İSTEĞE BAĞLI):</b> Yalnızca SMS ile giriş yapıp ilerlemeni telefonuna yedeklemeyi
+seçersen alınır. Doğrulama kodu Twilio aracılığıyla gönderilir. Numaran hesabını tanımlamak için kullanılır;
+reklam/pazarlama için KULLANILMAZ, üçüncü taraflara satılmaz. SMS girişini kullanmazsan numaran hiç alınmaz.</li>
 </ul>
 <h2>Toplamadığımız veriler</h2>
-<p>E-posta, telefon, gerçek ad, konum, rehber, fotoğraf, reklam kimliği (IDFA) <b>toplanmaz</b>. Reklam yoktur,
+<p>E-posta, gerçek ad, konum, rehber, fotoğraf, reklam kimliği (IDFA) <b>toplanmaz</b>. Reklam yoktur,
 uygulamalar/siteler arası takip yapılmaz, üçüncü taraf analiz/reklam SDK'sı yoktur.</p>
 <h2>Satın almalar</h2>
 <p>Tüm satın almalar Apple üzerinden yapılır; ödeme bilgini biz görmeyiz. Satın almalar yalnızca KOZMETİKTİR
@@ -149,17 +152,20 @@ satılmaz veya paylaşılmaz.</p>
 <p>Online oynamayı istediğin an bırakabilirsin. Hesap verilerinin silinmesini istersen aşağıdaki e-postadan bize
 ulaş; talebini en geç 30 gün içinde işleriz.</p>
 <h2>İletişim</h2>
-<p>E-posta: <a href="mailto:destek@nickdegs.com">destek@nickdegs.com</a></p>
+<p>E-posta: <a href="mailto:support@nickdegs.com">support@nickdegs.com</a></p>
 <hr>
 <h1>Rajon — Privacy Policy (English)</h1>
 <p>Rajon is a street/mafia-themed strategy game. We collect: a randomly generated anonymous account ID (a UUID created
 on your device, not your hardware identifier), a display name you choose (no real name required), and in-game progress
-(power, respect) synced solely to run online features (PvP matchmaking, leaderboard, clans).</p>
-<p>We do NOT collect email, phone, real name, location, contacts, photos, or advertising identifiers (IDFA). There are
+(power, respect) synced solely to run online features (PvP matchmaking, leaderboard, clans). OPTIONALLY, if you choose
+to log in via SMS to back up your progress to your phone, we collect your <b>phone number</b> (verification code sent
+via Twilio). Your phone number is used only to identify your account; it is never used for advertising/marketing or
+sold. If you do not use SMS login, no phone number is collected.</p>
+<p>We do NOT collect email, real name, location, contacts, photos, or advertising identifiers (IDFA). There are
 no ads, no cross-app/website tracking, and no third-party analytics/ad SDKs. Purchases are handled by Apple (we never
 see your payment info) and are PURELY COSMETIC — no pay-to-win. Data is stored only on our own server to run online
 features and is never sold or shared. The app is rated 17+. To request deletion of your account data, contact
-<a href="mailto:destek@nickdegs.com">destek@nickdegs.com</a>.</p>
+<a href="mailto:support@nickdegs.com">support@nickdegs.com</a>.</p>
 </body></html>"""
 
 
