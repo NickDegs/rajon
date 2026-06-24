@@ -518,6 +518,22 @@ final class GameStore: ObservableObject {
 
     var alinabilirGorevSayisi: Int { gorevler.filter { $0.tamam && !$0.alindi }.count }
 
+    // MARK: İmparatorluk / endgame ("Şehrin Kralı")
+    var imparatorlukAdimlari: [(ad: String, tamam: Bool, durum: String)] {
+        [
+            ("Tüm bölgeleri ele geçir", eleGecirilen == bolgeler.count && !bolgeler.isEmpty, "\(eleGecirilen)/\(bolgeler.count)"),
+            ("Tüm kaçak noktalarını al", eleGecirilenVaha == vahalar.count && !vahalar.isEmpty, "\(eleGecirilenVaha)/\(vahalar.count)"),
+            ("Karargahı Sv.10 yap", binaSeviye(.karargah) >= 10, "Sv.\(binaSeviye(.karargah))/10"),
+            ("Tüm çeteleri dağıt", !rivals.isEmpty && rivals.allSatisfy { $0.cleared }, "\(rivals.filter { $0.cleared }.count)/\(rivals.count)"),
+            ("Patron Sv.25 ol", bossLevel >= 25, "Sv.\(bossLevel)/25"),
+        ]
+    }
+    var imparatorlukTamam: Bool { imparatorlukAdimlari.allSatisfy { $0.tamam } }
+    var imparatorlukYuzde: Double {
+        let t = imparatorlukAdimlari.filter { $0.tamam }.count
+        return Double(t) / Double(max(1, imparatorlukAdimlari.count))
+    }
+
     // MARK: Patron maceraları
     var maceradaMi: Bool { maceralar.contains { $0.devamEdiyor } }
     var aktifMacera: Macera? { maceralar.first { $0.devamEdiyor } }

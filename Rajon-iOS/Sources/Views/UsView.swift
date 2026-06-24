@@ -5,6 +5,7 @@ struct UsView: View {
     @EnvironmentObject var game: GameStore
     @State private var mahalleAcik = false
     @State private var sehirAcik = false
+    @State private var kralAcik = false
 
     var body: some View {
         ScrollView {
@@ -13,6 +14,7 @@ struct UsView: View {
                 idleKart
                 mahalleButon
                 sehirButon
+                kralButon
                 gelirOzet
                 gorevlerKart
                 Text("İŞLETMELER")
@@ -63,6 +65,34 @@ struct UsView: View {
                     .navigationTitle("Şehir Haritası")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { sehirAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(.dark)
+            .environmentObject(game)
+        }
+    }
+
+    private var kralButon: some View {
+        Button { kralAcik = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "crown.fill").font(.system(size: 26)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ŞEHRİN KRALI").font(.system(size: 15, weight: .black)).foregroundStyle(.white)
+                    Text(game.imparatorlukTamam ? "Şehir senin! 👑" : "İmparatorluk ilerlemesi: %\(Int(game.imparatorlukYuzde * 100))")
+                        .font(.system(size: 12)).foregroundStyle(game.imparatorlukTamam ? Theme.gold : Theme.smoke)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+            }
+            .cardStyle(14)
+        }
+        .buttonStyle(.plain)
+        .fullScreenCover(isPresented: $kralAcik) {
+            NavigationStack {
+                SehrinKraliView()
+                    .navigationTitle("Şehrin Kralı")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { kralAcik = false } } }
                     .background(Theme.bg)
             }
             .preferredColorScheme(.dark)
