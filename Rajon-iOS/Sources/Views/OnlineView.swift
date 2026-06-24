@@ -24,6 +24,7 @@ struct OnlineView: View {
                     profilKart
                     sendikaButon
                     baskinKart
+                    if !online.gelenBaskinlar.isEmpty { gelenBaskinKart }
                     liderKart
                 }
                 if let b = bilgi {
@@ -38,7 +39,11 @@ struct OnlineView: View {
         }
         .task {
             await online.otomatikGiris()
-            if online.girisli { await online.sync(game: game); await online.liderTablosu() }
+            if online.girisli {
+                await online.sync(game: game)
+                await online.liderTablosu()
+                await online.gelenBaskinlariGetir()
+            }
         }
         .fullScreenCover(item: $pvpNode) { node in
             CombatView(node: node) { kazandi in
@@ -214,6 +219,34 @@ struct OnlineView: View {
                     Text("Önce Ekip'ten sahaya adam koy.").font(.system(size: 11)).foregroundStyle(Theme.blood)
                 }
             }
+        }
+        .cardStyle(16)
+    }
+
+    // MARK: Sana gelen baskınlar (savunma raporu)
+    private var gelenBaskinKart: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Label("SANA GELEN BASKINLAR", systemImage: "shield.lefthalf.filled")
+                    .font(.system(size: 12, weight: .black)).foregroundStyle(Theme.blood)
+                Spacer()
+                Text("Savunma: \(fmt(game.korunakSavunma))")
+                    .font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.gold)
+            }
+            ForEach(online.gelenBaskinlar.prefix(6)) { r in
+                HStack(spacing: 10) {
+                    Image(systemName: r.won == 1 ? "flame.fill" : "shield.fill")
+                        .foregroundStyle(r.won == 1 ? Theme.blood : Color.green)
+                    Text(r.attacker_ad).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                    Spacer()
+                    Text(r.won == 1 ? "−₺\(fmt(r.loot)) yağmalandı" : "savunma tuttu")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(r.won == 1 ? Theme.blood : Color.green)
+                }
+                .padding(.vertical, 3)
+            }
+            Text("Korunak binasını yükselt → daha az yağmalanırsın.")
+                .font(.system(size: 11)).foregroundStyle(Theme.smoke)
         }
         .cardStyle(16)
     }

@@ -58,10 +58,12 @@ def init_db():
             );
             """
         )
-        # players.clan_id sonradan eklendi — yoksa ekle (migration)
+        # sonradan eklenen kolonlar (migration)
         cols = [r[1] for r in c.execute("PRAGMA table_info(players)").fetchall()]
         if "clan_id" not in cols:
             c.execute("ALTER TABLE players ADD COLUMN clan_id TEXT DEFAULT ''")
+        if "savunma" not in cols:
+            c.execute("ALTER TABLE players ADD COLUMN savunma INTEGER DEFAULT 0")
 
 
 def new_token() -> str:
@@ -91,13 +93,25 @@ def create_player(device_id: str, ad: str):
     return get_by_id(device_id)
 
 
-def update_state(pid: str, ad, power, respect, cash, crew):
+def update_state(pid: str, ad, power, respect, cash, crew, savunma=0):
     with conn() as c:
         c.execute(
-            """UPDATE players SET ad=?, power=?, respect=?, cash=?, crew_json=?, last_sync=?
+            """UPDATE players SET ad=?, power=?, respect=?, cash=?, crew_json=?, savunma=?, last_sync=?
                WHERE id=?""",
-            (ad, power, respect, cash, json.dumps(crew), int(time.time()), pid),
+            (ad, power, respect, cash, json.dumps(crew), savunma, int(time.time()), pid),
         )
+
+
+def incoming_attacks(pid: str, limit: int = 20):
+    """Bu oyuncuya yapılan son saldırılar (savunma raporu)."""
+    with conn() as c:
+        rows = c.execute(
+            """SELECT a.attacker, a.won, a.loot, a.ts, COALESCE(p.ad,'?') AS attacker_ad
+               FROM attacks a LEFT JOIN players p ON p.id = a.attacker
+               WHERE a.defender=? ORDER BY a.ts DESC LIMIT ?""",
+            (pid, limit),
+        ).fetchall()
+        return [dict(r) for r in rows]
 
 
 def find_target(pid: str, power: int):

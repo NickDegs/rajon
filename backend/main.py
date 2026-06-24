@@ -41,6 +41,7 @@ class SyncBody(BaseModel):
     respect: int
     cash: int
     crew: list = []          # savunma ekibi snapshot (istemci formatı)
+    savunma: int = 0         # Korunak savunma puanı (yağmayı azaltır)
 
 
 class AttackResultBody(BaseModel):
@@ -78,7 +79,7 @@ def register(b: RegisterBody):
 def sync(b: SyncBody, authorization: str = Header(None)):
     """İstemci durumunu sunucuya yansıtır (PvP havuzu + lider tablosu için)."""
     p = auth(authorization)
-    db.update_state(p["id"], b.ad.strip()[:24] or p["ad"], b.power, b.respect, b.cash, b.crew)
+    db.update_state(p["id"], b.ad.strip()[:24] or p["ad"], b.power, b.respect, b.cash, b.crew, b.savunma)
     return {"ok": True}
 
 
@@ -89,12 +90,15 @@ def pvp_target(authorization: str = Header(None)):
     t = db.find_target(p["id"], p["power"])
     if not t:
         raise HTTPException(404, "uygun rakip yok, sonra dene")
+    savunma = t["savunma"] if "savunma" in t.keys() else 0
+    loot = max(50, int(t["cash"] * 0.10) - savunma * 10)   # Korunak yağmayı azaltır
     return {
         "id": t["id"],
         "ad": t["ad"],
         "power": t["power"],
         "respect": t["respect"],
-        "loot": max(50, int(t["cash"] * 0.10)),   # alınabilecek yağma
+        "savunma": savunma,
+        "loot": loot,
         "crew": json.loads(t["crew_json"] or "[]"),
     }
 
@@ -110,6 +114,13 @@ def pvp_result(b: AttackResultBody, authorization: str = Header(None)):
     db.record_attack(p["id"], b.defender_id, b.won, loot)
     me = db.get_by_id(p["id"])
     return {"ok": True, "won": b.won, "loot": loot if b.won else 0, "player": _public(me)}
+
+
+@app.get("/rajon/raids/incoming")
+def raids_incoming(authorization: str = Header(None)):
+    """Bana yapılan baskınlar (savunma raporu)."""
+    p = auth(authorization)
+    return {"raids": db.incoming_attacks(p["id"], 20)}
 
 
 @app.get("/rajon/leaderboard")

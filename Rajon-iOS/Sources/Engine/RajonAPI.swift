@@ -12,6 +12,7 @@ final class OnlineService: ObservableObject {
     @Published var myRank: Int?
     @Published var clanim: Clan?
     @Published var clanListesi: [ClanOzet] = []
+    @Published var gelenBaskinlar: [GelenBaskin] = []
     @Published var hata: String?
     @Published var mesgul = false
 
@@ -61,8 +62,15 @@ final class OnlineService: ObservableObject {
             "ad": ad.isEmpty ? "Patron" : ad,
             "power": game.squadPower, "respect": game.respect,
             "cash": game.cash, "crew": crewSnap,
+            "savunma": game.korunakSavunma,
         ]
         _ = try? await postRaw("/rajon/sync", body: body)
+    }
+
+    func gelenBaskinlariGetir() async {
+        if let r: GelenBaskinResp = try? await get("/rajon/raids/incoming") {
+            gelenBaskinlar = r.raids
+        }
     }
 
     // MARK: PvP
@@ -243,3 +251,13 @@ struct ClanOzet: Codable, Identifiable {
 
 struct MineResp: Codable { let clan: Clan? }
 struct ClanListResp: Codable { let clans: [ClanOzet] }
+
+// Sana gelen baskınlar
+struct GelenBaskin: Codable, Identifiable {
+    var id: Double { ts }      // ts benzersiz-ish
+    let attacker_ad: String
+    let won: Int
+    let loot: Int
+    let ts: Double
+}
+struct GelenBaskinResp: Codable { let raids: [GelenBaskin] }
