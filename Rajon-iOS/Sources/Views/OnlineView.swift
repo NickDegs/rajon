@@ -21,6 +21,7 @@ struct OnlineView: View {
                 if !online.girisli {
                     girisKart
                 } else {
+                    canliDunyaButon
                     profilKart
                     sendikaButon
                     baskinKart
@@ -78,6 +79,24 @@ struct OnlineView: View {
         }
     }
 
+    private var canliDunyaButon: some View {
+        Button { Task { await online.dunyayaGir() } } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "globe.europe.africa.fill").font(.system(size: 24)).foregroundStyle(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("CANLI DÜNYAYA GİR").font(.system(size: 16, weight: .black)).foregroundStyle(.white)
+                    Text("Tüm dünyayla aynı sahada oyna — üssünü kur, fethet, baskın yap")
+                        .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 14)).foregroundStyle(Theme.gold)
+            }
+            .cardStyle(16)
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.gold.opacity(0.5), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
     private var sendikaButon: some View {
         Button { clanAcik = true } label: {
             HStack(spacing: 12) {
@@ -116,8 +135,8 @@ struct OnlineView: View {
                 .foregroundStyle(.white)
             Button {
                 Task {
-                    await online.girisYap(ad: adGirisi.isEmpty ? "Patron" : adGirisi)
-                    if online.girisli { await online.sync(game: game); await online.liderTablosu() }
+                    online.ad = adGirisi.isEmpty ? "Patron" : adGirisi
+                    await online.dunyayaGir()   // tüm arayüz canlı dünyaya geçer
                 }
             } label: {
                 Text(online.mesgul ? "Bağlanıyor…" : "SOKAĞA ÇIK")

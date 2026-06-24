@@ -2,11 +2,21 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject var game: GameStore
+    @EnvironmentObject var online: OnlineService
     @State private var tab = 0
     @State private var magazaAcik = false
     @State private var ayarAcik = false
 
     var body: some View {
+        // Online'a girince TÜM arayüz sunucu-otoriter canlı dünyaya geçer.
+        if online.dunyaAktif {
+            OnlineWorldView()
+        } else {
+            offlineRoot
+        }
+    }
+
+    private var offlineRoot: some View {
         ZStack {
             Theme.bg
             VStack(spacing: 0) {

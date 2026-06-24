@@ -225,7 +225,88 @@ final class OnlineService: ObservableObject {
         let (d, _) = try await URLSession.shared.data(for: req(path, method: "POST", body: data, auth: true))
         return d
     }
+
+    // MARK: - SUNUCU-OTORİTER DÜNYA (tek paylaşılan dünya)
+
+    @Published var dunya: DunyaView?
+    @Published var dunyaAktif = false
+    @Published var dunyaOyuncular: [LiderSatir] = []
+    @Published var dunyaBilgi: String?
+    @Published var sonSaldiri: (won: Bool, loot: Int)?
+
+    /// Canlı dünyaya gir: bağlı değilse anonim giriş yap, durumu çek.
+    func dunyayaGir() async {
+        if !girisli { await girisYap(ad: ad.isEmpty ? "Patron" : ad) }
+        guard girisli else { return }
+        dunyaAktif = true
+        await dunyaCek()
+        await dunyaHaritasi()
+    }
+
+    func dunyadanCik() { dunyaAktif = false }
+
+    func dunyaCek() async {
+        if let v: DunyaView = try? await get("/rajon/world/state") { dunya = v }
+    }
+
+    /// Mutasyon aksiyonu: başarılıysa yeni dünya, hatadaysa mesaj.
+    private func dunyaAksiyon(_ path: String, _ body: [String: Any]) async {
+        do {
+            let r = try req(path, method: "POST", body: try JSONSerialization.data(withJSONObject: body), auth: true)
+            let (data, _) = try await URLSession.shared.data(for: r)
+            if let v = try? JSONDecoder().decode(DunyaView.self, from: data) {
+                dunya = v; dunyaBilgi = nil
+            } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
+                dunyaBilgi = e.detail
+            }
+        } catch { dunyaBilgi = "Bağlantı hatası" }
+    }
+
+    func dunyaTopla() async { await dunyaAksiyon("/rajon/world/collect", [:]) }
+    func dunyaIsletme(_ idx: Int) async { await dunyaAksiyon("/rajon/world/racket", ["idx": idx]) }
+    func dunyaBina(_ tip: String) async { await dunyaAksiyon("/rajon/world/building", ["tip": tip]) }
+    func dunyaFethet(_ kind: String, _ idx: Int) async { await dunyaAksiyon("/rajon/world/conquer", ["kind": kind, "idx": idx]) }
+    func dunyaAsker(_ tip: String, _ count: Int) async { await dunyaAksiyon("/rajon/world/train", ["tip": tip, "count": count]) }
+
+    func dunyaSaldir(_ targetId: String) async {
+        do {
+            let r = try req("/rajon/world/attack", method: "POST",
+                            body: try JSONSerialization.data(withJSONObject: ["target_id": targetId]), auth: true)
+            let (data, _) = try await URLSession.shared.data(for: r)
+            if let resp = try? JSONDecoder().decode(DunyaAttackResp.self, from: data) {
+                dunya = resp.world; sonSaldiri = (resp.won, resp.loot); dunyaBilgi = nil
+            } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
+                dunyaBilgi = e.detail
+            }
+        } catch { dunyaBilgi = "Bağlantı hatası" }
+    }
+
+    func dunyaHaritasi() async {
+        if let m: DunyaMap = try? await get("/rajon/world/map") { dunyaOyuncular = m.players }
+    }
 }
+
+// MARK: - Dünya modelleri (world.view JSON ile birebir)
+struct DetailErr: Codable { let detail: String }
+
+struct DunyaView: Codable {
+    let cash, idle, cephane, respect, bossLevel, incomePerMin: Int
+    let depoKapasite, cephaneMax, cephaneUretimDk, maxKadro, nufuzKapasite, nufuzKullanim: Int
+    let rackets: [DRacket]
+    let buildings: [DBina]
+    let insaatMesgul: Bool
+    let regions: [DBolge]
+    let oases: [DVaha]
+    let army: [String: Int]
+    let train: DTrain?
+}
+struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
+struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
+struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
+struct DVaha: Codable, Identifiable { let idx: Int; let ad: String; let tip: String; let bonusDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
+struct DTrain: Codable { let tip: String; let count: Int; let kalan: Int }
+struct DunyaAttackResp: Codable { let won: Bool; let loot: Int; let world: DunyaView }
+struct DunyaMap: Codable { let me: String; let players: [LiderSatir] }
 
 // MARK: - Modeller
 
