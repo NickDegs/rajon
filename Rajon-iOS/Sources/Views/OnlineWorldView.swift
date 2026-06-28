@@ -32,6 +32,7 @@ struct OnlineWorldView: View {
                             OnlineHaritaView().tag(1).tabItem { Label("Harita", systemImage: "map.fill") }
                             orduSekme(d).tag(2).tabItem { Label("Ordu", systemImage: "figure.walk") }
                             dunyaSekme().tag(3).tabItem { Label("Dünya", systemImage: "trophy.fill") }
+                            OnlineCeteView().tag(4).tabItem { Label("Çete", systemImage: "shield.lefthalf.filled") }
                         }
                         .tint(Theme.blood)
                     }

@@ -288,6 +288,12 @@ final class OnlineService: ObservableObject {
     func dunyaHaritasi() async {
         if let m: DunyaMap = try? await get("/rajon/world/map") { dunyaOyuncular = m.players }
     }
+
+    /// Çete hazinesine bağış — dünya nakdinden otoriter düşülür, sonra çete tazelenir.
+    func dunyaClanBagis(_ miktar: Int) async {
+        await dunyaAksiyon("/rajon/world/clan_donate", ["amount": miktar])
+        await clanGetir()
+    }
 }
 
 // MARK: - Dünya modelleri (world.view JSON ile birebir)
