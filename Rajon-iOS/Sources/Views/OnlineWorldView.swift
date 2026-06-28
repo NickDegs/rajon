@@ -5,6 +5,8 @@ import SwiftUI
 struct OnlineWorldView: View {
     @EnvironmentObject var online: OnlineService
     @State private var tab = 0
+    @State private var magazaAcik = false
+    @State private var ayarAcik = false
 
     private static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
@@ -38,12 +40,34 @@ struct OnlineWorldView: View {
             }
         }
         .task {
-            await online.dunyaCek()
+            // TAM ONLINE: girişi sağla (gerekirse anonim), dünya yüklenene kadar dene.
+            while online.dunya == nil {
+                await online.dunyayaGir()
+                if online.dunya == nil { try? await Task.sleep(nanoseconds: 2_000_000_000) }
+            }
             // Canlı poll: her 3 sn durumu tazele
-            while online.dunyaAktif {
+            while true {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
                 await online.dunyaCek()
             }
+        }
+        .sheet(isPresented: $magazaAcik) {
+            NavigationStack {
+                MagazaView()
+                    .navigationTitle("Mağaza").navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { magazaAcik = false } } }
+                    .background(Theme.coal)
+            }
+            .preferredColorScheme(.dark)
+        }
+        .sheet(isPresented: $ayarAcik) {
+            NavigationStack {
+                AyarlarView()
+                    .navigationTitle("Ayarlar").navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { ayarAcik = false } } }
+                    .background(Theme.coal)
+            }
+            .preferredColorScheme(.dark)
         }
     }
 
@@ -55,10 +79,13 @@ struct OnlineWorldView: View {
             kaynak("circle.hexagongrid.fill", fmt(d?.cephane ?? 0), Theme.smoke)
             kaynak("flame.fill", fmt(d?.respect ?? 0), Theme.blood)
             Spacer()
-            Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(.white)
-            Button { online.dunyadanCik() } label: {
-                Image(systemName: "rectangle.portrait.and.arrow.right").font(.system(size: 15)).foregroundStyle(Theme.smoke)
+            Button { magazaAcik = true } label: {
+                Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
             }
+            Button { ayarAcik = true } label: {
+                Image(systemName: "gearshape.fill").font(.system(size: 16)).foregroundStyle(Theme.smoke)
+            }
+            Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(.white)
         }
         .padding(.horizontal, 16).padding(.vertical, 10).background(Theme.coal)
     }

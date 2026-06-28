@@ -8,12 +8,8 @@ struct RootView: View {
     @State private var ayarAcik = false
 
     var body: some View {
-        // Online'a girince TÜM arayüz sunucu-otoriter canlı dünyaya geçer.
-        if online.dunyaAktif {
-            OnlineWorldView()
-        } else {
-            offlineRoot
-        }
+        // Uygulama TAMAMEN ONLINE — her zaman sunucu-otoriter canlı dünya (Travian gibi).
+        OnlineWorldView()
     }
 
     private var offlineRoot: some View {
