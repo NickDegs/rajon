@@ -7,6 +7,7 @@ struct OnlineWorldView: View {
     @State private var tab = 0
     @State private var magazaAcik = false
     @State private var ayarAcik = false
+    @State private var rumuzGirildi = false
 
     private static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
@@ -19,36 +20,55 @@ struct OnlineWorldView: View {
     private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför"]
 
     var body: some View {
-        ZStack {
-            Theme.bg.ignoresSafeArea()
-            VStack(spacing: 0) {
-                kaynakBar
-                if let d = online.dunya {
-                    TabView(selection: $tab) {
-                        OnlineKoyView().tag(0).tabItem { Label("Üs", systemImage: "building.2.fill") }
-                        OnlineHaritaView().tag(1).tabItem { Label("Harita", systemImage: "map.fill") }
-                        orduSekme(d).tag(2).tabItem { Label("Ordu", systemImage: "figure.walk") }
-                        dunyaSekme().tag(3).tabItem { Label("Dünya", systemImage: "trophy.fill") }
+        Group {
+            if let d = online.dunya {
+                ZStack {
+                    Theme.bg.ignoresSafeArea()
+                    VStack(spacing: 0) {
+                        kaynakBar
+                        TabView(selection: $tab) {
+                            OnlineKoyView().tag(0).tabItem { Label("Üs", systemImage: "building.2.fill") }
+                            OnlineHaritaView().tag(1).tabItem { Label("Harita", systemImage: "map.fill") }
+                            orduSekme(d).tag(2).tabItem { Label("Ordu", systemImage: "figure.walk") }
+                            dunyaSekme().tag(3).tabItem { Label("Dünya", systemImage: "trophy.fill") }
+                        }
+                        .tint(Theme.blood)
                     }
-                    .tint(Theme.blood)
-                } else {
-                    Spacer()
-                    ProgressView().tint(Theme.gold)
-                    Text("Canlı dünya yükleniyor…").font(.system(size: 13)).foregroundStyle(Theme.smoke).padding(.top, 8)
-                    Spacer()
+                }
+            } else if !online.hesapVar && !rumuzGirildi {
+                // İlk açılış: oyuncu kendi rumuzunu oluşturur, sonra dünyaya girer.
+                RumuzGirisView { ad in
+                    online.ad = ad
+                    rumuzGirildi = true
+                    Task {
+                        while online.dunya == nil {
+                            await online.dunyayaGir()
+                            if online.dunya == nil { try? await Task.sleep(nanoseconds: 2_000_000_000) }
+                        }
+                    }
+                }
+            } else {
+                ZStack {
+                    Theme.bg.ignoresSafeArea()
+                    VStack {
+                        ProgressView().tint(Theme.gold)
+                        Text("Canlı dünya yükleniyor…").font(.system(size: 13)).foregroundStyle(Theme.smoke).padding(.top, 8)
+                    }
                 }
             }
         }
         .task {
-            // TAM ONLINE: girişi sağla (gerekirse anonim), dünya yüklenene kadar dene.
-            while online.dunya == nil {
-                await online.dunyayaGir()
-                if online.dunya == nil { try? await Task.sleep(nanoseconds: 2_000_000_000) }
+            // Dönen kullanıcı (anonim/SMS hesabı var): otomatik giriş.
+            if online.hesapVar {
+                while online.dunya == nil {
+                    await online.dunyayaGir()
+                    if online.dunya == nil { try? await Task.sleep(nanoseconds: 2_000_000_000) }
+                }
             }
-            // Canlı poll: her 3 sn durumu tazele
+            // Canlı poll: dünya yüklendiğinde her 3 sn tazele.
             while true {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
-                await online.dunyaCek()
+                if online.dunya != nil { await online.dunyaCek() }
             }
         }
         .sheet(isPresented: $magazaAcik) {

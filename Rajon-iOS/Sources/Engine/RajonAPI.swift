@@ -23,6 +23,10 @@ final class OnlineService: ObservableObject {
         get { AuthService.token ?? UserDefaults.standard.string(forKey: "rajon_online_token") }
         set { UserDefaults.standard.set(newValue, forKey: "rajon_online_token") }
     }
+    /// Daha önce (anonim veya SMS) hesap oluşturulmuş mu — ilk açılış rumuz ekranı için.
+    var hesapVar: Bool {
+        AuthService.token != nil || UserDefaults.standard.string(forKey: "rajon_online_token") != nil
+    }
     private var deviceID: String {
         if let id = UserDefaults.standard.string(forKey: "rajon_device_id") { return id }
         let id = UUID().uuidString
