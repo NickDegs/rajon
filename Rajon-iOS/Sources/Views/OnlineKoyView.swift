@@ -55,7 +55,7 @@ struct OnlineKoyView: View {
     private func zemin(_ W: CGFloat, _ H: CGFloat) -> some View {
         ZStack {
             Theme.bg
-            RadialGradient(colors: [Theme.panelHi.opacity(0.55), Theme.bg],
+            RadialGradient(colors: [Theme.panelHi.opacity(0.55), Theme.coal],
                            center: .init(x: 0.5, y: 0.46), startRadius: 8, endRadius: max(W, H) * 0.62)
             RadialGradient(colors: [.clear, .black.opacity(0.55)],
                            center: .center, startRadius: min(W, H) * 0.30, endRadius: max(W, H) * 0.72)
