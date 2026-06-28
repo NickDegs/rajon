@@ -60,7 +60,7 @@ struct OnlineHaritaView: View {
         let sahipV = d?.oases.filter { $0.owned }.count ?? 0
         return HStack(spacing: 14) {
             Label("\(sahipB) bölge · \(sahipV) nokta", systemImage: "map.fill")
-                .font(.system(size: 12, weight: .bold)).foregroundStyle(.white)
+                .font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.ink)
             Spacer()
             Label("Nüfuz \(d?.nufuzKullanim ?? 0)/\(d?.nufuzKapasite ?? 0)", systemImage: "crown.fill")
                 .font(.system(size: 12, weight: .heavy))
@@ -87,7 +87,7 @@ private struct OnlineBolgePin: View {
                         .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
                     rozet
                 }
-                Text(LocalizedStringKey(bolge.ad)).font(.system(size: 10, weight: .heavy)).foregroundStyle(.white)
+                Text(LocalizedStringKey(bolge.ad)).font(.system(size: 10, weight: .heavy)).foregroundStyle(Theme.ink)
                     .padding(.horizontal, 6).padding(.vertical, 1)
                     .background(Capsule().fill(Theme.coal.opacity(0.9)))
             }
@@ -135,7 +135,7 @@ private struct OnlineVahaPin: View {
                             .background(Circle().fill(Theme.coal)).offset(x: 14, y: 14)
                     }
                 }
-                Text(LocalizedStringKey(vaha.ad)).font(.system(size: 9, weight: .bold)).foregroundStyle(.white).lineLimit(1)
+                Text(LocalizedStringKey(vaha.ad)).font(.system(size: 9, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
                     .padding(.horizontal, 5).padding(.vertical, 1)
                     .background(Capsule().fill(Theme.coal.opacity(0.9)))
             }
@@ -159,7 +159,7 @@ private struct OnlineBolgeDetay: View {
             VStack(spacing: 14) {
                 Image(gorsel).resizable().scaledToFill().frame(height: 200).clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 16))
-                Text(LocalizedStringKey(g.ad)).font(.system(size: 24, weight: .black)).foregroundStyle(.white)
+                Text(LocalizedStringKey(g.ad)).font(.system(size: 24, weight: .black)).foregroundStyle(Theme.ink)
                 Text("Bölge · ele geçirince dk/₺\(fmt(g.gelirDk)) sürekli gelir")
                     .font(.system(size: 13)).foregroundStyle(Theme.smoke)
                 OnlineFetihButton(owned: g.owned, fetihte: g.fetihte, fiyat: g.fiyat,
@@ -189,7 +189,7 @@ private struct OnlineVahaDetay: View {
                         .font(.system(size: 80, weight: .bold))
                         .foregroundStyle(nakit ? Theme.gold : Theme.blood)
                 }
-                Text(LocalizedStringKey(g.ad)).font(.system(size: 24, weight: .black)).foregroundStyle(.white)
+                Text(LocalizedStringKey(g.ad)).font(.system(size: 24, weight: .black)).foregroundStyle(Theme.ink)
                 Text("Kaçak noktası · ele geçirince dk +\(fmt(g.bonusDk)) \(nakit ? "nakit" : "cephane") üretir")
                     .font(.system(size: 13)).foregroundStyle(Theme.smoke).multilineTextAlignment(.center)
                 OnlineFetihButton(owned: g.owned, fetihte: g.fetihte, fiyat: g.fiyat,

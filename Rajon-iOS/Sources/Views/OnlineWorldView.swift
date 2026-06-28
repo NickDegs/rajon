@@ -4,6 +4,7 @@ import SwiftUI
 /// Online'a girince RootView bunu gösterir; aksiyonlar /world/* uçlarına gider.
 struct OnlineWorldView: View {
     @EnvironmentObject var online: OnlineService
+    @EnvironmentObject var tema: ThemeManager
     @State private var tab = 0
     @State private var magazaAcik = false
     @State private var ayarAcik = false
@@ -78,7 +79,7 @@ struct OnlineWorldView: View {
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { magazaAcik = false } } }
                     .background(Theme.coal)
             }
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(tema.colorScheme)
         }
         .sheet(isPresented: $ayarAcik) {
             NavigationStack {
@@ -87,7 +88,7 @@ struct OnlineWorldView: View {
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { ayarAcik = false } } }
                     .background(Theme.coal)
             }
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(tema.colorScheme)
         }
     }
 
@@ -105,7 +106,7 @@ struct OnlineWorldView: View {
             Button { ayarAcik = true } label: {
                 Image(systemName: "gearshape.fill").font(.system(size: 16)).foregroundStyle(Theme.smoke)
             }
-            Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(.white)
+            Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
         }
         .padding(.horizontal, 16).padding(.vertical, 10).background(Theme.coal)
     }
@@ -113,7 +114,7 @@ struct OnlineWorldView: View {
     private func kaynak(_ icon: String, _ v: String, _ c: Color) -> some View {
         HStack(spacing: 5) {
             Image(systemName: icon).foregroundStyle(c)
-            Text(v).font(.system(size: 15, weight: .heavy, design: .rounded)).foregroundStyle(.white)
+            Text(v).font(.system(size: 15, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
         }
     }
 
@@ -155,7 +156,7 @@ struct OnlineWorldView: View {
         HStack(spacing: 12) {
             Image(systemName: Self.binaIkon[b.tip] ?? "building.2.fill").font(.system(size: 22)).foregroundStyle(Theme.gold).frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                (Text(LocalizedStringKey(Self.binaAd[b.tip] ?? b.tip)) + Text(" · Sv.\(b.seviye)")).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                (Text(LocalizedStringKey(Self.binaAd[b.tip] ?? b.tip)) + Text(" · Sv.\(b.seviye)")).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                 if b.insaatta {
                     Text("İnşaatta · \(sureMetni(b.kalan))").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 } else {
@@ -180,7 +181,7 @@ struct OnlineWorldView: View {
             Image(systemName: r.owned ? "storefront.fill" : "lock.fill").font(.system(size: 18))
                 .foregroundStyle(r.owned ? Theme.gold : Theme.smoke).frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text(LocalizedStringKey(r.ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                Text(LocalizedStringKey(r.ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                 Text(r.owned ? "Sv.\(r.tier) · dk/₺\(fmt(r.perMin))" : "dk/₺\(fmt(r.perMin)) üretir")
                     .font(.system(size: 12)).foregroundStyle(r.owned ? Theme.gold : Theme.smoke)
             }
@@ -228,7 +229,7 @@ struct OnlineWorldView: View {
             Image(systemName: owned ? "checkmark.seal.fill" : (fetihte ? "flag.fill" : "mappin.and.ellipse"))
                 .font(.system(size: 20)).foregroundStyle(owned || fetihte ? renk : Theme.smoke).frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text(LocalizedStringKey(ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                Text(LocalizedStringKey(ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                 Text(owned ? alt : (fetihte ? "Fethediliyor · \(sureMetni(kalan))" : "₺\(fmt(fiyat)) · \(sureMetni(sure))"))
                     .font(.system(size: 12)).foregroundStyle(owned ? renk : Theme.smoke)
             }
@@ -271,7 +272,7 @@ struct OnlineWorldView: View {
                 ForEach(["tetikci", "kabadayi", "sofor"], id: \.self) { tip in
                     Button { Task { await online.dunyaAsker(tip, 5) } } label: {
                         HStack {
-                            (Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)) + Text(" ×5")).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                            (Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)) + Text(" ×5")).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                             Spacer()
                             Image(systemName: "plus.circle.fill").foregroundStyle(Theme.gold)
                         }.cardStyle(12)
@@ -284,7 +285,7 @@ struct OnlineWorldView: View {
                 }
                 ForEach(online.dunyaOyuncular.prefix(20)) { p in
                     HStack(spacing: 10) {
-                        Text(p.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(.white).lineLimit(1)
+                        Text(p.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
                         Spacer()
                         Text("Güç \(fmt(p.power))").font(.system(size: 12)).foregroundStyle(Theme.smoke)
                         Button { Task { await online.dunyaSaldir(p.id) } } label: {
@@ -325,7 +326,7 @@ struct OnlineWorldView: View {
                         Text("#\(i + 1)").font(.system(size: 13, weight: .heavy, design: .rounded))
                             .foregroundStyle(i < 3 ? Theme.gold : Theme.smoke).frame(width: 34, alignment: .leading)
                         Text(s.ad).font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(s.id == online.me?.id ? Theme.gold : .white).lineLimit(1)
+                            .foregroundStyle(s.id == online.me?.id ? Theme.gold : Theme.ink).lineLimit(1)
                         Spacer()
                         Text("⚔︎\(s.wins)  ★\(fmt(s.respect))").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.smoke)
                     }

@@ -21,10 +21,10 @@ struct RumuzGirisView: View {
                 Image(systemName: "crown.fill").font(.system(size: 52)).foregroundStyle(Theme.gold)
                 Text("RAJON")
                     .font(.system(size: 40, weight: .black, design: .rounded))
-                    .foregroundStyle(.white).tracking(4)
+                    .foregroundStyle(Theme.ink).tracking(4)
                 VStack(spacing: 6) {
                     Text("Rumuzunu seç")
-                        .font(.system(size: 18, weight: .heavy)).foregroundStyle(.white)
+                        .font(.system(size: 18, weight: .heavy)).foregroundStyle(Theme.ink)
                     Text("Sokakta seni bu isimle tanıyacaklar.")
                         .font(.system(size: 13)).foregroundStyle(Theme.smoke)
                 }
@@ -33,7 +33,7 @@ struct RumuzGirisView: View {
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.ink)
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 14)
                     .background(Theme.panelHi)

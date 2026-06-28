@@ -45,7 +45,7 @@ struct MagazaView: View {
         HStack(spacing: 10) {
             Image(systemName: "checkmark.shield.fill").foregroundStyle(Color.green)
             Text("Adil oyun: Bu satın alımlar **tamamen kozmetiktir**. Oyunu güçlendirmez, pay-to-win yoktur. Her şey oynayarak kazanılır.")
-                .font(.system(size: 12, weight: .medium)).foregroundStyle(.white)
+                .font(.system(size: 12, weight: .medium)).foregroundStyle(Theme.ink)
         }
         .cardStyle(14)
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.green.opacity(0.4), lineWidth: 1))
@@ -87,7 +87,7 @@ struct KozmetikRow: View {
             .frame(width: 48, height: 48)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(urun.baslik).font(.system(size: 15, weight: .heavy)).foregroundStyle(.white)
+                Text(urun.baslik).font(.system(size: 15, weight: .heavy)).foregroundStyle(Theme.ink)
                 Text(urun.altyazi).font(.system(size: 12)).foregroundStyle(Theme.smoke)
             }
             Spacer()

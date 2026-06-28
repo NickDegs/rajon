@@ -1,18 +1,49 @@
 import SwiftUI
+import UIKit
 
-/// Karanlık mafya teması — kan kırmızısı, kömür siyahı, altın.
+/// Kullanıcı tema tercihi (kalıcı). Varsayılan: koyu (mevcut görünüm korunur).
+enum ThemeMode: String, CaseIterable {
+    case koyu, acik, sistem
+    var colorScheme: ColorScheme? { self == .koyu ? .dark : (self == .acik ? .light : nil) }
+    var ad: String { self == .koyu ? "Koyu" : (self == .acik ? "Açık" : "Sistem") }
+    var ikon: String { self == .koyu ? "moon.stars.fill" : (self == .acik ? "sun.max.fill" : "circle.lefthalf.filled") }
+}
+
+/// Tema yöneticisi — seçimi UserDefaults'ta saklar, app geneline uygulanır.
+final class ThemeManager: ObservableObject {
+    @Published var mode: ThemeMode {
+        didSet { UserDefaults.standard.set(mode.rawValue, forKey: "rajon_theme") }
+    }
+    init() {
+        let raw = UserDefaults.standard.string(forKey: "rajon_theme") ?? ThemeMode.koyu.rawValue
+        mode = ThemeMode(rawValue: raw) ?? .koyu
+    }
+    var colorScheme: ColorScheme? { mode.colorScheme }
+}
+
+/// İki temaya da uyan dinamik renk (koyu / açık).
+private func dyn(_ d: (Double, Double, Double), _ l: (Double, Double, Double)) -> Color {
+    Color(UIColor { tc in
+        let c = tc.userInterfaceStyle == .light ? l : d
+        return UIColor(red: c.0, green: c.1, blue: c.2, alpha: 1)
+    })
+}
+
+/// Mafya teması — koyu (kan/kömür/altın) ve açık varyantlarıyla adaptif.
 enum Theme {
-    static let blood = Color(red: 0.78, green: 0.09, blue: 0.06)
-    static let bloodDim = Color(red: 0.45, green: 0.06, blue: 0.05)
-    static let gold = Color(red: 0.85, green: 0.68, blue: 0.30)
-    static let coal = Color(red: 0.05, green: 0.05, blue: 0.06)
-    static let panel = Color(red: 0.11, green: 0.11, blue: 0.13)
-    static let panelHi = Color(red: 0.16, green: 0.16, blue: 0.19)
-    static let smoke = Color(red: 0.62, green: 0.62, blue: 0.66)
+    static let blood    = dyn((0.78, 0.09, 0.06), (0.82, 0.13, 0.10))
+    static let bloodDim = dyn((0.45, 0.06, 0.05), (0.80, 0.20, 0.16))
+    static let gold     = dyn((0.85, 0.68, 0.30), (0.70, 0.52, 0.10))
+    static let coal     = dyn((0.05, 0.05, 0.06), (0.96, 0.96, 0.97))
+    static let panel    = dyn((0.11, 0.11, 0.13), (1.00, 1.00, 1.00))
+    static let panelHi  = dyn((0.16, 0.16, 0.19), (0.90, 0.90, 0.93))
+    static let smoke    = dyn((0.62, 0.62, 0.66), (0.42, 0.42, 0.47))
+    /// Birincil metin (panel/kart üstü) — koyuda beyaz, açıkta siyah.
+    static let ink      = dyn((0.96, 0.96, 0.97), (0.08, 0.08, 0.10))
 
     static var bg: some View {
         LinearGradient(
-            colors: [Color(red: 0.07, green: 0.06, blue: 0.07), coal],
+            colors: [dyn((0.07, 0.06, 0.07), (0.97, 0.97, 0.98)), coal],
             startPoint: .top, endPoint: .bottom
         )
         .ignoresSafeArea()

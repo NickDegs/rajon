@@ -6,6 +6,7 @@ struct RajonApp: App {
     @StateObject private var store = StoreManager()
     @StateObject private var online = OnlineService()
     @StateObject private var kozmetik = CosmeticStore()
+    @StateObject private var tema = ThemeManager()
 
     @State private var splash = true
 
@@ -17,6 +18,7 @@ struct RajonApp: App {
                     .environmentObject(store)
                     .environmentObject(online)
                     .environmentObject(kozmetik)
+                    .environmentObject(tema)
                     .opacity(splash ? 0 : 1)
 
                 if splash {
@@ -24,7 +26,7 @@ struct RajonApp: App {
                         .transition(.opacity)
                 }
             }
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(tema.colorScheme)
             .tint(Theme.blood)
             .onAppear {
                 game.bootstrap()

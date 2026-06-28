@@ -5,6 +5,7 @@ struct AyarlarView: View {
     @EnvironmentObject var game: GameStore
     @EnvironmentObject var store: StoreManager
     @EnvironmentObject var online: OnlineService
+    @EnvironmentObject var tema: ThemeManager
 
     @ObservedObject private var sound = SoundManager.shared
     @State private var adDuzenle = ""
@@ -20,11 +21,11 @@ struct AyarlarView: View {
                     Text("ONLINE HESAP").sectionHeader()
                     if online.girisli {
                         Text("Patron: \(online.me?.ad ?? online.ad)")
-                            .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                            .font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                         HStack {
                             TextField("Yeni patron adı", text: $adDuzenle)
                                 .padding(10).background(Theme.panelHi)
-                                .clipShape(RoundedRectangle(cornerRadius: 9)).foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 9)).foregroundStyle(Theme.ink)
                             Button("Kaydet") {
                                 Task {
                                     online.ad = adDuzenle.isEmpty ? online.ad : adDuzenle
@@ -51,7 +52,7 @@ struct AyarlarView: View {
                                 .foregroundStyle(online.smsGirisli ? Color.green : Theme.blood)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(online.smsGirisli ? "Telefonla yedek aktif" : "Telefonla Yedekle / Giriş")
-                                    .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                                    .font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                                 Text("SMS ile bağla; iCloud + telefonuna otomatik yedek")
                                     .font(.system(size: 11)).foregroundStyle(Theme.smoke)
                             }
@@ -76,10 +77,24 @@ struct AyarlarView: View {
                         Task { await store.geriYukle(); bilgi = "Satın alımlar geri yüklendi." }
                     } label: {
                         Text("Satın Alımları Geri Yükle")
-                            .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                            .font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                             .frame(maxWidth: .infinity).padding(.vertical, 11)
                             .background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 10))
                     }
+                }
+                .cardStyle(14)
+
+                // Görünüm (tema)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("GÖRÜNÜM").sectionHeader()
+                    Picker("Tema", selection: $tema.mode) {
+                        ForEach(ThemeMode.allCases, id: \.self) { m in
+                            Label(m.ad, systemImage: m.ikon).tag(m)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    Text("Karanlık noir mu, açık tema mı — sen seç.")
+                        .font(.system(size: 11)).foregroundStyle(Theme.smoke)
                 }
                 .cardStyle(14)
 
@@ -88,7 +103,7 @@ struct AyarlarView: View {
                     Text("SES").sectionHeader()
                     Toggle(isOn: $sound.acik) {
                         Label("Ses efektleri", systemImage: sound.acik ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                            .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                            .font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                     }
                     .tint(Theme.blood)
                 }
@@ -129,7 +144,7 @@ struct AyarlarView: View {
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { smsAcik = false } } }
                     .background(Theme.bg)
             }
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(tema.colorScheme)
             .environmentObject(game)
             .environmentObject(online)
         }

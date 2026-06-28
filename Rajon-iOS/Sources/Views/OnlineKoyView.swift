@@ -5,6 +5,7 @@ import SwiftUI
 /// üstteki sabit kaynak barı (OnlineWorldView.kaynakBar) korunur, altta haraç + işletme.
 struct OnlineKoyView: View {
     @EnvironmentObject var online: OnlineService
+    @EnvironmentObject var tema: ThemeManager
     @State private var seciliBina: DBina?
     @State private var isletmelerAcik = false
 
@@ -48,7 +49,7 @@ struct OnlineKoyView: View {
             }
         }
         .sheet(item: $seciliBina) { b in OnlineBinaDetay(bina: b).environmentObject(online) }
-        .sheet(isPresented: $isletmelerAcik) { OnlineIsletmelerSheet().environmentObject(online) }
+        .sheet(isPresented: $isletmelerAcik) { OnlineIsletmelerSheet().environmentObject(online).environmentObject(tema) }
     }
 
     // Zemin: koyu radyal "meydan" + kenar karartma
@@ -155,7 +156,7 @@ private struct KoyBinaTile: View {
                     }
                 }
                 Text(LocalizedStringKey(OnlineKoyView.binaAd[bina.tip] ?? bina.tip))
-                    .font(.system(size: 11, weight: .heavy)).foregroundStyle(.white)
+                    .font(.system(size: 11, weight: .heavy)).foregroundStyle(Theme.ink)
                     .padding(.horizontal, 7).padding(.vertical, 2)
                     .background(Capsule().fill(Theme.coal.opacity(0.92)))
             }
@@ -185,7 +186,7 @@ private struct OnlineBinaDetay: View {
                 Image("bina_\(g.tip)").resizable().scaledToFill().frame(height: 190).clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 Text(LocalizedStringKey(OnlineKoyView.binaAd[g.tip] ?? g.tip))
-                    .font(.system(size: 24, weight: .black)).foregroundStyle(.white)
+                    .font(.system(size: 24, weight: .black)).foregroundStyle(Theme.ink)
                 Text("Seviye \(g.seviye)").font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.gold)
                 Text(LocalizedStringKey(OnlineKoyView.binaAciklama[g.tip] ?? ""))
                     .font(.system(size: 13)).foregroundStyle(Theme.smoke).multilineTextAlignment(.center)
@@ -217,6 +218,7 @@ private struct OnlineBinaDetay: View {
 /// İşletmeler (haraç kaynakları) sheet'i.
 private struct OnlineIsletmelerSheet: View {
     @EnvironmentObject var online: OnlineService
+    @EnvironmentObject var tema: ThemeManager
     var body: some View {
         let d = online.dunya
         NavigationStack {
@@ -227,7 +229,7 @@ private struct OnlineIsletmelerSheet: View {
                             Image(systemName: r.owned ? "storefront.fill" : "lock.fill").font(.system(size: 18))
                                 .foregroundStyle(r.owned ? Theme.gold : Theme.smoke).frame(width: 30)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(LocalizedStringKey(r.ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                                Text(LocalizedStringKey(r.ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                                 Text(r.owned ? "Sv.\(r.tier) · dk/₺\(fmt(r.perMin))" : "dk/₺\(fmt(r.perMin)) üretir")
                                     .font(.system(size: 12)).foregroundStyle(r.owned ? Theme.gold : Theme.smoke)
                             }
@@ -249,6 +251,6 @@ private struct OnlineIsletmelerSheet: View {
             .background(Theme.bg)
             .navigationTitle("İşletmeler").navigationBarTitleDisplayMode(.inline)
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(tema.colorScheme)
     }
 }
