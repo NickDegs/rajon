@@ -23,7 +23,7 @@ struct OnlineWorldView: View {
                 kaynakBar
                 if let d = online.dunya {
                     TabView(selection: $tab) {
-                        usSekme(d).tag(0).tabItem { Label("Üs", systemImage: "building.2.fill") }
+                        OnlineKoyView().tag(0).tabItem { Label("Üs", systemImage: "building.2.fill") }
                         OnlineHaritaView().tag(1).tabItem { Label("Harita", systemImage: "map.fill") }
                         orduSekme(d).tag(2).tabItem { Label("Ordu", systemImage: "figure.walk") }
                         dunyaSekme().tag(3).tabItem { Label("Dünya", systemImage: "trophy.fill") }
