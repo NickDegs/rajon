@@ -330,6 +330,8 @@ struct OnlinePlayer: Codable {
     let losses: Int
     let def_wins: Int
     let def_losses: Int
+    var lat: Double? = nil      // gerçek dünya şehir koordinatı (sunucudan)
+    var lon: Double? = nil
 }
 
 struct RegisterResp: Codable { let token: String; let player: OnlinePlayer }
@@ -376,6 +378,8 @@ struct LiderSatir: Codable, Identifiable {
     let respect: Int
     let wins: Int
     let def_wins: Int
+    var lat: Double? = nil      // gerçek dünya şehir koordinatı (sunucudan)
+    var lon: Double? = nil
 }
 
 struct LeaderResp: Codable { let top: [LiderSatir]; let me: String; let my_rank: Int? }

@@ -120,8 +120,19 @@ struct OnlineHaritaView: View {
                                       longitude: sehir.longitude + jLon)
     }
 
-    /// Kendi üssünün dünya merkezi (id'den türetilir; yoksa varsayılan).
+    /// Oyuncunun harita koordinatı: önce sunucudan gelen gerçek şehir, yoksa yerel hash.
+    static func koordFor(_ p: LiderSatir) -> CLLocationCoordinate2D {
+        if let la = p.lat, let lo = p.lon, !(la == 0 && lo == 0) {
+            return CLLocationCoordinate2D(latitude: la, longitude: lo)
+        }
+        return dusmanKoord(p.id)
+    }
+
+    /// Kendi üssünün dünya merkezi (sunucu koordinatı; yoksa id-hash; yoksa varsayılan).
     private var evMerkezi: CLLocationCoordinate2D {
+        if let la = online.me?.lat, let lo = online.me?.lon, !(la == 0 && lo == 0) {
+            return CLLocationCoordinate2D(latitude: la, longitude: lo)
+        }
         if let id = online.me?.id { return Self.dusmanKoord(id) }
         return Self.sehirMerkezi
     }
@@ -157,7 +168,7 @@ struct OnlineHaritaView: View {
                 }
                 // Diğer GERÇEK oyuncular — tüm dünyaya yayılı
                 ForEvery(online.dunyaOyuncular) { p in
-                    MapViewAnnotation(coordinate: Self.dusmanKoord(p.id)) {
+                    MapViewAnnotation(coordinate: Self.koordFor(p)) {
                         OnlineDusmanPin(oyuncu: p) { seciliDusman = p }
                     }
                     .allowOverlap(true)
