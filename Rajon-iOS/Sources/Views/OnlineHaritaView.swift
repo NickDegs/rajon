@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import CoreLocation
 import MapboxMaps
 
@@ -121,8 +122,10 @@ struct OnlineHaritaView: View {
     }
 
     /// Oyuncunun harita koordinatı: önce sunucudan gelen gerçek şehir, yoksa yerel hash.
+    /// Geçersiz değerleri (0,0 / NaN / aralık dışı) ELE — Mapbox aksi halde çökebilir.
     static func koordFor(_ p: LiderSatir) -> CLLocationCoordinate2D {
-        if let la = p.lat, let lo = p.lon, !(la == 0 && lo == 0) {
+        if let la = p.lat, let lo = p.lon, la.isFinite, lo.isFinite,
+           !(la == 0 && lo == 0), la >= -85, la <= 85, lo >= -180, lo <= 180 {
             return CLLocationCoordinate2D(latitude: la, longitude: lo)
         }
         return dusmanKoord(p.id)
@@ -166,12 +169,16 @@ struct OnlineHaritaView: View {
                         .allowOverlap(true)
                     }
                 }
-                // Diğer GERÇEK oyuncular — tüm dünyaya yayılı
-                ForEvery(online.dunyaOyuncular) { p in
-                    MapViewAnnotation(coordinate: Self.koordFor(p)) {
-                        OnlineDusmanPin(oyuncu: p) { seciliDusman = p }
-                    }
-                    .allowOverlap(true)
+                // Diğer GERÇEK oyuncular + NPC rakipler — TEK circle layer (yüzlerce üs için performanslı).
+                // View-tabanlı MapViewAnnotation yüzlercesinde ana thread'i kilitler → çökme; circle layer GPU'da çizer.
+                CircleAnnotationGroup(online.dunyaOyuncular, id: \.id) { p in
+                    CircleAnnotation(id: p.id, centerCoordinate: Self.koordFor(p))
+                        .circleRadius(p.respect >= 500 ? 7.0 : 5.5)
+                        .circleColor(StyleColor(p.respect >= 1500 ? UIColor.systemRed
+                            : (p.respect >= 300 ? UIColor.systemOrange : UIColor(white: 0.75, alpha: 1))))
+                        .circleStrokeWidth(1.4)
+                        .circleStrokeColor(StyleColor(UIColor.black))
+                        .onTapGesture { seciliDusman = p }
                 }
             }
             .mapStyle(.dark)
@@ -297,31 +304,6 @@ private struct OnlineVahaPin: View {
                 Text(LocalizedStringKey(vaha.ad)).font(.system(size: 9, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
                     .padding(.horizontal, 5).padding(.vertical, 1)
                     .background(Capsule().fill(Theme.coal.opacity(0.9)))
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// Diğer gerçek oyuncunun üssü — güce göre renk, basınca baskın detayı.
-private struct OnlineDusmanPin: View {
-    let oyuncu: LiderSatir
-    let tap: () -> Void
-    private var renk: Color { oyuncu.respect >= 500 ? Theme.blood : Theme.smoke }
-
-    var body: some View {
-        Button(action: tap) {
-            VStack(spacing: 2) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8).fill(Theme.coal.opacity(0.95))
-                        .frame(width: 34, height: 34)
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(renk.opacity(0.8), lineWidth: 1.5))
-                        .shadow(color: .black.opacity(0.6), radius: 3, y: 2)
-                    Image(systemName: "building.2.fill").font(.system(size: 15, weight: .bold)).foregroundStyle(renk)
-                }
-                Text(oyuncu.ad).font(.system(size: 9, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
-                    .padding(.horizontal, 5).padding(.vertical, 1)
-                    .background(Capsule().fill(Theme.coal.opacity(0.85)))
             }
         }
         .buttonStyle(.plain)
