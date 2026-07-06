@@ -9,6 +9,7 @@ struct OnlineWorldView: View {
     @State private var magazaAcik = false
     @State private var ayarAcik = false
     @State private var rumuzGirildi = false
+    @State private var denemeler = 0
 
     private static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
@@ -42,31 +43,15 @@ struct OnlineWorldView: View {
                 RumuzGirisView { ad in
                     online.ad = ad
                     rumuzGirildi = true
-                    Task {
-                        while online.dunya == nil {
-                            await online.dunyayaGir()
-                            if online.dunya == nil { try? await Task.sleep(nanoseconds: 2_000_000_000) }
-                        }
-                    }
+                    Task { await girisDongu() }
                 }
             } else {
-                ZStack {
-                    Theme.bg.ignoresSafeArea()
-                    VStack {
-                        ProgressView().tint(Theme.gold)
-                        Text("Canlı dünya yükleniyor…").font(.system(size: 13)).foregroundStyle(Theme.smoke).padding(.top, 8)
-                    }
-                }
+                yuklemeEkrani
             }
         }
         .task {
             // Dönen kullanıcı (anonim/SMS hesabı var): otomatik giriş.
-            if online.hesapVar {
-                while online.dunya == nil {
-                    await online.dunyayaGir()
-                    if online.dunya == nil { try? await Task.sleep(nanoseconds: 2_000_000_000) }
-                }
-            }
+            if online.hesapVar { await girisDongu() }
             // Canlı poll: dünya yüklendiğinde her 3 sn tazele.
             while true {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
@@ -90,6 +75,57 @@ struct OnlineWorldView: View {
                     .background(Theme.coal)
             }
             .preferredColorScheme(tema.colorScheme)
+        }
+    }
+
+    // MARK: Giriş döngüsü + yükleme ekranı (kilitlenmeden kurtulur)
+    /// Dünya gelene kadar dene; her başarısızlıkta sayaç artar (kurtarma UI'ı için).
+    private func girisDongu() async {
+        while online.dunya == nil {
+            await online.dunyayaGir()
+            if online.dunya == nil {
+                denemeler += 1
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+            }
+        }
+        denemeler = 0
+    }
+
+    private var yuklemeEkrani: some View {
+        ZStack {
+            Theme.bg.ignoresSafeArea()
+            VStack(spacing: 16) {
+                ProgressView().tint(Theme.gold)
+                Text("Canlı dünya yükleniyor…")
+                    .font(.system(size: 13)).foregroundStyle(Theme.smoke)
+                // Birkaç denemede yüklenmediyse hatayı göster + kurtarma seçenekleri.
+                if denemeler >= 2 {
+                    VStack(spacing: 12) {
+                        Text(online.hata ?? "Sunucuya bağlanılamıyor. İnternet bağlantını kontrol et.")
+                            .font(.system(size: 12)).foregroundStyle(Theme.blood)
+                            .multilineTextAlignment(.center).padding(.horizontal, 28)
+                        Button {
+                            denemeler = 0
+                            Task { await girisDongu() }
+                        } label: {
+                            Text("Tekrar Dene").font(.system(size: 15, weight: .black))
+                                .frame(maxWidth: .infinity).padding(.vertical, 12)
+                                .background(Theme.blood).foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.horizontal, 44)
+                        Button {
+                            online.tamSifirla()
+                            rumuzGirildi = false
+                            denemeler = 0
+                        } label: {
+                            Text("Sıfırdan başla (yeni hesap)")
+                                .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.smoke)
+                        }
+                    }
+                    .padding(.top, 12)
+                }
+            }
         }
     }
 

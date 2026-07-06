@@ -250,7 +250,20 @@ final class OnlineService: ObservableObject {
     func dunyadanCik() { dunyaAktif = false }
 
     func dunyaCek() async {
-        if let v: DunyaView = try? await get("/rajon/world/state") { dunya = v }
+        do {
+            let v: DunyaView = try await get("/rajon/world/state")
+            dunya = v; hata = nil
+        } catch {
+            hata = "Dünya yüklenemedi: \(error.localizedDescription)"
+        }
+    }
+
+    /// Yükleme kilitlenirse: kimlik/token'ı temizle, sıfırdan (yeni anonim hesap) başla.
+    func tamSifirla() {
+        UserDefaults.standard.removeObject(forKey: "rajon_online_token")
+        UserDefaults.standard.removeObject(forKey: "rajon_device_id")
+        AuthService.sil()
+        girisli = false; me = nil; dunya = nil; dunyaAktif = false; hata = nil
     }
 
     /// Mutasyon aksiyonu: başarılıysa yeni dünya, hatadaysa mesaj.
