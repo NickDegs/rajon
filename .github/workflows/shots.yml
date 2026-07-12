@@ -1,0 +1,78 @@
+name: Rajon Shots
+
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  shots:
+    runs-on: macos-26
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: Rajon-iOS
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode seç
+        run: |
+          SEL=$(ls /Applications/ | grep -E "^Xcode_(2[6-9]|[3-9][0-9])(\.|_)" | sort -V | tail -1)
+          [ -z "$SEL" ] && SEL=$(ls /Applications/ | grep -E "^Xcode_[0-9]" | sort -V | tail -1)
+          sudo xcode-select -s "/Applications/$SEL/Contents/Developer"
+          xcodebuild -version
+
+      - name: XcodeGen kur
+        run: brew install xcodegen
+
+      - name: Mapbox SDK indirme + token
+        env:
+          MAPBOX_DOWNLOAD_TOKEN: ${{ secrets.MAPBOX_DOWNLOAD_TOKEN }}
+          MAPBOX_PUBLIC_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
+        run: |
+          printf 'machine api.mapbox.com\nlogin mapbox\npassword %s\n' "$MAPBOX_DOWNLOAD_TOKEN" > "$HOME/.netrc"
+          chmod 600 "$HOME/.netrc"
+          PL="Sources/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :MBXAccessToken" "$PL" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :MBXAccessToken string $MAPBOX_PUBLIC_TOKEN" "$PL"
+
+      - name: Xcodeproj üret
+        run: BUILD_NUMBER=1 xcodegen generate
+
+      - name: Simülatör için derle
+        run: |
+          DEV=$(xcrun simctl list devices available | grep -oE "iPhone 1[6-9] Pro Max" | head -1)
+          [ -z "$DEV" ] && DEV="iPhone 16 Pro Max"
+          echo "DEV=$DEV" >> "$GITHUB_ENV"
+          echo "Simülatör: $DEV"
+          xcodebuild -project Rajon.xcodeproj -scheme Rajon -configuration Debug \
+            -destination "platform=iOS Simulator,name=$DEV" \
+            -derivedDataPath dd -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build 2>&1 | tail -40
+
+      - name: Ekran görüntülerini yakala
+        run: |
+          set -x
+          APP=$(find dd/Build/Products -name "Rajon.app" -type d | head -1)
+          echo "APP=$APP"
+          BID=app.realvirtuality.blockings
+          xcrun simctl boot "$DEV" || true
+          xcrun simctl bootstatus "$DEV" || true
+          sleep 8
+          xcrun simctl install "$DEV" "$APP"
+          mkdir -p shots
+          for S in oyun usler koy kahraman natar rehber akademi; do
+            xcrun simctl terminate "$DEV" $BID 2>/dev/null || true
+            sleep 1
+            xcrun simctl launch "$DEV" $BID -shot $S
+            sleep 15
+            xcrun simctl io "$DEV" screenshot "shots/$S.png" || echo "shot $S başarısız"
+          done
+          ls -la shots/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rajon-shots
+          path: Rajon-iOS/shots/*.png
+          if-no-files-found: warn
