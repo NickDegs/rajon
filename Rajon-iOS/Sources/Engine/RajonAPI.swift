@@ -208,26 +208,32 @@ final class OnlineService: ObservableObject {
         r.httpMethod = method
         r.setValue("application/json", forHTTPHeaderField: "Content-Type")
         r.setValue("application/json", forHTTPHeaderField: "Accept")
-        // gzip'i kapat: sıkıştırılmış JSON bazı ağ/istemci koşullarında decode hatası veriyordu.
-        r.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        // ÖNEMLİ: Accept-Encoding'i ELLE AYARLAMA. Elle ayarlanırsa URLSession otomatik
+        // gzip açmayı bırakır; yolda gzip varsa açılmamış bayt gelir ve HER yanıt decode
+        // hatası verir. Boş bırakınca URLSession gzip'i şeffaf ve güvenilir yönetir.
         r.cachePolicy = .reloadIgnoringLocalCacheData      // bayat/kısmi önbellek yanıtı gelmesin
         if auth, let t = token { r.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization") }
         r.httpBody = body
         return r
     }
 
-    /// Ortak: durum kodunu kontrol et, hatalıysa/çözülemezse ham gövdeyi mesaja koy (teşhis için).
+    /// Ortak: durum kodunu kontrol et, gövdeyi temizleyip çöz; olmazsa ham gövdeyi mesaja koy (teşhis).
     private func cozumle<T: Decodable>(_ d: Data, _ resp: URLResponse) throws -> T {
         let kod = (resp as? HTTPURLResponse)?.statusCode ?? 0
         if !(200..<300).contains(kod) {
             let g = String(data: d.prefix(140), encoding: .utf8) ?? "?"
             throw APIError("HTTP \(kod): \(g)")
         }
-        do { return try JSONDecoder().decode(T.self, from: d) }
-        catch {
-            let g = String(data: d.prefix(140), encoding: .utf8) ?? "boş/ikili yanıt"
-            throw APIError("Cevap çözülemedi [\(kod), \(d.count)B]: \(g)")
+        // 1) doğrudan dene
+        if let v = try? JSONDecoder().decode(T.self, from: d) { return v }
+        // 2) baştaki BOM / boşluk / çöp baytları temizleyip JSON'un başından dene
+        //    (bazı ağ proxy'leri yanıta BOM veya önek ekliyor → decode patlıyor)
+        if let acilis = d.firstIndex(where: { $0 == 0x7B || $0 == 0x5B }) {   // '{' veya '['
+            let kirp = d.suffix(from: acilis)
+            if let v = try? JSONDecoder().decode(T.self, from: kirp) { return v }
         }
+        let g = String(data: d.prefix(140), encoding: .utf8) ?? "ikili/sıkıştırılmış yanıt (\(d.count)B)"
+        throw APIError("Cevap çözülemedi [\(kod), \(d.count)B]: \(g)")
     }
 
     private func get<T: Decodable>(_ path: String) async throws -> T {
