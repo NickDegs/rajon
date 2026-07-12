@@ -100,7 +100,9 @@ struct PazarView: View {
         }.cardStyle(12)
     }
 
-    private func ad(_ t: String) -> String { t == "cash" ? "₺" : "cephane" }
+    private func ad(_ t: String) -> String {
+        ["cash": "₺", "cephane": "cephane", "icki": "içki", "mal": "mal"][t] ?? t
+    }
     private func durumIkon(_ d: String) -> String {
         switch d { case "ittifak": return "hands.clap.fill"; case "nap": return "hand.raised.fill"; default: return "flame.fill" }
     }
@@ -114,29 +116,33 @@ struct PazarView: View {
     }
 }
 
-/// Yeni takas ilanı formu.
+/// Yeni takas ilanı formu (4 kaynak: kuruş/cephane/içki/mal).
 private struct IlanEkleView: View {
     @EnvironmentObject var online: OnlineService
     @Environment(\.dismiss) var dismiss
-    @State private var verNakit = true
+    @State private var ver = "cash"
+    @State private var iste = "cephane"
     @State private var verMik = 1000
     @State private var isteMik = 100
+
+    private static let tipler = ["cash", "cephane", "icki", "mal"]
+    private static let ad: [String: String] = ["cash": "Kuruş ₺", "cephane": "Cephane", "icki": "İçki", "mal": "Mal"]
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Veriyorum") {
-                    Picker("Kaynak", selection: $verNakit) { Text("Kuruş ₺").tag(true); Text("Cephane").tag(false) }
+                    Picker("Kaynak", selection: $ver) { ForEach(Self.tipler, id: \.self) { Text(Self.ad[$0] ?? $0).tag($0) } }
                     Stepper("Miktar: \(verMik)", value: $verMik, in: 100...1_000_000, step: 100)
                 }
-                Section("İstiyorum (\(verNakit ? "Cephane" : "Kuruş ₺"))") {
+                Section("İstiyorum") {
+                    Picker("Kaynak", selection: $iste) { ForEach(Self.tipler.filter { $0 != ver }, id: \.self) { Text(Self.ad[$0] ?? $0).tag($0) } }
                     Stepper("Miktar: \(isteMik)", value: $isteMik, in: 10...1_000_000, step: 50)
                 }
                 Section {
                     Button {
-                        let ver = verNakit ? "cash" : "cephane"
-                        let iste = verNakit ? "cephane" : "cash"
-                        Task { await online.pazarEkle(ver: ver, verMik: verMik, iste: iste, isteMik: isteMik); dismiss() }
+                        let i = iste == ver ? (Self.tipler.first { $0 != ver } ?? "cephane") : iste
+                        Task { await online.pazarEkle(ver: ver, verMik: verMik, iste: i, isteMik: isteMik); dismiss() }
                     } label: { Text("İlanı Yayınla").frame(maxWidth: .infinity).font(.system(size: 15, weight: .black)) }
                 }
             }

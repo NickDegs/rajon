@@ -9,6 +9,14 @@ struct KahramanView: View {
             if let h = online.hero {
                 VStack(spacing: 14) {
                     baslik(h)
+                    NavigationLink {
+                        MuzayedeView().environmentObject(online)
+                            .navigationTitle("Eşya Müzayedesi").navigationBarTitleDisplayMode(.inline)
+                    } label: {
+                        Label("Eşya Müzayedesi — al/sat", systemImage: "bag.fill")
+                            .font(.system(size: 14, weight: .black)).foregroundStyle(.white)
+                            .frame(maxWidth: .infinity).padding(.vertical, 10).background(Theme.blood).clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
                     yetenekler(h)
                     maceraBolum(h)
                     esyaBolum(h)

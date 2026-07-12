@@ -13,6 +13,7 @@ struct OnlineKoyView: View {
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
         "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
         "belediye": "Belediye", "akademi": "Akademi", "hastane": "Hastane",
+        "meyhane": "Meyhane", "imalathane": "İmalathane",
     ]
     static let binaAciklama: [String: String] = [
         "karargah": "İnşaatları hızlandırır", "kasa": "Dakikalık nakit üretir",
@@ -21,6 +22,7 @@ struct OnlineKoyView: View {
         "zula": "Baskında kaynağının bir kısmını yağmadan gizler",
         "belediye": "Kutlama düzenler → kültür puanı (yeni köy)", "akademi": "İleri birlikleri araştırır",
         "hastane": "Baskınlarda ordunun kayıplarını azaltır",
+        "meyhane": "İçki üretir (bina inşası için gerekir)", "imalathane": "Mal üretir (asker eğitimi için gerekir)",
     ]
     // tip -> (x oranı, y oranı, parsel boyutu)
     private static let yerlesim: [String: (CGFloat, CGFloat, CGFloat)] = [
@@ -34,6 +36,8 @@ struct OnlineKoyView: View {
         "belediye":   (0.15, 0.50, 72),
         "akademi":    (0.85, 0.50, 72),
         "hastane":    (0.30, 0.72, 68),
+        "meyhane":    (0.70, 0.72, 68),
+        "imalathane": (0.15, 0.83, 68),
     ]
 
     var body: some View {
@@ -207,7 +211,7 @@ private struct OnlineBinaDetay: View {
                         VStack(spacing: 2) {
                             Text(g.seviye == 0 ? "İNŞA ET · ₺\(fmt(g.fiyat))" : "YÜKSELT · ₺\(fmt(g.fiyat))")
                                 .font(.system(size: 16, weight: .black))
-                            Text(mesgul ? "Başka inşaat sürüyor" : "Süre \(sureMetni(g.sure))")
+                            Text(g.icki > 0 ? "🍷 \(fmt(g.icki)) içki · Süre \(sureMetni(g.sure))" : (mesgul ? "Başka inşaat sürüyor" : "Süre \(sureMetni(g.sure))"))
                                 .font(.system(size: 11, weight: .semibold)).opacity(0.85)
                         }
                         .frame(maxWidth: .infinity).padding(.vertical, 13)

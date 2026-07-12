@@ -9,6 +9,7 @@ struct KoyYonetimView: View {
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
         "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
         "belediye": "Belediye", "akademi": "Akademi", "hastane": "Hastane",
+        "meyhane": "Meyhane", "imalathane": "İmalathane",
     ]
     static let askerAd: [String: String] = [
         "tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı",
@@ -33,10 +34,12 @@ struct KoyYonetimView: View {
     private func ustBar(_ k: KoyView) -> some View {
         VStack(spacing: 8) {
             Text(k.ad).font(.system(size: 18, weight: .black)).foregroundStyle(Theme.ink)
-            HStack(spacing: 14) {
+            HStack(spacing: 12) {
                 deger("Nakit", "₺\(k.cash)", Theme.gold)
                 deger("Kasa", "₺\(k.idle)", Theme.gold)
                 deger("Cephane", "\(k.cephane)", Theme.smoke)
+                deger("İçki", "\(k.icki)", Theme.blood)
+                deger("Mal", "\(k.mal)", Theme.gold)
             }
             Text("Gelir: ₺\(k.incomePerMin)/dk · Savunma: \(k.savunma)").font(.system(size: 12)).foregroundStyle(Theme.smoke)
             Button { Task { await online.koyTopla(bid) } } label: {
@@ -53,7 +56,7 @@ struct KoyYonetimView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(Self.binaAd[b.tip] ?? b.tip) · Sv.\(b.seviye)").font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                         if b.insaatta { Text("İnşaatta · \(sure(b.kalan))").font(.system(size: 11)).foregroundStyle(Theme.gold) }
-                        else { Text("₺\(b.fiyat) · \(sure(b.sure))").font(.system(size: 11)).foregroundStyle(Theme.smoke) }
+                        else { Text(b.icki > 0 ? "₺\(b.fiyat) · 🍷\(b.icki) · \(sure(b.sure))" : "₺\(b.fiyat) · \(sure(b.sure))").font(.system(size: 11)).foregroundStyle(Theme.smoke) }
                     }
                     Spacer()
                     Button { Task { await online.koyBina(bid, b.tip) } } label: {

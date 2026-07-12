@@ -26,12 +26,13 @@ struct OnlineWorldView: View {
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
         "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
         "belediye": "Belediye", "akademi": "Akademi", "hastane": "Hastane",
+        "meyhane": "Meyhane", "imalathane": "İmalathane",
     ]
     private static let binaIkon: [String: String] = [
         "karargah": "flag.2.crossed.fill", "kasa": "banknote.fill", "depo": "shippingbox.fill",
         "cephanelik": "shield.lefthalf.filled", "kisla": "person.3.sequence.fill", "korunak": "lock.shield.fill",
         "zula": "archivebox.fill", "belediye": "building.columns.fill", "akademi": "graduationcap.fill",
-        "hastane": "cross.case.fill",
+        "hastane": "cross.case.fill", "meyhane": "wineglass.fill", "imalathane": "shippingbox.circle.fill",
     ]
     private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı", "sef": "Şef", "suvari": "Süvari", "muhafiz": "Muhafız", "izci": "İzci"]
     private static let askerNot: [String: String] = ["yikici": "bina yıkar", "sef": "üs+başkent fetheder", "suvari": "hızlı saldırı", "muhafiz": "ağır savunma", "izci": "keşif"]
@@ -273,10 +274,11 @@ struct OnlineWorldView: View {
     // MARK: Üst kaynak barı
     private var kaynakBar: some View {
         let d = online.dunya
-        return HStack(spacing: 10) {
+        return HStack(spacing: 8) {
             kaynak("dollarsign.circle.fill", fmt(d?.cash ?? 0), Theme.gold)
             kaynak("circle.hexagongrid.fill", fmt(d?.cephane ?? 0), Theme.smoke)
-            kaynak("flame.fill", fmt(d?.respect ?? 0), Theme.blood)
+            kaynak("wineglass.fill", fmt(d?.icki ?? 0), Theme.blood)
+            kaynak("shippingbox.circle.fill", fmt(d?.mal ?? 0), Theme.gold)
             Spacer()
             Button { gorevAcik = true } label: {
                 ZStack(alignment: .topTrailing) {
@@ -556,6 +558,17 @@ struct OnlineWorldView: View {
                             Text("SALDIR").font(.system(size: 11, weight: .black))
                                 .padding(.horizontal, 10).padding(.vertical, 7)
                                 .background(Theme.blood).foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        if (d.army["yikici"] ?? 0) > 0 {
+                            Menu {
+                                Text("Yıkıcı hangi binayı vursun?")
+                                ForEach(["kasa", "cephanelik", "kisla", "korunak", "depo", "akademi", "meyhane", "imalathane", "belediye", "hastane", "zula"], id: \.self) { bina in
+                                    Button(Self.binaAd[bina] ?? bina) { Task { await online.dunyaSaldir(p.id, hedefBina: bina) } }
+                                }
+                            } label: {
+                                Image(systemName: "scope").font(.system(size: 13)).foregroundStyle(Theme.blood)
+                                    .padding(6).background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 7))
+                            }
                         }
                     }.cardStyle(10)
                 }

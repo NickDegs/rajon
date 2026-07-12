@@ -344,12 +344,12 @@ final class OnlineService: ObservableObject {
     func dunyaFethet(_ kind: String, _ idx: Int) async { await dunyaAksiyon("/rajon/world/conquer", ["kind": kind, "idx": idx]) }
     func dunyaAsker(_ tip: String, _ count: Int) async { await dunyaAksiyon("/rajon/world/train", ["tip": tip, "count": count]) }
 
-    func dunyaSaldir(_ targetId: String) async {
+    func dunyaSaldir(_ targetId: String, hedefBina: String = "") async {
         await attestGerekli()
         for deneme in 0..<2 {
             do {
                 let r = try req("/rajon/world/attack", method: "POST",
-                                body: try JSONSerialization.data(withJSONObject: ["target_id": targetId]), auth: true)
+                                body: try JSONSerialization.data(withJSONObject: ["target_id": targetId, "hedef_bina": hedefBina]), auth: true)
                 let (data, resp) = try await URLSession.shared.data(for: r)
                 if (resp as? HTTPURLResponse)?.statusCode == 403 && deneme == 0 {
                     await attestSaglat(); continue
@@ -558,6 +558,19 @@ final class OnlineService: ObservableObject {
     func koyBina(_ bid: Int, _ tip: String) async { if let v: KoyView = try? await post("/rajon/world/village/building", body: ["us_id": bid, "tip": tip]) { aktifKoy = v } }
     func koyAsker(_ bid: Int, _ tip: String, _ count: Int) async { if let v: KoyView = try? await post("/rajon/world/village/train", body: ["us_id": bid, "tip": tip, "count": count]) { aktifKoy = v } }
 
+    // MARK: - Kahraman eşya müzayedesi
+    @Published var muzayede: MuzayedeDurum?
+    func muzayedeCek() async { if let m: MuzayedeDurum = try? await get("/rajon/world/auction") { muzayede = m } }
+    func muzayedeKoy(_ itemId: Int, _ fiyat: Int) async {
+        if let r: MuzayedeResp = try? await post("/rajon/world/auction/sell", body: ["item_id": itemId, "fiyat": fiyat]) { muzayede = r.muzayede; hero = r.hero }
+    }
+    func muzayedeAl(_ id: Int) async {
+        if let r: MuzayedeResp = try? await post("/rajon/world/auction/buy", body: ["id": id]) { muzayede = r.muzayede; hero = r.hero; if let w = r.world { dunya = w } }
+    }
+    func muzayedeIptal(_ id: Int) async {
+        if let r: MuzayedeResp = try? await post("/rajon/world/auction/cancel", body: ["id": id]) { muzayede = r.muzayede; hero = r.hero }
+    }
+
     // MARK: - Birlik kataloğu (savaş derinliği)
     func birimKatalogCek() async {
         if birimKatalog.isEmpty, let r: BirimKatalogResp = try? await get("/rajon/world/units") { birimKatalog = r.birimler }
@@ -630,6 +643,12 @@ struct APIError: LocalizedError {
 struct DetailErr: Codable { let detail: String }
 
 struct DunyaView: Codable {
+    var icki: Int? = nil
+    var mal: Int? = nil
+    var ickiMax: Int? = nil
+    var malMax: Int? = nil
+    var ickiUretimDk: Int? = nil
+    var malUretimDk: Int? = nil
     let cash, idle, cephane, respect, bossLevel, incomePerMin: Int
     let depoKapasite, cephaneMax, cephaneUretimDk, maxKadro, nufuzKapasite, nufuzKullanim: Int
     let rackets: [DRacket]
@@ -663,6 +682,7 @@ struct DusmanUs: Codable, Identifiable {
 struct UslerimResp: Codable { let usler: [Us]; let limit: Int; let kurulu: Int }
 struct KoyView: Codable {
     let id: Int; let ad: String; let cash: Int; let idle: Int; let cephane: Int
+    var icki: Int = 0; var mal: Int = 0
     let incomePerMin: Int; let depoKapasite: Int; let cephaneMax: Int; let maxKadro: Int
     let buildings: [DBina]; let insaatMesgul: Bool
     let army: [String: Int]; var train: DTrain? = nil; let savunma: Int
@@ -681,6 +701,13 @@ struct HeroMacera: Codable { let tip: String; let zorluk: String; let kalan: Int
 struct HeroZorluk: Codable, Identifiable { let kod: String; let sure: Int; let cash: Int; let xp: Int; let itemSans: Int; var id: String { kod } }
 struct HeroEsya: Codable, Identifiable { let id: Int; let slot: String; let ad: String; let bonusTip: String; let bonus: Int; let nadir: String; let takili: Bool }
 struct HeroResp: Codable { var hero: HeroBilgi? = nil; var world: DunyaView? = nil; var esya: HeroEsya? = nil }
+
+struct MuzayedeIlan: Codable, Identifiable {
+    let id: Int; let satici: String; let ad: String; let slot: String
+    let bonusTip: String; let bonus: Int; let nadir: String; let fiyat: Int
+}
+struct MuzayedeDurum: Codable { let ilanlar: [MuzayedeIlan]; let benim: [MuzayedeIlan] }
+struct MuzayedeResp: Codable { var muzayede: MuzayedeDurum? = nil; var hero: HeroBilgi? = nil; var world: DunyaView? = nil }
 
 struct PazarIlan: Codable, Identifiable {
     let id: Int; let satici: String; let verTip: String; let verMiktar: Int; let isteTip: String; let isteMiktar: Int
@@ -715,6 +742,7 @@ struct HarikaResp: Codable {
 struct BirimBilgi: Codable, Identifiable {
     let tip: String; let ad: String; let saldiri: Int; let tur: String
     let defPiyade: Int; let defSuvari: Int; let yagma: Int; let rol: String
+    var cash: Int = 0; var cephane: Int = 0; var mal: Int = 0
     var id: String { tip }
 }
 struct BirimKatalogResp: Codable { let birimler: [BirimBilgi] }
@@ -746,7 +774,7 @@ struct IttifakBonus: Codable, Identifiable {
 struct IttifakDurum: Codable { let clan: String; let bonuslar: [IttifakBonus] }
 struct IttifakResp: Codable { var clanBonus: IttifakDurum? = nil; var world: DunyaView? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
-struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
+struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; var icki: Int = 0; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
 struct DVaha: Codable, Identifiable { let idx: Int; let ad: String; let tip: String; let bonusDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
 struct DTrain: Codable { let tip: String; let count: Int; let kalan: Int }
