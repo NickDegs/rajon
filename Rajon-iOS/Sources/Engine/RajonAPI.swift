@@ -352,28 +352,32 @@ final class OnlineService: ObservableObject {
         set { UserDefaults.standard.setValue(newValue, forKey: "rajon_attest_token") }
     }
 
-    /// Cihaz gerçekliğini App Attest ile kanıtla ve attest token'ı tazele.
-    /// Hata olsa da akışı BLOKLAMAZ (sunucu şimdilik log-only). Uygulama açılışında bir kez çağır.
+    /// Cihaz gerçekliğini App Attest ile kanıtla ve GEÇERLİ attest token'ı al.
+    /// Tek çağrıda garanti eder: assert başarısızsa aynı turda verify'a düşer (bayat token bırakmaz).
+    /// Okuma uçları açık olduğu için akışı bloklamaz; token yazma-aksiyonlarına yetişir.
     func attestSaglat() async {
         guard AppAttest.destekli else { return }
-        do {
-            let ch: AttestChallengeResp = try await post("/rajon/attest/challenge", body: [:], auth: false)
-            guard let chData = Data(base64Encoded: ch.challenge) else { return }
-            if AppAttest.attestEdildi {
-                let (kid, assertion) = try await AppAttest.assert(challenge: chData)
-                let r: AttestTokenResp = try await post("/rajon/attest/assert",
-                    body: ["key_id": kid, "assertion": assertion.base64EncodedString(), "challenge": ch.challenge], auth: false)
-                attestToken = r.attest_token
-            } else {
-                let (kid, att) = try await AppAttest.attest(challenge: chData)
-                let r: AttestTokenResp = try await post("/rajon/attest/verify",
-                    body: ["key_id": kid, "attestation": att.base64EncodedString(), "challenge": ch.challenge], auth: false)
-                attestToken = r.attest_token
-                AppAttest.attestEdildi = true
+        for _ in 0..<3 {
+            do {
+                let ch: AttestChallengeResp = try await post("/rajon/attest/challenge", body: [:], auth: false)
+                guard let chData = Data(base64Encoded: ch.challenge) else { return }
+                if AppAttest.attestEdildi {
+                    let (kid, assertion) = try await AppAttest.assert(challenge: chData)
+                    let r: AttestTokenResp = try await post("/rajon/attest/assert",
+                        body: ["key_id": kid, "assertion": assertion.base64EncodedString(), "challenge": ch.challenge], auth: false)
+                    attestToken = r.attest_token
+                } else {
+                    let (kid, att) = try await AppAttest.attest(challenge: chData)
+                    let r: AttestTokenResp = try await post("/rajon/attest/verify",
+                        body: ["key_id": kid, "attestation": att.base64EncodedString(), "challenge": ch.challenge], auth: false)
+                    attestToken = r.attest_token
+                    AppAttest.attestEdildi = true
+                }
+                return   // geçerli token alındı
+            } catch {
+                // assert başarısız / anahtar geçersiz (reinstall) → sıfırla, sonraki tur verify (taze anahtar)
+                AppAttest.sifirla()
             }
-        } catch {
-            // Uygulama silinip yüklenince eski anahtar geçersiz olabilir → sıfırla, sonraki açılışta yeniden attest.
-            AppAttest.sifirla()
         }
     }
 
