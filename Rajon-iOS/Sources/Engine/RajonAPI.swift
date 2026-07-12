@@ -3,7 +3,9 @@ import SwiftUI
 /// Online mod istemcisi — anonim hesap, ekip sync, PvP, lider tablosu.
 @MainActor
 final class OnlineService: ObservableObject {
-    static let base = URL(string: "https://nickdegs.duckdns.org/rajon-api")!
+    // NOT: duckdns.org bazı güvenlik/DNS filtreleri tarafından engellenip boş 200 döndürülüyordu
+    // (isteğe hiç ulaşmıyor). Ana alan adına taşındı — Safari'de çalışan, engellenmeyen domain.
+    static let base = URL(string: "https://rajon.nickdegs.com")!
 
     @Published var girisli = false
     @Published var ad = ""
