@@ -274,12 +274,12 @@ struct OnlineWorldView: View {
     // MARK: Üst kaynak barı
     private var kaynakBar: some View {
         let d = online.dunya
-        return HStack(spacing: 8) {
+        return HStack(spacing: 7) {
             kaynak("dollarsign.circle.fill", fmt(d?.cash ?? 0), Theme.gold)
             kaynak("circle.hexagongrid.fill", fmt(d?.cephane ?? 0), Theme.smoke)
             kaynak("wineglass.fill", fmt(d?.icki ?? 0), Theme.blood)
             kaynak("shippingbox.circle.fill", fmt(d?.mal ?? 0), Theme.gold)
-            Spacer()
+            Spacer(minLength: 4)
             Button { gorevAcik = true } label: {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: "checklist").font(.system(size: 16)).foregroundStyle(Theme.gold)
@@ -325,9 +325,10 @@ struct OnlineWorldView: View {
     }
 
     private func kaynak(_ icon: String, _ v: String, _ c: Color) -> some View {
-        HStack(spacing: 5) {
-            Image(systemName: icon).foregroundStyle(c)
-            Text(v).font(.system(size: 15, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
+        HStack(spacing: 3) {
+            Image(systemName: icon).font(.system(size: 13)).foregroundStyle(c)
+            Text(v).font(.system(size: 13, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
+                .lineLimit(1).fixedSize(horizontal: true, vertical: false)
         }
     }
 
