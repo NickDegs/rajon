@@ -13,6 +13,7 @@ struct OnlineWorldView: View {
     @State private var uslerAcik = false
     @State private var heroAcik = false
     @State private var pazarAcik = false
+    @State private var demirciAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -142,6 +143,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Pazar & Diplomasi").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { pazarAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $demirciAcik) {
+            NavigationStack {
+                DemirciView()
+                    .navigationTitle("Demirci").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { demirciAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -431,11 +441,21 @@ struct OnlineWorldView: View {
                         orduKutu(tip, d.army[tip] ?? 0)
                     }
                 }
+                if let idame = d.idameDk, idame > 0 {
+                    Text("Besleme gideri: −₺\(idame)/dk (ordu büyüdükçe gelir azalır)")
+                        .font(.system(size: 11)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
+                }
                 if let t = d.train {
                     Text("Eğitimde: \(Self.askerAd[t.tip] ?? t.tip) ×\(t.count) · \(sureMetni(t.kalan))")
                         .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 }
-                Text("ASKER EĞİT").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Text("ASKER EĞİT").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                    Spacer()
+                    Button { demirciAcik = true } label: {
+                        Label("Demirci", systemImage: "hammer.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
+                    }
+                }.frame(maxWidth: .infinity)
                 ForEach(["tetikci", "kabadayi", "sofor", "suvari", "muhafiz", "yikici", "sef", "izci"], id: \.self) { tip in
                     let adet = (tip == "yikici" || tip == "sef") ? 1 : 5
                     Button { Task { await online.dunyaAsker(tip, adet) } } label: {

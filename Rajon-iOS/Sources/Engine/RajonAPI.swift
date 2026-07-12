@@ -412,6 +412,7 @@ final class OnlineService: ObservableObject {
     @Published var pazarIlanlar: [PazarIlan] = []
     @Published var pazarBenim: [PazarIlan] = []
     @Published var diplomasi: DiplomasiDurum?
+    @Published var demirci: Demirci?
 
     func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
         await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
@@ -501,6 +502,14 @@ final class OnlineService: ObservableObject {
         if let r: DiplomasiResp = try? await post("/rajon/world/diplomacy/break", body: ["hedef_clan": hedef]) { diplomasi = r.diplomasi }
     }
 
+    // MARK: - Demirci (birlik yükseltme)
+    func demirciCek() async { if let d: Demirci = try? await get("/rajon/world/smithy") { demirci = d } }
+    func demirciYukselt(_ tip: String) async {
+        if let r: DemirciResp = try? await post("/rajon/world/smithy/upgrade", body: ["tip": tip]) {
+            demirci = r.demirci; if let w = r.world { dunya = w }
+        }
+    }
+
     // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
 
     private var attestToken: String? {
@@ -572,6 +581,7 @@ struct DunyaView: Codable {
     var fraksiyonlar: [FraksiyonSecim]? = nil
     var usSayisi: Int? = nil        // ek üs (outpost) sayısı
     var usLimit: Int? = nil         // kurulabilir ek üs hakkı (karargah nüfuzu)
+    var idameDk: Int? = nil         // ordunun dakikalık besleme gideri
 }
 struct FraksiyonSecim: Codable, Identifiable { let kod: String; let ad: String; let bonus: String; var id: String { kod } }
 struct Us: Codable, Identifiable {
@@ -609,6 +619,13 @@ struct DiplomasiIliski: Codable, Identifiable {
 }
 struct DiplomasiDurum: Codable { let clan: String; let iliskiler: [DiplomasiIliski] }
 struct DiplomasiResp: Codable { var diplomasi: DiplomasiDurum? = nil }
+
+struct DemirciBirim: Codable, Identifiable {
+    let tip: String; let seviye: Int; let maks: Int; let cash: Int; let cephane: Int; let bonus: Int; let acik: Bool
+    var id: String { tip }
+}
+struct Demirci: Codable { let birimler: [DemirciBirim] }
+struct DemirciResp: Codable { var demirci: Demirci? = nil; var world: DunyaView? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
