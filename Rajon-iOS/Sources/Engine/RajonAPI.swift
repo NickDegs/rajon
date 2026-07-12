@@ -352,8 +352,12 @@ final class OnlineService: ObservableObject {
                 if (resp as? HTTPURLResponse)?.statusCode == 403 && deneme == 0 {
                     await attestSaglat(); continue
                 }
-                if let resp2 = try? JSONDecoder().decode(DunyaAttackResp.self, from: data) {
-                    dunya = resp2.world; sonSaldiri = (resp2.won, resp2.loot); dunyaBilgi = nil
+                if let resp2 = try? JSONDecoder().decode(BaskinGonderResp.self, from: data) {
+                    dunya = resp2.world
+                    let dk = resp2.varis / 60, sn = resp2.varis % 60
+                    let sure = dk > 0 ? "\(dk) dk \(sn) sn" : "\(sn) sn"
+                    dunyaBilgi = "Ordu yola çıktı — \(sure) sonra varacak. Sonucu Ordu › Raporlar'da gör."
+                    await baskinlariCek()
                 } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
                     dunyaBilgi = e.detail
                 }
@@ -364,6 +368,32 @@ final class OnlineService: ObservableObject {
 
     func dunyaHaritasi() async {
         if let m: DunyaMap = try? await get("/rajon/world/map") { dunyaOyuncular = m.players }
+    }
+
+    // MARK: - Zamanlı baskın + sezon + çete savaş odası
+    @Published var gelenBaskin: [GelenBaskin] = []
+    @Published var gidenBaskin: [GidenBaskin] = []
+    @Published var baskinRapor: [BaskinRapor] = []
+    @Published var sezon: SezonBilgi?
+    @Published var clanMesajlar: [ClanMesaj] = []
+    @Published var clanHedefler: [ClanHedef] = []
+
+    func baskinlariCek() async {
+        if let r: GelenResp = try? await get("/rajon/world/raids/incoming") { gelenBaskin = r.gelen }
+        if let r: GidenResp = try? await get("/rajon/world/raids/outgoing") { gidenBaskin = r.giden }
+        if let r: RaporResp = try? await get("/rajon/world/raids/reports") { baskinRapor = r.raporlar }
+    }
+    func sezonCek() async { if let s: SezonBilgi = try? await get("/rajon/world/season") { sezon = s } }
+    func clanChatCek() async { if let r: ChatResp = try? await get("/rajon/clan/chat") { clanMesajlar = r.mesajlar } }
+    func clanChatGonder(_ mesaj: String) async {
+        if let r: ChatResp = try? await post("/rajon/clan/chat", body: ["mesaj": mesaj]) { clanMesajlar = r.mesajlar }
+    }
+    func clanHedeflerCek() async { if let r: HedefResp = try? await get("/rajon/clan/targets") { clanHedefler = r.hedefler } }
+    func clanHedefIsaretle(_ id: String) async {
+        if let r: HedefResp = try? await post("/rajon/clan/target", body: ["target_id": id]) { clanHedefler = r.hedefler }
+    }
+    func clanHedefKaldir(_ id: String) async {
+        if let r: HedefResp = try? await post("/rajon/clan/target/remove", body: ["target_id": id]) { clanHedefler = r.hedefler }
     }
 
     // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
@@ -432,6 +462,7 @@ struct DunyaView: Codable {
     let oases: [DVaha]
     let army: [String: Int]
     let train: DTrain?
+    var gelenBaskin: Int? = nil     // bana gelen (yolda) baskın sayısı → savunma uyarısı
 }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
@@ -456,6 +487,22 @@ struct OnlinePlayer: Codable {
     var lat: Double? = nil      // gerçek dünya şehir koordinatı (sunucudan)
     var lon: Double? = nil
 }
+
+// Zamanlı baskın + sezon + çete savaş odası modelleri
+struct GelenBaskin: Codable, Identifiable { let saldiran: String; let buyukluk: String; let kalan: Int; var id: String { saldiran + "\(kalan)" } }
+struct GidenBaskin: Codable, Identifiable { let hedef: String; let durum: String; let kalan: Int; var id: String { hedef + durum + "\(kalan)" } }
+struct BaskinRapor: Codable, Identifiable { let tur: String; let rakip: String; let kazandim: Bool; let yagma: Int; let ts: Double; var id: Double { ts } }
+struct GelenResp: Codable { let gelen: [GelenBaskin] }
+struct GidenResp: Codable { let giden: [GidenBaskin] }
+struct RaporResp: Codable { let raporlar: [BaskinRapor] }
+struct SezonSatir: Codable, Identifiable { let ad: String; let skor: Int; var id: String { ad } }
+struct OnurSatir: Codable, Identifiable { let sezon: Int; let ad: String; let skor: Int; var id: Int { sezon } }
+struct SezonBilgi: Codable { let no: Int; let kalan: Int; let benimSkor: Int; let top: [SezonSatir]; let onur: [OnurSatir] }
+struct ClanMesaj: Codable, Identifiable { let ad: String; let mesaj: String; let ts: Double; var id: Double { ts } }
+struct ClanHedef: Codable, Identifiable { let id: String; let ad: String; let guc: Int; let isaretleyen: String }
+struct ChatResp: Codable { let mesajlar: [ClanMesaj] }
+struct HedefResp: Codable { let hedefler: [ClanHedef] }
+struct BaskinGonderResp: Codable { let gonderildi: Bool; let varis: Int; let world: DunyaView }
 
 struct AttestChallengeResp: Codable { let challenge: String }
 struct AttestTokenResp: Codable { let attest_token: String; var env: String? = nil; var ttl: Int? = nil }

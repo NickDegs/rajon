@@ -146,6 +146,12 @@ struct OnlineWorldView: View {
             Button { ayarAcik = true } label: {
                 Image(systemName: "gearshape.fill").font(.system(size: 16)).foregroundStyle(Theme.smoke)
             }
+            if (d?.gelenBaskin ?? 0) > 0 {
+                Label("\(d?.gelenBaskin ?? 0)", systemImage: "shield.lefthalf.filled.badge.checkmark")
+                    .font(.system(size: 13, weight: .black)).foregroundStyle(.white)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background(Theme.blood).clipShape(Capsule())
+            }
             Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
         }
         .padding(.horizontal, 16).padding(.vertical, 10).background(Theme.coal)
@@ -286,17 +292,45 @@ struct OnlineWorldView: View {
         }.cardStyle(12)
     }
 
-    // MARK: Ordu (asker eğitimi + saldırı)
+    // MARK: Ordu (asker eğitimi + zamanlı baskın + savunma)
     private func orduSekme(_ d: DunyaView) -> some View {
         ScrollView {
             VStack(spacing: 14) {
                 if let b = online.dunyaBilgi {
-                    Text(b).font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.blood)
-                }
-                if let s = online.sonSaldiri {
-                    Text(s.won ? "Baskın başarılı! +₺\(fmt(s.loot)) yağma" : "Baskın patladı — savunma sağlamdı")
-                        .font(.system(size: 13, weight: .bold)).foregroundStyle(s.won ? Theme.gold : Theme.blood)
+                    Text(b).font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                         .frame(maxWidth: .infinity).padding(8).cardStyle(10)
+                }
+                // GELEN BASKINLAR — savunma alarmı (kırmızı, geri sayım)
+                if !online.gelenBaskin.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("SANA GELEN BASKIN!", systemImage: "exclamationmark.triangle.fill")
+                            .font(.system(size: 14, weight: .black)).foregroundStyle(.white)
+                        ForEach(online.gelenBaskin) { g in
+                            HStack {
+                                Text("\(g.saldiran) · \(g.buyukluk) kuvvet").font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
+                                Spacer()
+                                Text(sureMetni(g.kalan)).font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(.white)
+                            }
+                        }
+                        Text("Varmadan asker eğit / Korunak yükselt → savunmanı artır!")
+                            .font(.system(size: 11)).foregroundStyle(.white.opacity(0.85))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(12)
+                    .background(Theme.blood).clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                // YOLDAKİ BASKINLARIM
+                if !online.gidenBaskin.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("YOLDAKİ BASKINLARIM").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                        ForEach(online.gidenBaskin) { g in
+                            HStack {
+                                Image(systemName: g.durum.contains("döndü") ? "arrow.uturn.left" : "figure.walk").foregroundStyle(Theme.gold)
+                                Text(g.hedef).font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink)
+                                Spacer()
+                                Text("\(g.durum) · \(sureMetni(g.kalan))").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                            }
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
                 }
                 Text("ORDUN").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
                 HStack(spacing: 12) {
@@ -335,9 +369,34 @@ struct OnlineWorldView: View {
                         }
                     }.cardStyle(10)
                 }
+
+                // BASKIN RAPORLARI
+                if !online.baskinRapor.isEmpty {
+                    Text("RAPORLAR").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
+                    ForEach(online.baskinRapor.prefix(12)) { r in
+                        HStack(spacing: 10) {
+                            Image(systemName: r.kazandim ? "checkmark.seal.fill" : "xmark.seal.fill")
+                                .foregroundStyle(r.kazandim ? Theme.gold : Theme.blood)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("\(r.tur == "savunma" ? "Savunma" : "Baskın") · \(r.rakip)")
+                                    .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink)
+                                Text(r.kazandim ? (r.tur == "savunma" ? "Savundun" : "Kazandın · +₺\(fmt(r.yagma)) yağma") : (r.tur == "savunma" ? "Yağmalandın" : "Kaybettin"))
+                                    .font(.system(size: 11)).foregroundStyle(r.kazandim ? Theme.gold : Theme.smoke)
+                            }
+                            Spacer()
+                        }.cardStyle(10)
+                    }
+                }
             }.padding(16)
         }
-        .task { await online.dunyaHaritasi() }
+        .task {
+            await online.dunyaHaritasi()
+            await online.baskinlariCek()
+            while true {
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                await online.baskinlariCek()
+            }
+        }
     }
 
     private func orduKutu(_ tip: String, _ sayi: Int) -> some View {
@@ -347,10 +406,57 @@ struct OnlineWorldView: View {
         }.frame(maxWidth: .infinity).cardStyle(12)
     }
 
-    // MARK: Dünya (lider tablosu + sendika)
+    // MARK: Dünya (sezon + lider tablosu + onur listesi)
     private func dunyaSekme() -> some View {
         ScrollView {
             VStack(spacing: 12) {
+                // SEZON banner — geri sayım + kendi skorun
+                if let sz = online.sezon {
+                    VStack(spacing: 6) {
+                        HStack {
+                            Label("SEZON \(sz.no)", systemImage: "crown.fill").font(.system(size: 14, weight: .black)).foregroundStyle(Theme.gold)
+                            Spacer()
+                            Text("Bitişe \(sureMetni(sz.kalan))").font(.system(size: 12, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
+                        }
+                        HStack {
+                            Text("Sezon skorun: \(fmt(sz.benimSkor))").font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.smoke)
+                            Spacer()
+                            Text("Sezon sonunda #1 = KRAL").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                        }
+                        if let ilk = sz.top.first {
+                            Text("Lider: \(ilk.ad) · \(fmt(ilk.skor))").font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.gold)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }.frame(maxWidth: .infinity).cardStyle(14)
+                    // Sezon top 5
+                    if !sz.top.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("SEZON SIRALAMASI").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                            ForEach(Array(sz.top.prefix(5).enumerated()), id: \.element.id) { i, r in
+                                HStack {
+                                    Text("#\(i+1)").font(.system(size: 13, weight: .heavy)).foregroundStyle(i < 3 ? Theme.gold : Theme.smoke).frame(width: 30, alignment: .leading)
+                                    Text(r.ad).font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink)
+                                    Spacer()
+                                    Text(fmt(r.skor)).font(.system(size: 12)).foregroundStyle(Theme.gold)
+                                }.padding(.vertical, 2)
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
+                    }
+                    // Onur listesi (geçmiş krallar)
+                    if !sz.onur.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("ONUR LİSTESİ — GEÇMİŞ KRALLAR").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                            ForEach(sz.onur) { o in
+                                HStack {
+                                    Image(systemName: "crown.fill").font(.system(size: 12)).foregroundStyle(Theme.gold)
+                                    Text("Sezon \(o.sezon): \(o.ad)").font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink)
+                                    Spacer()
+                                    Text(fmt(o.skor)).font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                                }.padding(.vertical, 2)
+                            }
+                        }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
+                    }
+                }
                 HStack {
                     Text("LİDER TABLOSU").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
                     Spacer()
@@ -375,6 +481,6 @@ struct OnlineWorldView: View {
                 }
             }.padding(16)
         }
-        .task { await online.liderTablosu() }
+        .task { await online.liderTablosu(); await online.sezonCek() }
     }
 }

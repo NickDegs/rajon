@@ -7,6 +7,7 @@ struct OnlineCeteView: View {
     @State private var ceteAd = ""
     @State private var ceteAciklama = ""
     @State private var bagisMetin = ""
+    @State private var mesajMetin = ""
     @State private var savasHedef: ClanOzet?
 
     var body: some View {
@@ -28,6 +29,12 @@ struct OnlineCeteView: View {
             await online.clanGetir()
             await online.clanListele()
             await online.clanSavasGetir()
+            await online.clanChatCek()
+            await online.clanHedeflerCek()
+            while true {
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                if online.clanim != nil { await online.clanChatCek(); await online.clanHedeflerCek() }
+            }
         }
         .alert("Savaş ilan et", isPresented: Binding(get: { savasHedef != nil }, set: { if !$0 { savasHedef = nil } })) {
             Button("Vazgeç", role: .cancel) { savasHedef = nil }
@@ -95,6 +102,64 @@ struct OnlineCeteView: View {
             }
             Text("Kasandaki ₺\(fmt(online.dunya?.cash ?? 0)) nakitten düşülür.")
                 .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+        }
+        .frame(maxWidth: .infinity).cardStyle(14)
+
+        // İŞARETLİ HEDEFLER (koordineli baskın)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("İŞARETLİ HEDEFLER").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.blood)
+            if online.clanHedefler.isEmpty {
+                Text("Haritadan/Ordu'dan bir patronu işaretleyin → çete birlikte vursun.")
+                    .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+            }
+            ForEach(online.clanHedefler) { h in
+                HStack(spacing: 8) {
+                    Image(systemName: "target").foregroundStyle(Theme.blood)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(h.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                        Text("Güç \(fmt(h.guc)) · \(h.isaretleyen) işaretledi").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                    }
+                    Spacer()
+                    Button { Task { await online.dunyaSaldir(h.id) } } label: {
+                        Text("VUR").font(.system(size: 11, weight: .black))
+                            .padding(.horizontal, 12).padding(.vertical, 6)
+                            .background(Theme.blood).foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    Button { Task { await online.clanHedefKaldir(h.id) } } label: {
+                        Image(systemName: "xmark.circle.fill").foregroundStyle(Theme.smoke)
+                    }
+                }.padding(.vertical, 3)
+            }
+        }
+        .frame(maxWidth: .infinity).cardStyle(14)
+
+        // SAVAŞ ODASI (çete sohbeti)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("SAVAŞ ODASI").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+            VStack(alignment: .leading, spacing: 6) {
+                if online.clanMesajlar.isEmpty {
+                    Text("Henüz mesaj yok. Planı buradan koordine et.").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                }
+                ForEach(online.clanMesajlar.suffix(20)) { m in
+                    HStack(alignment: .top, spacing: 6) {
+                        Text(m.ad + ":").font(.system(size: 12, weight: .heavy)).foregroundStyle(m.ad == (online.me?.ad ?? "") ? Theme.gold : Theme.blood)
+                        Text(m.mesaj).font(.system(size: 13)).foregroundStyle(Theme.ink)
+                        Spacer(minLength: 0)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading).frame(minHeight: 60)
+            HStack {
+                TextField("Mesaj yaz…", text: $mesajMetin)
+                    .padding(10).background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 9)).foregroundStyle(Theme.ink)
+                Button {
+                    let t = mesajMetin.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !t.isEmpty { Task { await online.clanChatGonder(t); mesajMetin = "" } }
+                } label: {
+                    Image(systemName: "paperplane.fill").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(11).background(Theme.blood).clipShape(Circle())
+                }
+            }
         }
         .frame(maxWidth: .infinity).cardStyle(14)
 

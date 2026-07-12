@@ -343,12 +343,23 @@ private struct OnlineDusmanDetay: View {
                 Button {
                     Task { await online.dunyaSaldir(oyuncu.id); saldirdi = true }
                 } label: {
-                    Text("BASKIN YAP").font(.system(size: 16, weight: .black))
+                    Text("BASKIN GÖNDER").font(.system(size: 16, weight: .black))
                         .frame(maxWidth: .infinity).padding(.vertical, 14)
                         .background(Theme.blood).foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                Text("Ordunla saldırırsın; kazanırsan nakdinden yağma alırsın. Kaybedersen asker kaybedersin.")
+                // Çeten varsa: koordineli baskın için hedef işaretle
+                if online.clanim != nil {
+                    Button {
+                        Task { await online.clanHedefIsaretle(oyuncu.id) }
+                    } label: {
+                        Label("Çeteye Hedef İşaretle", systemImage: "target")
+                            .font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.gold)
+                            .frame(maxWidth: .infinity).padding(.vertical, 11)
+                            .background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 11))
+                    }
+                }
+                Text("Ordun yola çıkar, mesafeye göre bir süre sonra varır. Kazanırsan yağmayla döner; kaybedersen asker kaybedersin. Sonucu Ordu › Raporlar'da gör.")
                     .font(.system(size: 11)).foregroundStyle(Theme.smoke).multilineTextAlignment(.center)
             }.padding(16)
         }
