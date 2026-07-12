@@ -51,9 +51,9 @@ jobs:
             -derivedDataPath dd -sdk iphonesimulator \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build 2>&1 | tail -40
 
-      - name: Ekran görüntülerini yakala
+      - name: Ekran görüntülerini yakala (11 dil)
         run: |
-          set -x
+          set +e
           APP=$(find dd/Build/Products -name "Rajon.app" -type d | head -1)
           echo "APP=$APP"
           BID=app.realvirtuality.blockings
@@ -61,18 +61,23 @@ jobs:
           xcrun simctl bootstatus "$DEV" || true
           sleep 8
           xcrun simctl install "$DEV" "$APP"
-          mkdir -p shots
-          for S in oyun usler koy kahraman natar rehber akademi; do
-            xcrun simctl terminate "$DEV" $BID 2>/dev/null || true
-            sleep 1
-            xcrun simctl launch "$DEV" $BID -shot $S
-            sleep 15
-            xcrun simctl io "$DEV" screenshot "shots/$S.png" || echo "shot $S başarısız"
+          # App Store locale : uygulama içi dil kodu
+          for PAIR in "en-US:en" "tr:tr" "de-DE:de" "es-ES:es" "fr-FR:fr" "pt-BR:pt-BR" "ru:ru" "ja:ja" "ar-SA:ar" "ko:ko" "zh-Hans:zh-Hans"; do
+            LOC="${PAIR%%:*}"; LANG_CODE="${PAIR##*:}"
+            mkdir -p "shots/$LOC"
+            for S in oyun usler koy kahraman natar rehber akademi; do
+              xcrun simctl terminate "$DEV" $BID 2>/dev/null
+              sleep 1
+              xcrun simctl launch "$DEV" $BID -AppleLanguages "($LANG_CODE)" -shot $S
+              sleep 13
+              xcrun simctl io "$DEV" screenshot "shots/$LOC/$S.png"
+            done
+            echo "== $LOC bitti: $(ls shots/$LOC | wc -l) görsel =="
           done
-          ls -la shots/
+          find shots -name "*.png" | wc -l
 
       - uses: actions/upload-artifact@v4
         with:
           name: rajon-shots
-          path: Rajon-iOS/shots/*.png
+          path: Rajon-iOS/shots/**/*.png
           if-no-files-found: warn
