@@ -274,60 +274,53 @@ struct OnlineWorldView: View {
     // MARK: Üst kaynak barı
     private var kaynakBar: some View {
         let d = online.dunya
-        return HStack(spacing: 7) {
-            kaynak("dollarsign.circle.fill", fmt(d?.cash ?? 0), Theme.gold)
-            kaynak("circle.hexagongrid.fill", fmt(d?.cephane ?? 0), Theme.smoke)
-            kaynak("wineglass.fill", fmt(d?.icki ?? 0), Theme.blood)
-            kaynak("shippingbox.circle.fill", fmt(d?.mal ?? 0), Theme.gold)
-            Spacer(minLength: 4)
-            Button { gorevAcik = true } label: {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "checklist").font(.system(size: 16)).foregroundStyle(Theme.gold)
-                    if online.gorevler.contains(where: { $0.tamam && !$0.alindi }) {
-                        Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
-                    }
+        return VStack(spacing: 9) {
+            // 1. satır — 4 kaynak + gelen baskın + seviye
+            HStack(spacing: 10) {
+                kaynak("dollarsign.circle.fill", fmt(d?.cash ?? 0), Theme.gold)
+                kaynak("circle.hexagongrid.fill", fmt(d?.cephane ?? 0), Theme.smoke)
+                kaynak("wineglass.fill", fmt(d?.icki ?? 0), Theme.blood)
+                kaynak("shippingbox.circle.fill", fmt(d?.mal ?? 0), Theme.gold)
+                Spacer(minLength: 4)
+                if (d?.gelenBaskin ?? 0) > 0 {
+                    Label("\(d?.gelenBaskin ?? 0)", systemImage: "shield.lefthalf.filled.badge.checkmark")
+                        .font(.system(size: 12, weight: .black)).foregroundStyle(.white)
+                        .padding(.horizontal, 7).padding(.vertical, 3)
+                        .background(Theme.blood).clipShape(Capsule())
                 }
+                Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
             }
-            Button { uslerAcik = true } label: {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "map.circle.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
-                    if let d = d, (d.usSayisi ?? 0) < (d.usLimit ?? 0) {
-                        Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
-                    }
-                }
+            // 2. satır — aksiyon butonları (eşit yayılmış)
+            HStack(spacing: 0) {
+                navBtn("checklist", Theme.gold, online.gorevler.contains { $0.tamam && !$0.alindi }) { gorevAcik = true }
+                Spacer()
+                navBtn("map.circle.fill", Theme.gold, (d?.usSayisi ?? 0) < (d?.usLimit ?? 0)) { uslerAcik = true }
+                Spacer()
+                navBtn("figure.stand", Theme.gold, online.hero?.macera?.biterMi == true || (online.hero?.sp ?? 0) > 0) { heroAcik = true }
+                Spacer()
+                navBtn("arrow.left.arrow.right.circle.fill", Theme.gold, false) { pazarAcik = true }
+                Spacer()
+                navBtn("cart.fill", Theme.gold, false) { magazaAcik = true }
+                Spacer()
+                navBtn("gearshape.fill", Theme.smoke, false) { ayarAcik = true }
             }
-            Button { heroAcik = true } label: {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "figure.stand").font(.system(size: 16)).foregroundStyle(Theme.gold)
-                    if online.hero?.macera?.biterMi == true || (online.hero?.sp ?? 0) > 0 {
-                        Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
-                    }
-                }
-            }
-            Button { pazarAcik = true } label: {
-                Image(systemName: "arrow.left.arrow.right.circle.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
-            }
-            Button { magazaAcik = true } label: {
-                Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
-            }
-            Button { ayarAcik = true } label: {
-                Image(systemName: "gearshape.fill").font(.system(size: 16)).foregroundStyle(Theme.smoke)
-            }
-            if (d?.gelenBaskin ?? 0) > 0 {
-                Label("\(d?.gelenBaskin ?? 0)", systemImage: "shield.lefthalf.filled.badge.checkmark")
-                    .font(.system(size: 13, weight: .black)).foregroundStyle(.white)
-                    .padding(.horizontal, 8).padding(.vertical, 3)
-                    .background(Theme.blood).clipShape(Capsule())
-            }
-            Text("Sv.\(d?.bossLevel ?? 1)").font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
         }
-        .padding(.horizontal, 16).padding(.vertical, 10).background(Theme.coal)
+        .padding(.horizontal, 16).padding(.vertical, 9).background(Theme.coal)
+    }
+
+    private func navBtn(_ icon: String, _ c: Color, _ rozet: Bool, _ eylem: @escaping () -> Void) -> some View {
+        Button(action: eylem) {
+            ZStack(alignment: .topTrailing) {
+                Image(systemName: icon).font(.system(size: 20)).foregroundStyle(c)
+                if rozet { Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 5, y: -3) }
+            }
+        }
     }
 
     private func kaynak(_ icon: String, _ v: String, _ c: Color) -> some View {
         HStack(spacing: 3) {
-            Image(systemName: icon).font(.system(size: 13)).foregroundStyle(c)
-            Text(v).font(.system(size: 13, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
+            Image(systemName: icon).font(.system(size: 14)).foregroundStyle(c)
+            Text(v).font(.system(size: 14, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
                 .lineLimit(1).fixedSize(horizontal: true, vertical: false)
         }
     }
