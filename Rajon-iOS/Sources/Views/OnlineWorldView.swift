@@ -17,6 +17,7 @@ struct OnlineWorldView: View {
     @State private var harikaAcik = false
     @State private var rehberAcik = false
     @State private var akademiAcik = false
+    @State private var natarAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -193,6 +194,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Akademi & Kültür").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { akademiAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $natarAcik) {
+            NavigationStack {
+                NatarView()
+                    .navigationTitle("Natar Eyaleti").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { natarAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -630,6 +640,18 @@ struct OnlineWorldView: View {
                     }.padding(.horizontal, 14).padding(.vertical, 10)
                         .background(LinearGradient(colors: [Theme.blood, Theme.gold], startPoint: .leading, endPoint: .trailing))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                }.buttonStyle(.plain)
+                // NATAR EYALETİ — eser ele geçirme
+                Button { natarAcik = true } label: {
+                    HStack {
+                        Image(systemName: "crown.fill").foregroundStyle(Theme.gold)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("NATAR EYALETİ").font(.system(size: 13, weight: .black)).foregroundStyle(Theme.ink)
+                            Text("eser kalelerini fethet — güçlü sunucu bonusları").font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.smoke)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Theme.smoke)
+                    }.padding(.horizontal, 14).padding(.vertical, 10).background(Theme.panel).clipShape(RoundedRectangle(cornerRadius: 12))
                 }.buttonStyle(.plain)
                 // SEZON banner — geri sayım + kendi skorun
                 if let sz = online.sezon {

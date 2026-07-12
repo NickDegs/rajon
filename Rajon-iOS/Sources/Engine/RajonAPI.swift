@@ -512,6 +512,13 @@ final class OnlineService: ObservableObject {
         }
     }
 
+    // MARK: - Natar eyaleti (eser ele geçirme)
+    @Published var natarlar: [NatarKale] = []
+    func natarCek() async { if let r: NatarResp = try? await get("/rajon/world/natar") { natarlar = r.natarlar } }
+    func natarSaldir(_ id: Int) async {
+        await dunyaAksiyon("/rajon/world/natar/attack", ["natar_id": id]); await natarCek(); await baskinlariCek()
+    }
+
     // MARK: - Kervan + ticaret rotası
     @Published var kervan: KervanDurum?
     func kervanlarCek() async { if let k: KervanDurum = try? await get("/rajon/world/caravans") { kervan = k } }
@@ -718,6 +725,12 @@ struct KervanYolda: Codable, Identifiable { let id: Int; let hedef: String; let 
 struct TicaretRota: Codable, Identifiable { let id: Int; let hedef: String; let hedefKoy: Int; let miktar: Int; let periyot: Int }
 struct KervanDurum: Codable { let yolda: [KervanYolda]; let rotalar: [TicaretRota] }
 struct KervanResp: Codable { var kervan: KervanDurum? = nil }
+
+struct NatarKale: Codable, Identifiable {
+    let id: Int; let ad: String; let savunma: Int; let eser: String; let etki: String
+    let sahip: String; let bende: Bool; let uzaklik: Int
+}
+struct NatarResp: Codable { let natarlar: [NatarKale] }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
