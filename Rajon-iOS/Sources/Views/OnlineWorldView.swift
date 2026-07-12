@@ -15,6 +15,7 @@ struct OnlineWorldView: View {
     @State private var pazarAcik = false
     @State private var demirciAcik = false
     @State private var harikaAcik = false
+    @State private var rehberAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -163,6 +164,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Dünya Harikası").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { harikaAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $rehberAcik) {
+            NavigationStack {
+                BirlikRehberiView()
+                    .navigationTitle("Birlik Rehberi").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { rehberAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -463,6 +473,9 @@ struct OnlineWorldView: View {
                 HStack {
                     Text("ASKER EĞİT").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
                     Spacer()
+                    Button { rehberAcik = true } label: {
+                        Label("Rehber", systemImage: "book.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
+                    }
                     Button { demirciAcik = true } label: {
                         Label("Demirci", systemImage: "hammer.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
                     }

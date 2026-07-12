@@ -414,6 +414,7 @@ final class OnlineService: ObservableObject {
     @Published var diplomasi: DiplomasiDurum?
     @Published var demirci: Demirci?
     @Published var harika: HarikaDurum?
+    @Published var birimKatalog: [BirimBilgi] = []
 
     func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
         await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
@@ -509,6 +510,11 @@ final class OnlineService: ObservableObject {
         if let r: DemirciResp = try? await post("/rajon/world/smithy/upgrade", body: ["tip": tip]) {
             demirci = r.demirci; if let w = r.world { dunya = w }
         }
+    }
+
+    // MARK: - Birlik kataloğu (savaş derinliği)
+    func birimKatalogCek() async {
+        if birimKatalog.isEmpty, let r: BirimKatalogResp = try? await get("/rajon/world/units") { birimKatalog = r.birimler }
     }
 
     // MARK: - Dünya Harikası (endgame)
@@ -649,6 +655,13 @@ struct HarikaResp: Codable {
     var harika: HarikaDurum? = nil; var world: DunyaView? = nil
     var zafer: Bool? = nil; var yeniEser: [String]? = nil
 }
+
+struct BirimBilgi: Codable, Identifiable {
+    let tip: String; let ad: String; let saldiri: Int; let tur: String
+    let defPiyade: Int; let defSuvari: Int; let yagma: Int; let rol: String
+    var id: String { tip }
+}
+struct BirimKatalogResp: Codable { let birimler: [BirimBilgi] }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
