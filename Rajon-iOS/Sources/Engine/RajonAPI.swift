@@ -309,17 +309,31 @@ final class OnlineService: ObservableObject {
         girisli = false; me = nil; dunya = nil; dunyaAktif = false; hata = nil
     }
 
+    /// Attest token yoksa sağla (hassas aksiyon öncesi) — kullanıcı hata görmesin.
+    private func attestGerekli() async {
+        if (attestToken ?? "").isEmpty { await attestSaglat() }
+    }
+
     /// Mutasyon aksiyonu: başarılıysa yeni dünya, hatadaysa mesaj.
+    /// Attest garantili: token yoksa önce sağlar; 403 (attest) gelirse SESSİZCE yeniden attest edip 1 kez tekrar dener.
     private func dunyaAksiyon(_ path: String, _ body: [String: Any]) async {
-        do {
-            let r = try req(path, method: "POST", body: try JSONSerialization.data(withJSONObject: body), auth: true)
-            let (data, _) = try await URLSession.shared.data(for: r)
-            if let v = try? JSONDecoder().decode(DunyaView.self, from: data) {
-                dunya = v; dunyaBilgi = nil
-            } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
-                dunyaBilgi = e.detail
-            }
-        } catch { dunyaBilgi = "Bağlantı hatası" }
+        await attestGerekli()
+        for deneme in 0..<2 {
+            do {
+                let r = try req(path, method: "POST", body: try JSONSerialization.data(withJSONObject: body), auth: true)
+                let (data, resp) = try await URLSession.shared.data(for: r)
+                if (resp as? HTTPURLResponse)?.statusCode == 403 && deneme == 0 {
+                    await attestSaglat()      // token bayat/eksik → yenile, sessizce tekrar dene
+                    continue
+                }
+                if let v = try? JSONDecoder().decode(DunyaView.self, from: data) {
+                    dunya = v; dunyaBilgi = nil
+                } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
+                    dunyaBilgi = e.detail
+                }
+                return
+            } catch { dunyaBilgi = "Bağlantı hatası"; return }
+        }
     }
 
     func dunyaTopla() async { await dunyaAksiyon("/rajon/world/collect", [:]) }
@@ -329,16 +343,23 @@ final class OnlineService: ObservableObject {
     func dunyaAsker(_ tip: String, _ count: Int) async { await dunyaAksiyon("/rajon/world/train", ["tip": tip, "count": count]) }
 
     func dunyaSaldir(_ targetId: String) async {
-        do {
-            let r = try req("/rajon/world/attack", method: "POST",
-                            body: try JSONSerialization.data(withJSONObject: ["target_id": targetId]), auth: true)
-            let (data, _) = try await URLSession.shared.data(for: r)
-            if let resp = try? JSONDecoder().decode(DunyaAttackResp.self, from: data) {
-                dunya = resp.world; sonSaldiri = (resp.won, resp.loot); dunyaBilgi = nil
-            } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
-                dunyaBilgi = e.detail
-            }
-        } catch { dunyaBilgi = "Bağlantı hatası" }
+        await attestGerekli()
+        for deneme in 0..<2 {
+            do {
+                let r = try req("/rajon/world/attack", method: "POST",
+                                body: try JSONSerialization.data(withJSONObject: ["target_id": targetId]), auth: true)
+                let (data, resp) = try await URLSession.shared.data(for: r)
+                if (resp as? HTTPURLResponse)?.statusCode == 403 && deneme == 0 {
+                    await attestSaglat(); continue
+                }
+                if let resp2 = try? JSONDecoder().decode(DunyaAttackResp.self, from: data) {
+                    dunya = resp2.world; sonSaldiri = (resp2.won, resp2.loot); dunyaBilgi = nil
+                } else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) {
+                    dunyaBilgi = e.detail
+                }
+                return
+            } catch { dunyaBilgi = "Bağlantı hatası"; return }
+        }
     }
 
     func dunyaHaritasi() async {
@@ -355,8 +376,11 @@ final class OnlineService: ObservableObject {
     /// Cihaz gerçekliğini App Attest ile kanıtla ve GEÇERLİ attest token'ı al.
     /// Tek çağrıda garanti eder: assert başarısızsa aynı turda verify'a düşer (bayat token bırakmaz).
     /// Okuma uçları açık olduğu için akışı bloklamaz; token yazma-aksiyonlarına yetişir.
+    private var attestDevam = false
     func attestSaglat() async {
-        guard AppAttest.destekli else { return }
+        guard AppAttest.destekli, !attestDevam else { return }
+        attestDevam = true
+        defer { attestDevam = false }
         for _ in 0..<3 {
             do {
                 let ch: AttestChallengeResp = try await post("/rajon/attest/challenge", body: [:], auth: false)
