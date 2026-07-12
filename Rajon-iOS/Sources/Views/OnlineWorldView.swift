@@ -14,6 +14,7 @@ struct OnlineWorldView: View {
     @State private var heroAcik = false
     @State private var pazarAcik = false
     @State private var demirciAcik = false
+    @State private var harikaAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -152,6 +153,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Demirci").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { demirciAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $harikaAcik) {
+            NavigationStack {
+                HarikaView()
+                    .navigationTitle("Dünya Harikası").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { harikaAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -569,6 +579,21 @@ struct OnlineWorldView: View {
     private func dunyaSekme() -> some View {
         ScrollView {
             VStack(spacing: 12) {
+                // DÜNYA HARİKASI — endgame zaferi
+                Button { harikaAcik = true } label: {
+                    HStack {
+                        Image(systemName: "building.columns.circle.fill").foregroundStyle(.white)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("DÜNYA HARİKASI").font(.system(size: 13, weight: .black)).foregroundStyle(.white)
+                            Text(online.harika.map { $0.seviye >= $0.maks ? "Zafer kazanıldı!" : "Sv.\($0.seviye)/\($0.maks) — sezonu kazan" } ?? "çeteyle inşa et, sezonu kazan")
+                                .font(.system(size: 11, weight: .bold)).foregroundStyle(.white.opacity(0.9))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(.white.opacity(0.8))
+                    }.padding(.horizontal, 14).padding(.vertical, 10)
+                        .background(LinearGradient(colors: [Theme.blood, Theme.gold], startPoint: .leading, endPoint: .trailing))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }.buttonStyle(.plain)
                 // SEZON banner — geri sayım + kendi skorun
                 if let sz = online.sezon {
                     VStack(spacing: 6) {
