@@ -10,8 +10,19 @@ struct RajonApp: App {
 
     @State private var splash = true
 
+    // App Store görsel modu: `-shot <ekran>` argümanıyla açılırsa gerçek arayüzü demo veriyle gösterir.
+    private var shotEkran: String? { UserDefaults.standard.string(forKey: "shot") }
+
     var body: some Scene {
         WindowGroup {
+            if let ekran = shotEkran {
+                ShotHostView(ekran: ekran)
+                    .environmentObject(online)
+                    .environmentObject(game)
+                    .environmentObject(store)
+                    .environmentObject(kozmetik)
+                    .environmentObject(tema)
+            } else {
             ZStack {
                 RootView()
                     .environmentObject(game)
@@ -34,6 +45,7 @@ struct RajonApp: App {
                 if AuthService.girisli {
                     game.bulutaYedek = { blob in Task { await online.durumYedekle(blob) } }
                 }
+            }
             }
         }
     }

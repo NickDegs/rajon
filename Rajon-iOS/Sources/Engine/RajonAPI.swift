@@ -290,6 +290,14 @@ final class OnlineService: ObservableObject {
 
     func dunyadanCik() { dunyaAktif = false }
 
+    /// Görsel modu: zengin demo hesabına (SHOT_DEMO) gir ve dünyayı yükle (App Store ekran görüntüleri için).
+    func shotLogin() async {
+        UserDefaults.standard.set("SHOT_DEMO", forKey: "rajon_device_id")
+        await girisYap(ad: "Kan Reis")
+        await dunyayaGir()
+        await uslerimCek()
+    }
+
     func dunyaCek() async {
         do {
             let v: DunyaView = try await get("/rajon/world/state")
