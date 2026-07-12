@@ -396,6 +396,42 @@ final class OnlineService: ObservableObject {
         if let r: HedefResp = try? await post("/rajon/clan/target/remove", body: ["target_id": id]) { clanHedefler = r.hedefler }
     }
 
+    // MARK: - Derin özellikler: takviye, casus, kaynak, farm, sıralama, görev
+    @Published var takviyeGelen: [TakviyeGelen] = []
+    @Published var takviyeGiden: [TakviyeGiden] = []
+    @Published var casusSonuc: CasusSonuc?
+    @Published var farmHedefler: [FarmHedef] = []
+    @Published var siralama: Siralamalar?
+    @Published var gorevler: [Gorev] = []
+
+    func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
+        await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
+        await takviyeBilgiCek()
+    }
+    func takviyeGeriCek() async { await dunyaAksiyon("/rajon/world/reinforce/recall", [:]); await takviyeBilgiCek() }
+    func takviyeBilgiCek() async {
+        if let r: TakviyeResp = try? await get("/rajon/world/reinforce/info") { takviyeGelen = r.gelen; takviyeGiden = r.giden }
+    }
+    func casusGonder(_ target: String) async {
+        do {
+            let r = try req("/rajon/world/scout", method: "POST",
+                            body: try JSONSerialization.data(withJSONObject: ["target_id": target]), auth: true)
+            let (data, _) = try await URLSession.shared.data(for: r)
+            if let s = try? JSONDecoder().decode(CasusSonuc.self, from: data) { casusSonuc = s; if let w = s.world { dunya = w }; dunyaBilgi = nil }
+            else if let e = try? JSONDecoder().decode(DetailErr.self, from: data) { dunyaBilgi = e.detail }
+        } catch { dunyaBilgi = "Bağlantı hatası" }
+    }
+    func kaynakGonder(_ target: String, cash: Int, cephane: Int) async {
+        await dunyaAksiyon("/rajon/world/send", ["target_id": target, "cash": cash, "cephane": cephane])
+    }
+    func farmCek() async { if let r: FarmResp = try? await get("/rajon/world/farm") { farmHedefler = r.liste } }
+    func farmEkle(_ id: String) async { if let r: FarmResp = try? await post("/rajon/world/farm/add", body: ["target_id": id]) { farmHedefler = r.liste } }
+    func farmKaldir(_ id: String) async { if let r: FarmResp = try? await post("/rajon/world/farm/remove", body: ["target_id": id]) { farmHedefler = r.liste } }
+    func farmAkin() async { await dunyaAksiyon("/rajon/world/farm/raid", [:]); await baskinlariCek() }
+    func siralamaCek() async { if let s: Siralamalar = try? await get("/rajon/world/rankings") { siralama = s } }
+    func gorevlerCek() async { if let r: GorevResp = try? await get("/rajon/world/quests") { gorevler = r.gorevler } }
+    func gorevOdulAl(_ tip: String) async { await dunyaAksiyon("/rajon/world/quest/claim", ["tip": tip]); await gorevlerCek() }
+
     // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
 
     private var attestToken: String? {
@@ -502,6 +538,18 @@ struct ClanMesaj: Codable, Identifiable { let ad: String; let mesaj: String; let
 struct ClanHedef: Codable, Identifiable { let id: String; let ad: String; let guc: Int; let isaretleyen: String }
 struct ChatResp: Codable { let mesajlar: [ClanMesaj] }
 struct HedefResp: Codable { let hedefler: [ClanHedef] }
+
+// Derin özellik modelleri
+struct TakviyeGelen: Codable, Identifiable { let kim: String; let savunma: Int; var id: String { kim + "\(savunma)" } }
+struct TakviyeGiden: Codable, Identifiable { let nerede: String; let asker: Int; var id: String { nerede + "\(asker)" } }
+struct TakviyeResp: Codable { let gelen: [TakviyeGelen]; let giden: [TakviyeGiden] }
+struct CasusSonuc: Codable { let ad: String; let army: [String: Int]; let savunma: Int; let korunak: Int; let nakit: Int; var world: DunyaView? = nil }
+struct FarmHedef: Codable, Identifiable { let id: String; let ad: String; let guc: Int; let kalkanli: Bool }
+struct FarmResp: Codable { let liste: [FarmHedef] }
+struct SiraSatir: Codable, Identifiable { let ad: String; let deger: Int; var id: String { ad } }
+struct Siralamalar: Codable { let saldirgan: [SiraSatir]; let savunmaci: [SiraSatir]; let cete: [SiraSatir] }
+struct Gorev: Codable, Identifiable { let tip: String; let ad: String; let hedef: Int; let ilerleme: Int; let tamam: Bool; let alindi: Bool; let odul: Int; var id: String { tip } }
+struct GorevResp: Codable { let gorevler: [Gorev] }
 struct BaskinGonderResp: Codable { let gonderildi: Bool; let varis: Int; let world: DunyaView }
 
 struct AttestChallengeResp: Codable { let challenge: String }

@@ -8,6 +8,7 @@ struct OnlineWorldView: View {
     @State private var tab = 0
     @State private var magazaAcik = false
     @State private var ayarAcik = false
+    @State private var gorevAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -55,10 +56,16 @@ struct OnlineWorldView: View {
             Task { await online.attestSaglat() }
             // Dönen kullanıcı (anonim/SMS hesabı var): otomatik giriş.
             if online.hesapVar { await girisDongu() }
+            if online.dunya != nil { await online.gorevlerCek() }
             // Canlı poll: dünya yüklendiğinde her 3 sn tazele.
+            var say = 0
             while true {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
-                if online.dunya != nil { await online.dunyaCek() }
+                if online.dunya != nil {
+                    await online.dunyaCek()
+                    say += 1
+                    if say % 4 == 0 { await online.gorevlerCek() }   // ~12 sn'de görev tazele
+                }
             }
         }
         .sheet(isPresented: $magazaAcik) {
@@ -78,6 +85,15 @@ struct OnlineWorldView: View {
                     .background(Theme.coal)
             }
             .preferredColorScheme(tema.colorScheme)
+        }
+        .sheet(isPresented: $gorevAcik) {
+            NavigationStack {
+                GorevlerView()
+                    .navigationTitle("Günlük Görevler").navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { gorevAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
     }
 
@@ -140,6 +156,14 @@ struct OnlineWorldView: View {
             kaynak("circle.hexagongrid.fill", fmt(d?.cephane ?? 0), Theme.smoke)
             kaynak("flame.fill", fmt(d?.respect ?? 0), Theme.blood)
             Spacer()
+            Button { gorevAcik = true } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "checklist").font(.system(size: 16)).foregroundStyle(Theme.gold)
+                    if online.gorevler.contains(where: { $0.tamam && !$0.alindi }) {
+                        Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
+                    }
+                }
+            }
             Button { magazaAcik = true } label: {
                 Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
             }
@@ -358,16 +382,58 @@ struct OnlineWorldView: View {
                     Text("Henüz başka oyuncu yok. Sen ilk reissin.").font(.system(size: 12)).foregroundStyle(Theme.smoke)
                 }
                 ForEach(online.dunyaOyuncular.prefix(20)) { p in
-                    HStack(spacing: 10) {
-                        Text(p.ad).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
-                        Spacer()
-                        Text("Güç \(fmt(p.power))").font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    HStack(spacing: 8) {
+                        Text(p.ad).font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                        Spacer(minLength: 2)
+                        Button { Task { await online.casusGonder(p.id) } } label: {
+                            Image(systemName: "eye.fill").font(.system(size: 13)).foregroundStyle(Theme.smoke)
+                                .padding(6).background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 7))
+                        }
+                        Button { Task { await online.farmEkle(p.id) } } label: {
+                            Image(systemName: "list.star").font(.system(size: 13)).foregroundStyle(Theme.gold)
+                                .padding(6).background(Theme.panelHi).clipShape(RoundedRectangle(cornerRadius: 7))
+                        }
                         Button { Task { await online.dunyaSaldir(p.id) } } label: {
                             Text("SALDIR").font(.system(size: 11, weight: .black))
-                                .padding(.horizontal, 10).padding(.vertical, 6)
+                                .padding(.horizontal, 10).padding(.vertical, 7)
                                 .background(Theme.blood).foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }.cardStyle(10)
+                }
+
+                // CASUS RAPORU
+                if let cs = online.casusSonuc {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Label("CASUS RAPORU · \(cs.ad)", systemImage: "eye.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
+                        Text("Ordu: tetikçi \(cs.army["tetikci"] ?? 0) · kabadayı \(cs.army["kabadayi"] ?? 0) · şoför \(cs.army["sofor"] ?? 0)")
+                            .font(.system(size: 12)).foregroundStyle(Theme.ink)
+                        Text("Savunma: \(fmt(cs.savunma)) · Korunak Sv.\(cs.korunak) · Yağmalanabilir: ₺\(fmt(cs.nakit))")
+                            .font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
+                }
+
+                // YAĞMA LİSTESİ (farm list)
+                if !online.farmHedefler.isEmpty {
+                    HStack {
+                        Text("YAĞMA LİSTESİ").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
+                        Spacer()
+                        Button { Task { await online.farmAkin() } } label: {
+                            Label("HEPSİNE AKIN", systemImage: "bolt.fill").font(.system(size: 11, weight: .black))
+                                .padding(.horizontal, 10).padding(.vertical, 6)
+                                .background(Theme.gold).foregroundStyle(.black).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                    ForEach(online.farmHedefler) { f in
+                        HStack(spacing: 8) {
+                            Image(systemName: f.kalkanli ? "shield.fill" : "target").foregroundStyle(f.kalkanli ? Theme.smoke : Theme.blood)
+                            Text(f.ad).font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                            Spacer()
+                            Text(f.kalkanli ? "kalkanlı" : "Güç \(fmt(f.guc))").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+                            Button { Task { await online.farmKaldir(f.id) } } label: {
+                                Image(systemName: "xmark.circle.fill").foregroundStyle(Theme.smoke)
+                            }
+                        }.cardStyle(10)
+                    }
                 }
 
                 // BASKIN RAPORLARI
@@ -392,6 +458,8 @@ struct OnlineWorldView: View {
         .task {
             await online.dunyaHaritasi()
             await online.baskinlariCek()
+            await online.farmCek()
+            await online.takviyeBilgiCek()
             while true {
                 try? await Task.sleep(nanoseconds: 5_000_000_000)
                 await online.baskinlariCek()
@@ -479,8 +547,32 @@ struct OnlineWorldView: View {
                     .padding(.vertical, 4)
                     Divider().background(Color.white.opacity(0.05))
                 }
+
+                // KATEGORİ SIRALAMALARI
+                if let s = online.siralama {
+                    siraKutu("EN ÇOK BASKIN YAPAN", s.saldirgan, "flame.fill", Theme.blood)
+                    siraKutu("EN İYİ SAVUNAN", s.savunmaci, "shield.lefthalf.filled", Theme.gold)
+                    siraKutu("EN GÜÇLÜ ÇETELER", s.cete, "person.3.fill", Theme.gold)
+                }
             }.padding(16)
         }
-        .task { await online.liderTablosu(); await online.sezonCek() }
+        .task { await online.liderTablosu(); await online.sezonCek(); await online.siralamaCek() }
+    }
+
+    private func siraKutu(_ baslik: String, _ liste: [SiraSatir], _ ikon: String, _ renk: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Label(baslik, systemImage: ikon).font(.system(size: 12, weight: .black)).foregroundStyle(renk)
+            if liste.isEmpty {
+                Text("Henüz veri yok.").font(.system(size: 11)).foregroundStyle(Theme.smoke)
+            }
+            ForEach(Array(liste.prefix(5).enumerated()), id: \.element.id) { i, r in
+                HStack {
+                    Text("#\(i+1)").font(.system(size: 12, weight: .heavy)).foregroundStyle(i < 3 ? Theme.gold : Theme.smoke).frame(width: 28, alignment: .leading)
+                    Text(r.ad).font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                    Spacer()
+                    Text(fmt(r.deger)).font(.system(size: 12)).foregroundStyle(renk)
+                }.padding(.vertical, 1)
+            }
+        }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
     }
 }

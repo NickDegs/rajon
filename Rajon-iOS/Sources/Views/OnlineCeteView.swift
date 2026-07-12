@@ -31,9 +31,10 @@ struct OnlineCeteView: View {
             await online.clanSavasGetir()
             await online.clanChatCek()
             await online.clanHedeflerCek()
+            await online.takviyeBilgiCek()
             while true {
                 try? await Task.sleep(nanoseconds: 5_000_000_000)
-                if online.clanim != nil { await online.clanChatCek(); await online.clanHedeflerCek() }
+                if online.clanim != nil { await online.clanChatCek(); await online.clanHedeflerCek(); await online.takviyeBilgiCek() }
             }
         }
         .alert("Savaş ilan et", isPresented: Binding(get: { savasHedef != nil }, set: { if !$0 { savasHedef = nil } })) {
@@ -159,6 +160,48 @@ struct OnlineCeteView: View {
                     Image(systemName: "paperplane.fill").font(.system(size: 16)).foregroundStyle(.white)
                         .padding(11).background(Theme.blood).clipShape(Circle())
                 }
+            }
+        }
+        .frame(maxWidth: .infinity).cardStyle(14)
+
+        // MÜTTEFİK YARDIM (takviye + kaynak gönder)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("MÜTTEFİK YARDIM").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
+            if !online.takviyeGelen.isEmpty {
+                Text("Üssünde takviye: +\(fmt(online.takviyeGelen.reduce(0){$0+$1.savunma})) savunma (\(online.takviyeGelen.map{$0.kim}.joined(separator: ", ")))")
+                    .font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.gold)
+            }
+            if !online.takviyeGiden.isEmpty {
+                HStack {
+                    Text("Gönderdiğin takviyeler: \(online.takviyeGiden.reduce(0){$0+$1.asker}) asker")
+                        .font(.system(size: 12)).foregroundStyle(Theme.smoke)
+                    Spacer()
+                    Button("Geri Çek") { Task { await online.takviyeGeriCek() } }
+                        .font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.blood)
+                }
+            }
+            Text("Bir arkadaşına ordunla (kabadayı) savunma takviyesi veya nakit gönder:")
+                .font(.system(size: 11)).foregroundStyle(Theme.smoke)
+            ForEach(c.members.filter { $0.id != online.me?.id }) { m in
+                HStack(spacing: 8) {
+                    Text(m.ad).font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                    Spacer()
+                    Button {
+                        let k = online.dunya?.army["kabadayi"] ?? 0
+                        if k > 0 { Task { await online.takviyeGonder(m.id, t: 0, k: k, s: 0) } }
+                    } label: {
+                        Label("Takviye", systemImage: "shield.lefthalf.filled").font(.system(size: 11, weight: .black))
+                            .padding(.horizontal, 10).padding(.vertical, 6).background(Theme.bloodDim)
+                            .foregroundStyle(.white).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    Button {
+                        Task { await online.kaynakGonder(m.id, cash: 10000, cephane: 0) }
+                    } label: {
+                        Text("₺10K").font(.system(size: 11, weight: .black))
+                            .padding(.horizontal, 10).padding(.vertical, 6).background(Theme.panelHi)
+                            .foregroundStyle(Theme.gold).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }.padding(.vertical, 2)
             }
         }
         .frame(maxWidth: .infinity).cardStyle(14)
