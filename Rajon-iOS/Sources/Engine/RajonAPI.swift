@@ -207,20 +207,38 @@ final class OnlineService: ObservableObject {
         var r = URLRequest(url: OnlineService.base.appendingPathComponent(path))
         r.httpMethod = method
         r.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        r.setValue("application/json", forHTTPHeaderField: "Accept")
+        // gzip'i kapat: sıkıştırılmış JSON bazı ağ/istemci koşullarında decode hatası veriyordu.
+        r.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        r.cachePolicy = .reloadIgnoringLocalCacheData      // bayat/kısmi önbellek yanıtı gelmesin
         if auth, let t = token { r.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization") }
         r.httpBody = body
         return r
     }
 
+    /// Ortak: durum kodunu kontrol et, hatalıysa/çözülemezse ham gövdeyi mesaja koy (teşhis için).
+    private func cozumle<T: Decodable>(_ d: Data, _ resp: URLResponse) throws -> T {
+        let kod = (resp as? HTTPURLResponse)?.statusCode ?? 0
+        if !(200..<300).contains(kod) {
+            let g = String(data: d.prefix(140), encoding: .utf8) ?? "?"
+            throw APIError("HTTP \(kod): \(g)")
+        }
+        do { return try JSONDecoder().decode(T.self, from: d) }
+        catch {
+            let g = String(data: d.prefix(140), encoding: .utf8) ?? "boş/ikili yanıt"
+            throw APIError("Cevap çözülemedi [\(kod), \(d.count)B]: \(g)")
+        }
+    }
+
     private func get<T: Decodable>(_ path: String) async throws -> T {
-        let (d, _) = try await URLSession.shared.data(for: req(path, method: "GET", body: nil, auth: true))
-        return try JSONDecoder().decode(T.self, from: d)
+        let (d, r) = try await URLSession.shared.data(for: req(path, method: "GET", body: nil, auth: true))
+        return try cozumle(d, r)
     }
 
     private func post<T: Decodable>(_ path: String, body: [String: Any], auth: Bool = true) async throws -> T {
         let data = try JSONSerialization.data(withJSONObject: body)
-        let (d, _) = try await URLSession.shared.data(for: req(path, method: "POST", body: data, auth: auth))
-        return try JSONDecoder().decode(T.self, from: d)
+        let (d, r) = try await URLSession.shared.data(for: req(path, method: "POST", body: data, auth: auth))
+        return try cozumle(d, r)
     }
 
     @discardableResult
@@ -239,9 +257,11 @@ final class OnlineService: ObservableObject {
     @Published var sonSaldiri: (won: Bool, loot: Int)?
 
     /// Canlı dünyaya gir: bağlı değilse anonim giriş yap, durumu çek.
+    /// Register (girisYap) başarısız olsa bile KAYITLI TOKEN varsa dünyayı çekmeyi dener —
+    /// böylece geçici bir register hatası dünyaya girişi engellemez.
     func dunyayaGir() async {
         if !girisli { await girisYap(ad: ad.isEmpty ? "Patron" : ad) }
-        guard girisli else { return }
+        guard girisli || token != nil else { return }
         dunyaAktif = true
         await dunyaCek()
         await dunyaHaritasi()
@@ -307,6 +327,13 @@ final class OnlineService: ObservableObject {
         await dunyaAksiyon("/rajon/world/clan_donate", ["amount": miktar])
         await clanGetir()
     }
+}
+
+/// Ağ/decode hatalarını okunur mesajla taşıyan hata tipi (yükleme ekranında gösterilir).
+struct APIError: LocalizedError {
+    let mesaj: String
+    init(_ mesaj: String) { self.mesaj = mesaj }
+    var errorDescription: String? { mesaj }
 }
 
 // MARK: - Dünya modelleri (world.view JSON ile birebir)
