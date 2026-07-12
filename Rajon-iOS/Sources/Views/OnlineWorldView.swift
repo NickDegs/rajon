@@ -11,6 +11,7 @@ struct OnlineWorldView: View {
     @State private var gorevAcik = false
     @State private var fraksiyonAcik = false
     @State private var uslerAcik = false
+    @State private var heroAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -76,7 +77,7 @@ struct OnlineWorldView: View {
                 if online.dunya != nil {
                     await online.dunyaCek()
                     say += 1
-                    if say % 4 == 0 { await online.gorevlerCek() }   // ~12 sn'de görev tazele
+                    if say % 4 == 0 { await online.gorevlerCek(); await online.heroCek() }   // ~12 sn'de görev+kahraman tazele
                 }
             }
         }
@@ -121,6 +122,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Üsler & Fetih").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { uslerAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $heroAcik) {
+            NavigationStack {
+                KahramanView()
+                    .navigationTitle("Kahraman").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { heroAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -197,6 +207,14 @@ struct OnlineWorldView: View {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: "map.circle.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
                     if let d = d, (d.usSayisi ?? 0) < (d.usLimit ?? 0) {
+                        Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
+                    }
+                }
+            }
+            Button { heroAcik = true } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "figure.stand").font(.system(size: 16)).foregroundStyle(Theme.gold)
+                    if online.hero?.macera?.biterMi == true || (online.hero?.sp ?? 0) > 0 {
                         Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
                     }
                 }

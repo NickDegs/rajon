@@ -125,7 +125,11 @@ private struct GarnizonAyarView: View {
     @EnvironmentObject var online: OnlineService
     @Environment(\.dismiss) var dismiss
     let us: Us
-    @State private var t = 0, k = 0, s = 0, y = 0, sef = 0
+    @State private var t = 0
+    @State private var k = 0
+    @State private var s = 0
+    @State private var y = 0
+    @State private var sef = 0
 
     private var ordu: [String: Int] { online.dunya?.army ?? [:] }
 

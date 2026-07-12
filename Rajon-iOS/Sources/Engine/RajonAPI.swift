@@ -408,6 +408,7 @@ final class OnlineService: ObservableObject {
     @Published var uslerim: [Us] = []
     @Published var usLimit: Int = 0
     @Published var dusmanUsler: [DusmanUs] = []
+    @Published var hero: HeroBilgi?
 
     func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
         await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
@@ -453,6 +454,29 @@ final class OnlineService: ObservableObject {
     func usGarnizonCek(_ id: Int) async { await dunyaAksiyon("/rajon/world/base/garrison/recall", ["us_id": id]); await uslerimCek() }
     func usSaldir(_ id: Int) async {
         await dunyaAksiyon("/rajon/world/base/attack", ["us_id": id]); await dusmanUsleriCek(); await baskinlariCek()
+    }
+
+    // MARK: - Kahraman + macera + eşya
+    func heroCek() async { if let h: HeroBilgi = try? await get("/rajon/world/hero") { hero = h } }
+    func heroYetenek(_ alan: String) async {
+        if let r: HeroResp = try? await post("/rajon/world/hero/skill", body: ["alan": alan]) {
+            hero = r.hero; if let w = r.world { dunya = w }
+        }
+    }
+    func maceraBaslat(_ zorluk: String) async {
+        if let r: HeroResp = try? await post("/rajon/world/hero/adventure", body: ["zorluk": zorluk]) { hero = r.hero }
+    }
+    func maceraTopla() async {
+        if let r: HeroResp = try? await post("/rajon/world/hero/adventure/collect", body: [:]) {
+            hero = r.hero; if let w = r.world { dunya = w }
+            if let e = r.esya { dunyaBilgi = "Maceradan eşya düştü: \(e.ad)!" }
+        }
+    }
+    func esyaTak(_ id: Int) async {
+        if let r: HeroResp = try? await post("/rajon/world/hero/item/equip", body: ["item_id": id]) { hero = r.hero; if let w = r.world { dunya = w } }
+    }
+    func esyaCikar(_ id: Int) async {
+        if let r: HeroResp = try? await post("/rajon/world/hero/item/unequip", body: ["item_id": id]) { hero = r.hero; if let w = r.world { dunya = w } }
     }
 
     // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
@@ -539,6 +563,19 @@ struct DusmanUs: Codable, Identifiable {
 }
 struct UslerimResp: Codable { let usler: [Us]; let limit: Int; let kurulu: Int }
 struct DusmanUslerResp: Codable { let usler: [DusmanUs] }
+
+struct HeroBilgi: Codable {
+    let ad: String; let level: Int; let xp: Int; let xpGerek: Int
+    let sp: Int; let savas: Int; let liderlik: Int; let servet: Int
+    let evde: Bool; let atkBonus: Int; let defBonus: Int; let gelirBonus: Int
+    var macera: HeroMacera? = nil
+    let zorluklar: [HeroZorluk]
+    let esyalar: [HeroEsya]
+}
+struct HeroMacera: Codable { let tip: String; let zorluk: String; let kalan: Int; let biterMi: Bool }
+struct HeroZorluk: Codable, Identifiable { let kod: String; let sure: Int; let cash: Int; let xp: Int; let itemSans: Int; var id: String { kod } }
+struct HeroEsya: Codable, Identifiable { let id: Int; let slot: String; let ad: String; let bonusTip: String; let bonus: Int; let nadir: String; let takili: Bool }
+struct HeroResp: Codable { var hero: HeroBilgi? = nil; var world: DunyaView? = nil; var esya: HeroEsya? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
