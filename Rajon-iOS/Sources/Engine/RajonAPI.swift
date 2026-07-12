@@ -402,7 +402,7 @@ final class OnlineService: ObservableObject {
     @Published var casusSonuc: CasusSonuc?
     @Published var farmHedefler: [FarmHedef] = []
     @Published var siralama: Siralamalar?
-    @Published var gorevler: [Gorev] = []
+    @Published var gorevler: [GunlukGorev] = []
 
     func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
         await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
@@ -548,8 +548,8 @@ struct FarmHedef: Codable, Identifiable { let id: String; let ad: String; let gu
 struct FarmResp: Codable { let liste: [FarmHedef] }
 struct SiraSatir: Codable, Identifiable { let ad: String; let deger: Int; var id: String { ad } }
 struct Siralamalar: Codable { let saldirgan: [SiraSatir]; let savunmaci: [SiraSatir]; let cete: [SiraSatir] }
-struct Gorev: Codable, Identifiable { let tip: String; let ad: String; let hedef: Int; let ilerleme: Int; let tamam: Bool; let alindi: Bool; let odul: Int; var id: String { tip } }
-struct GorevResp: Codable { let gorevler: [Gorev] }
+struct GunlukGorev: Codable, Identifiable { let tip: String; let ad: String; let hedef: Int; let ilerleme: Int; let tamam: Bool; let alindi: Bool; let odul: Int; var id: String { tip } }
+struct GorevResp: Codable { let gorevler: [GunlukGorev] }
 struct BaskinGonderResp: Codable { let gonderildi: Bool; let varis: Int; let world: DunyaView }
 
 struct AttestChallengeResp: Codable { let challenge: String }
