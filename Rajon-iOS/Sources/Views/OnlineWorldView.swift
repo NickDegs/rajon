@@ -18,18 +18,20 @@ struct OnlineWorldView: View {
     @State private var rehberAcik = false
     @State private var akademiAcik = false
     @State private var natarAcik = false
+    @State private var ittifakAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
     private static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
         "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
-        "belediye": "Belediye", "akademi": "Akademi",
+        "belediye": "Belediye", "akademi": "Akademi", "hastane": "Hastane",
     ]
     private static let binaIkon: [String: String] = [
         "karargah": "flag.2.crossed.fill", "kasa": "banknote.fill", "depo": "shippingbox.fill",
         "cephanelik": "shield.lefthalf.filled", "kisla": "person.3.sequence.fill", "korunak": "lock.shield.fill",
         "zula": "archivebox.fill", "belediye": "building.columns.fill", "akademi": "graduationcap.fill",
+        "hastane": "cross.case.fill",
     ]
     private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı", "sef": "Şef", "suvari": "Süvari", "muhafiz": "Muhafız", "izci": "İzci"]
     private static let askerNot: [String: String] = ["yikici": "bina yıkar", "sef": "üs+başkent fetheder", "suvari": "hızlı saldırı", "muhafiz": "ağır savunma", "izci": "keşif"]
@@ -203,6 +205,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Natar Eyaleti").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { natarAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $ittifakAcik) {
+            NavigationStack {
+                IttifakView()
+                    .navigationTitle("İttifak Bonusları").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { ittifakAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -648,6 +659,18 @@ struct OnlineWorldView: View {
                         VStack(alignment: .leading, spacing: 1) {
                             Text("NATAR EYALETİ").font(.system(size: 13, weight: .black)).foregroundStyle(Theme.ink)
                             Text("eser kalelerini fethet — güçlü sunucu bonusları").font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.smoke)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(Theme.smoke)
+                    }.padding(.horizontal, 14).padding(.vertical, 10).background(Theme.panel).clipShape(RoundedRectangle(cornerRadius: 12))
+                }.buttonStyle(.plain)
+                // İTTİFAK BONUSLARI — çete geneli kalıcı güç
+                Button { ittifakAcik = true } label: {
+                    HStack {
+                        Image(systemName: "person.3.fill").foregroundStyle(Theme.gold)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("İTTİFAK BONUSLARI").font(.system(size: 13, weight: .black)).foregroundStyle(Theme.ink)
+                            Text("çeteyle katkı yap — herkese kalıcı güç").font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.smoke)
                         }
                         Spacer()
                         Image(systemName: "chevron.right").foregroundStyle(Theme.smoke)

@@ -512,6 +512,13 @@ final class OnlineService: ObservableObject {
         }
     }
 
+    // MARK: - İttifak (çete) bonusları
+    @Published var ittifak: IttifakDurum?
+    func ittifakCek() async { if let i: IttifakDurum = try? await get("/rajon/world/alliance") { ittifak = i } }
+    func ittifakYukselt(_ tip: String) async {
+        if let r: IttifakResp = try? await post("/rajon/world/alliance/upgrade", body: ["tip": tip]) { ittifak = r.clanBonus; if let w = r.world { dunya = w } }
+    }
+
     // MARK: - Natar eyaleti (eser ele geçirme)
     @Published var natarlar: [NatarKale] = []
     func natarCek() async { if let r: NatarResp = try? await get("/rajon/world/natar") { natarlar = r.natarlar } }
@@ -731,6 +738,13 @@ struct NatarKale: Codable, Identifiable {
     let sahip: String; let bende: Bool; let uzaklik: Int
 }
 struct NatarResp: Codable { let natarlar: [NatarKale] }
+
+struct IttifakBonus: Codable, Identifiable {
+    let tip: String; let ad: String; let seviye: Int; let bonus: Int; let cash: Int
+    var id: String { tip }
+}
+struct IttifakDurum: Codable { let clan: String; let bonuslar: [IttifakBonus] }
+struct IttifakResp: Codable { var clanBonus: IttifakDurum? = nil; var world: DunyaView? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }

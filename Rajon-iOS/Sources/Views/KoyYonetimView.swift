@@ -8,7 +8,7 @@ struct KoyYonetimView: View {
     static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
         "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
-        "belediye": "Belediye", "akademi": "Akademi",
+        "belediye": "Belediye", "akademi": "Akademi", "hastane": "Hastane",
     ]
     static let askerAd: [String: String] = [
         "tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı",
