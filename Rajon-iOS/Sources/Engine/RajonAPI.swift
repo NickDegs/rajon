@@ -450,9 +450,10 @@ final class OnlineService: ObservableObject {
     }
     func usKur() async { await dunyaAksiyon("/rajon/world/base/found", [:]); await uslerimCek() }
     func usHasat() async { await dunyaAksiyon("/rajon/world/base/harvest", [:]); await uslerimCek() }
-    func usGarnizonGonder(_ id: Int, t: Int, k: Int, s: Int, y: Int, sef: Int) async {
-        await dunyaAksiyon("/rajon/world/base/garrison",
-            ["us_id": id, "tetikci": t, "kabadayi": k, "sofor": s, "yikici": y, "sef": sef]); await uslerimCek()
+    func usGarnizonGonder(_ id: Int, _ ordu: [String: Int]) async {
+        var body: [String: Any] = ["us_id": id]
+        for (k, v) in ordu { body[k] = v }
+        await dunyaAksiyon("/rajon/world/base/garrison", body); await uslerimCek()
     }
     func usGarnizonCek(_ id: Int) async { await dunyaAksiyon("/rajon/world/base/garrison/recall", ["us_id": id]); await uslerimCek() }
     func usSaldir(_ id: Int) async {

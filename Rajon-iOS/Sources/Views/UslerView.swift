@@ -120,41 +120,38 @@ struct UslerView: View {
     }
 }
 
-/// Ek üsse garnizon (savunma birliği) yerleştirme.
+/// Ek üsse garnizon (savunma birliği) yerleştirme — tüm birim türleri.
 private struct GarnizonAyarView: View {
     @EnvironmentObject var online: OnlineService
     @Environment(\.dismiss) var dismiss
     let us: Us
-    @State private var t = 0
-    @State private var k = 0
-    @State private var s = 0
-    @State private var y = 0
-    @State private var sef = 0
+    @State private var sec: [String: Int] = [:]
 
+    private static let birimler: [(String, String)] = [
+        ("tetikci", "Tetikçi"), ("kabadayi", "Kabadayı"), ("sofor", "Şoför"),
+        ("suvari", "Süvari"), ("muhafiz", "Muhafız"), ("yikici", "Yıkıcı"),
+        ("sef", "Şef"), ("izci", "İzci"),
+    ]
     private var ordu: [String: Int] { online.dunya?.army ?? [:] }
+    private var toplam: Int { sec.values.reduce(0, +) }
 
     var body: some View {
         Form {
             Section("Ana üsten gönderilecek birlik") {
-                stepper("Tetikçi", $t, ordu["tetikci"] ?? 0)
-                stepper("Kabadayı", $k, ordu["kabadayi"] ?? 0)
-                stepper("Şoför", $s, ordu["sofor"] ?? 0)
-                stepper("Yıkıcı", $y, ordu["yikici"] ?? 0)
-                stepper("Şef", $sef, ordu["sef"] ?? 0)
+                ForEach(Self.birimler, id: \.0) { kod, ad in
+                    let maks = ordu[kod] ?? 0
+                    Stepper(value: Binding(get: { sec[kod] ?? 0 }, set: { sec[kod] = $0 }), in: 0...max(0, maks)) {
+                        HStack { Text(ad); Spacer(); Text("\(sec[kod] ?? 0) / \(maks)").foregroundStyle(Theme.smoke) }
+                    }.disabled(maks == 0)
+                }
             }
             Section {
                 Button {
-                    Task { await online.usGarnizonGonder(us.id, t: t, k: k, s: s, y: y, sef: sef); dismiss() }
+                    Task { await online.usGarnizonGonder(us.id, sec); dismiss() }
                 } label: {
                     Text("Garnizona Yerleştir").frame(maxWidth: .infinity).font(.system(size: 15, weight: .black))
-                }.disabled(t + k + s + y + sef == 0)
+                }.disabled(toplam == 0)
             }
         }
-    }
-
-    private func stepper(_ ad: String, _ v: Binding<Int>, _ maks: Int) -> some View {
-        Stepper(value: v, in: 0...max(0, maks)) {
-            HStack { Text(ad); Spacer(); Text("\(v.wrappedValue) / \(maks)").foregroundStyle(Theme.smoke) }
-        }.disabled(maks == 0)
     }
 }

@@ -24,7 +24,8 @@ struct OnlineWorldView: View {
         "karargah": "flag.2.crossed.fill", "kasa": "banknote.fill", "depo": "shippingbox.fill",
         "cephanelik": "shield.lefthalf.filled", "kisla": "person.3.sequence.fill", "korunak": "lock.shield.fill",
     ]
-    private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı"]
+    private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı", "sef": "Şef", "suvari": "Süvari", "muhafiz": "Muhafız", "izci": "İzci"]
+    private static let askerNot: [String: String] = ["yikici": "bina yıkar", "sef": "üs fetheder", "suvari": "hızlı saldırı", "muhafiz": "ağır savunma", "izci": "keşif"]
 
     var body: some View {
         Group {
@@ -425,23 +426,22 @@ struct OnlineWorldView: View {
                     }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
                 }
                 Text("ORDUN").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
-                HStack(spacing: 10) {
-                    orduKutu("tetikci", d.army["tetikci"] ?? 0)
-                    orduKutu("kabadayi", d.army["kabadayi"] ?? 0)
-                    orduKutu("sofor", d.army["sofor"] ?? 0)
-                    orduKutu("yikici", d.army["yikici"] ?? 0)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
+                    ForEach(["tetikci", "kabadayi", "sofor", "suvari", "muhafiz", "yikici", "sef", "izci"], id: \.self) { tip in
+                        orduKutu(tip, d.army[tip] ?? 0)
+                    }
                 }
                 if let t = d.train {
                     Text("Eğitimde: \(Self.askerAd[t.tip] ?? t.tip) ×\(t.count) · \(sureMetni(t.kalan))")
                         .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 }
                 Text("ASKER EĞİT").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
-                ForEach(["tetikci", "kabadayi", "sofor", "yikici"], id: \.self) { tip in
-                    let adet = tip == "yikici" ? 1 : 5
+                ForEach(["tetikci", "kabadayi", "sofor", "suvari", "muhafiz", "yikici", "sef", "izci"], id: \.self) { tip in
+                    let adet = (tip == "yikici" || tip == "sef") ? 1 : 5
                     Button { Task { await online.dunyaAsker(tip, adet) } } label: {
                         HStack {
                             (Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)) + Text(" ×\(adet)")).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
-                            if tip == "yikici" { Text("bina yıkar").font(.system(size: 10)).foregroundStyle(Theme.blood) }
+                            if let n = Self.askerNot[tip] { Text(n).font(.system(size: 10)).foregroundStyle(Theme.blood) }
                             Spacer()
                             Image(systemName: "plus.circle.fill").foregroundStyle(Theme.gold)
                         }.cardStyle(12)
