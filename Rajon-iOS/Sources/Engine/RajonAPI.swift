@@ -409,6 +409,9 @@ final class OnlineService: ObservableObject {
     @Published var usLimit: Int = 0
     @Published var dusmanUsler: [DusmanUs] = []
     @Published var hero: HeroBilgi?
+    @Published var pazarIlanlar: [PazarIlan] = []
+    @Published var pazarBenim: [PazarIlan] = []
+    @Published var diplomasi: DiplomasiDurum?
 
     func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
         await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
@@ -477,6 +480,24 @@ final class OnlineService: ObservableObject {
     }
     func esyaCikar(_ id: Int) async {
         if let r: HeroResp = try? await post("/rajon/world/hero/item/unequip", body: ["item_id": id]) { hero = r.hero; if let w = r.world { dunya = w } }
+    }
+
+    // MARK: - Pazar (marketplace)
+    func pazarCek() async { if let r: PazarListe = try? await get("/rajon/world/market") { pazarIlanlar = r.ilanlar; pazarBenim = r.benim } }
+    func pazarEkle(ver: String, verMik: Int, iste: String, isteMik: Int) async {
+        await dunyaAksiyon("/rajon/world/market/post",
+            ["ver_tip": ver, "ver_miktar": verMik, "iste_tip": iste, "iste_miktar": isteMik]); await pazarCek()
+    }
+    func pazarKabul(_ id: Int) async { await dunyaAksiyon("/rajon/world/market/accept", ["id": id]); await pazarCek() }
+    func pazarIptal(_ id: Int) async { await dunyaAksiyon("/rajon/world/market/cancel", ["id": id]); await pazarCek() }
+
+    // MARK: - Diplomasi (çete-çete)
+    func diplomasiCek() async { if let d: DiplomasiDurum = try? await get("/rajon/world/diplomacy") { diplomasi = d } }
+    func diplomasiTeklif(_ hedef: String, durum: String) async {
+        if let r: DiplomasiResp = try? await post("/rajon/world/diplomacy/offer", body: ["hedef_clan": hedef, "durum": durum]) { diplomasi = r.diplomasi }
+    }
+    func diplomasiBoz(_ hedef: String) async {
+        if let r: DiplomasiResp = try? await post("/rajon/world/diplomacy/break", body: ["hedef_clan": hedef]) { diplomasi = r.diplomasi }
     }
 
     // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
@@ -576,6 +597,17 @@ struct HeroMacera: Codable { let tip: String; let zorluk: String; let kalan: Int
 struct HeroZorluk: Codable, Identifiable { let kod: String; let sure: Int; let cash: Int; let xp: Int; let itemSans: Int; var id: String { kod } }
 struct HeroEsya: Codable, Identifiable { let id: Int; let slot: String; let ad: String; let bonusTip: String; let bonus: Int; let nadir: String; let takili: Bool }
 struct HeroResp: Codable { var hero: HeroBilgi? = nil; var world: DunyaView? = nil; var esya: HeroEsya? = nil }
+
+struct PazarIlan: Codable, Identifiable {
+    let id: Int; let satici: String; let verTip: String; let verMiktar: Int; let isteTip: String; let isteMiktar: Int
+}
+struct PazarListe: Codable { let ilanlar: [PazarIlan]; let benim: [PazarIlan] }
+struct DiplomasiIliski: Codable, Identifiable {
+    let clan: String; let durum: String; let onayli: Bool; let bekleyen: Bool
+    var id: String { clan }
+}
+struct DiplomasiDurum: Codable { let clan: String; let iliskiler: [DiplomasiIliski] }
+struct DiplomasiResp: Codable { var diplomasi: DiplomasiDurum? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }

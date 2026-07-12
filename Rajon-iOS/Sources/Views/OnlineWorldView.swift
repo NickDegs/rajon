@@ -12,6 +12,7 @@ struct OnlineWorldView: View {
     @State private var fraksiyonAcik = false
     @State private var uslerAcik = false
     @State private var heroAcik = false
+    @State private var pazarAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -134,6 +135,15 @@ struct OnlineWorldView: View {
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
+        .sheet(isPresented: $pazarAcik) {
+            NavigationStack {
+                PazarView()
+                    .navigationTitle("Pazar & Diplomasi").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { pazarAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
     }
 
     // MARK: Giriş döngüsü + yükleme ekranı (kilitlenmeden kurtulur)
@@ -218,6 +228,9 @@ struct OnlineWorldView: View {
                         Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
                     }
                 }
+            }
+            Button { pazarAcik = true } label: {
+                Image(systemName: "arrow.left.arrow.right.circle.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
             }
             Button { magazaAcik = true } label: {
                 Image(systemName: "cart.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
