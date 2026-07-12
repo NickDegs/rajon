@@ -405,6 +405,9 @@ final class OnlineService: ObservableObject {
     @Published var farmHedefler: [FarmHedef] = []
     @Published var siralama: Siralamalar?
     @Published var gorevler: [GunlukGorev] = []
+    @Published var uslerim: [Us] = []
+    @Published var usLimit: Int = 0
+    @Published var dusmanUsler: [DusmanUs] = []
 
     func takviyeGonder(_ target: String, t: Int, k: Int, s: Int) async {
         await dunyaAksiyon("/rajon/world/reinforce", ["target_id": target, "tetikci": t, "kabadayi": k, "sofor": s])
@@ -433,6 +436,24 @@ final class OnlineService: ObservableObject {
     func siralamaCek() async { if let s: Siralamalar = try? await get("/rajon/world/rankings") { siralama = s } }
     func gorevlerCek() async { if let r: GorevResp = try? await get("/rajon/world/quests") { gorevler = r.gorevler } }
     func gorevOdulAl(_ tip: String) async { await dunyaAksiyon("/rajon/world/quest/claim", ["tip": tip]); await gorevlerCek() }
+
+    // MARK: - Çoklu üs + fetih (outpost / conquest)
+    func uslerimCek() async {
+        if let r: UslerimResp = try? await get("/rajon/world/bases") { uslerim = r.usler; usLimit = r.limit }
+    }
+    func dusmanUsleriCek() async {
+        if let r: DusmanUslerResp = try? await get("/rajon/world/bases/enemy") { dusmanUsler = r.usler }
+    }
+    func usKur() async { await dunyaAksiyon("/rajon/world/base/found", [:]); await uslerimCek() }
+    func usHasat() async { await dunyaAksiyon("/rajon/world/base/harvest", [:]); await uslerimCek() }
+    func usGarnizonGonder(_ id: Int, t: Int, k: Int, s: Int, y: Int, sef: Int) async {
+        await dunyaAksiyon("/rajon/world/base/garrison",
+            ["us_id": id, "tetikci": t, "kabadayi": k, "sofor": s, "yikici": y, "sef": sef]); await uslerimCek()
+    }
+    func usGarnizonCek(_ id: Int) async { await dunyaAksiyon("/rajon/world/base/garrison/recall", ["us_id": id]); await uslerimCek() }
+    func usSaldir(_ id: Int) async {
+        await dunyaAksiyon("/rajon/world/base/attack", ["us_id": id]); await dusmanUsleriCek(); await baskinlariCek()
+    }
 
     // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
 
@@ -503,8 +524,21 @@ struct DunyaView: Codable {
     var gelenBaskin: Int? = nil     // bana gelen (yolda) baskın sayısı → savunma uyarısı
     var fraksiyon: String? = nil
     var fraksiyonlar: [FraksiyonSecim]? = nil
+    var usSayisi: Int? = nil        // ek üs (outpost) sayısı
+    var usLimit: Int? = nil         // kurulabilir ek üs hakkı (karargah nüfuzu)
 }
 struct FraksiyonSecim: Codable, Identifiable { let kod: String; let ad: String; let bonus: String; var id: String { kod } }
+struct Us: Codable, Identifiable {
+    let id: Int; let ad: String; let ana: Bool; let sadakat: Int; let gelir: Int; let kasa: Int
+    let garrison: [String: Int]
+    var lat: Double? = nil; var lon: Double? = nil
+}
+struct DusmanUs: Codable, Identifiable {
+    let id: Int; let sahip: String; let ad: String; let lat: Double; let lon: Double
+    let sadakat: Int; let uzaklik: Int
+}
+struct UslerimResp: Codable { let usler: [Us]; let limit: Int; let kurulu: Int }
+struct DusmanUslerResp: Codable { let usler: [DusmanUs] }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }

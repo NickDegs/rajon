@@ -10,6 +10,7 @@ struct OnlineWorldView: View {
     @State private var ayarAcik = false
     @State private var gorevAcik = false
     @State private var fraksiyonAcik = false
+    @State private var uslerAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -114,6 +115,15 @@ struct OnlineWorldView: View {
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
+        .sheet(isPresented: $uslerAcik) {
+            NavigationStack {
+                UslerView()
+                    .navigationTitle("Üsler & Fetih").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { uslerAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
     }
 
     // MARK: Giriş döngüsü + yükleme ekranı (kilitlenmeden kurtulur)
@@ -179,6 +189,14 @@ struct OnlineWorldView: View {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: "checklist").font(.system(size: 16)).foregroundStyle(Theme.gold)
                     if online.gorevler.contains(where: { $0.tamam && !$0.alindi }) {
+                        Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
+                    }
+                }
+            }
+            Button { uslerAcik = true } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "map.circle.fill").font(.system(size: 16)).foregroundStyle(Theme.gold)
+                    if let d = d, (d.usSayisi ?? 0) < (d.usLimit ?? 0) {
                         Circle().fill(Theme.blood).frame(width: 8, height: 8).offset(x: 4, y: -3)
                     }
                 }
