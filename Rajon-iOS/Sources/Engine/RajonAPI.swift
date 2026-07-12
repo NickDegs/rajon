@@ -20,19 +20,31 @@ final class OnlineService: ObservableObject {
     @Published var hata: String?
     @Published var mesgul = false
 
-    /// Önce iCloud Keychain'deki SMS token'ı (varsa), yoksa anonim cihaz token'ı.
+    /// Token önceliği: SMS (iCloud) → anonim (iCloud Keychain) → eski UserDefaults (migrasyon).
+    /// Yazınca hem UserDefaults'a hem iCLOUD KEYCHAIN'e yazılır → app silinse de kalır.
     private var token: String? {
-        get { AuthService.token ?? UserDefaults.standard.string(forKey: "rajon_online_token") }
-        set { UserDefaults.standard.set(newValue, forKey: "rajon_online_token") }
+        get { AuthService.token ?? AuthService.anonToken ?? UserDefaults.standard.string(forKey: "rajon_online_token") }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "rajon_online_token")
+            if let v = newValue, !v.isEmpty { AuthService.anonTokenKaydet(v) }
+        }
     }
     /// Daha önce (anonim veya SMS) hesap oluşturulmuş mu — ilk açılış rumuz ekranı için.
     var hesapVar: Bool {
-        AuthService.token != nil || UserDefaults.standard.string(forKey: "rajon_online_token") != nil
+        AuthService.token != nil || AuthService.anonToken != nil
+            || UserDefaults.standard.string(forKey: "rajon_online_token") != nil
     }
+    /// Cihaz kimliği: iCloud Keychain (kalıcı) → eski UserDefaults (migrasyon) → yeni üret.
+    /// Keychain'de tutulduğu için app silinip yüklenince aynı hesap geri gelir (aynı Apple ID).
     private var deviceID: String {
-        if let id = UserDefaults.standard.string(forKey: "rajon_device_id") { return id }
+        if let id = AuthService.anonDeviceId { return id }
+        if let id = UserDefaults.standard.string(forKey: "rajon_device_id") {
+            AuthService.anonCihazKaydet(id)               // eski kurulumu iCloud'a taşı
+            return id
+        }
         let id = UUID().uuidString
         UserDefaults.standard.set(id, forKey: "rajon_device_id")
+        AuthService.anonCihazKaydet(id)
         return id
     }
 
@@ -290,7 +302,8 @@ final class OnlineService: ObservableObject {
     func tamSifirla() {
         UserDefaults.standard.removeObject(forKey: "rajon_online_token")
         UserDefaults.standard.removeObject(forKey: "rajon_device_id")
-        AuthService.sil()
+        AuthService.sil()        // SMS token (iCloud)
+        AuthService.anonSil()    // anonim cihaz+token (iCloud)
         girisli = false; me = nil; dunya = nil; dunyaAktif = false; hata = nil
     }
 

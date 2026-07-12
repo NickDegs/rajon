@@ -19,6 +19,15 @@ enum AuthService {
     static var phone: String? { oku(phoneKey) }
     static var girisli: Bool { (token?.isEmpty == false) }
 
+    // MARK: Anonim hesap (rumuzla giriş) — iCloud Keychain'de sakla ki app silinse de kalsın
+    private static let anonDevKey = "rajon_anon_device"
+    private static let anonTokKey = "rajon_anon_token"
+    static var anonDeviceId: String? { oku(anonDevKey) }
+    static var anonToken: String? { oku(anonTokKey) }
+    static func anonCihazKaydet(_ id: String) { yaz(anonDevKey, id) }
+    static func anonTokenKaydet(_ t: String) { yaz(anonTokKey, t) }
+    static func anonSil() { sil(anonDevKey); sil(anonTokKey) }
+
     // MARK: Keychain (synchronizable)
     private static func yaz(_ key: String, _ value: String) {
         sil(key)
