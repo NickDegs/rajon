@@ -371,7 +371,7 @@ final class OnlineService: ObservableObject {
     }
 
     // MARK: - Zamanlı baskın + sezon + çete savaş odası
-    @Published var gelenBaskin: [GelenBaskin] = []
+    @Published var gelenBaskin: [GelenAkin] = []
     @Published var gidenBaskin: [GidenBaskin] = []
     @Published var baskinRapor: [BaskinRapor] = []
     @Published var sezon: SezonBilgi?
@@ -488,11 +488,11 @@ struct OnlinePlayer: Codable {
     var lon: Double? = nil
 }
 
-// Zamanlı baskın + sezon + çete savaş odası modelleri
-struct GelenBaskin: Codable, Identifiable { let saldiran: String; let buyukluk: String; let kalan: Int; var id: String { saldiran + "\(kalan)" } }
+// Zamanlı baskın + sezon + çete savaş odası modelleri (GelenAkin — eski GelenBaskin ile çakışmasın)
+struct GelenAkin: Codable, Identifiable { let saldiran: String; let buyukluk: String; let kalan: Int; var id: String { saldiran + "\(kalan)" } }
 struct GidenBaskin: Codable, Identifiable { let hedef: String; let durum: String; let kalan: Int; var id: String { hedef + durum + "\(kalan)" } }
 struct BaskinRapor: Codable, Identifiable { let tur: String; let rakip: String; let kazandim: Bool; let yagma: Int; let ts: Double; var id: Double { ts } }
-struct GelenResp: Codable { let gelen: [GelenBaskin] }
+struct GelenResp: Codable { let gelen: [GelenAkin] }
 struct GidenResp: Codable { let giden: [GidenBaskin] }
 struct RaporResp: Codable { let raporlar: [BaskinRapor] }
 struct SezonSatir: Codable, Identifiable { let ad: String; let skor: Int; var id: String { ad } }
