@@ -75,6 +75,14 @@ struct UslerView: View {
             Text(toplam > 0 ? "Garnizon: \(toplam) birlik" : "Garnizon boş — savunmasız!")
                 .font(.system(size: 12)).foregroundStyle(toplam > 0 ? Theme.smoke : Theme.blood)
             if !us.ana {
+                NavigationLink {
+                    KoyYonetimView(bid: us.id).environmentObject(online)
+                        .navigationTitle(us.ad).navigationBarTitleDisplayMode(.inline)
+                } label: {
+                    Label("Köyü Yönet (bina · ekonomi · eğit)", systemImage: "building.2.crop.circle.fill")
+                        .font(.system(size: 13, weight: .black)).foregroundStyle(Theme.blood)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }.padding(.top, 2)
                 HStack {
                     Button { garnizonUs = us } label: {
                         Label("Garnizon Yerleştir", systemImage: "person.3.fill").font(.system(size: 12, weight: .bold))

@@ -512,6 +512,13 @@ final class OnlineService: ObservableObject {
         }
     }
 
+    // MARK: - Tam köy yönetimi (bağımsız köyler)
+    @Published var aktifKoy: KoyView?
+    func koyGor(_ bid: Int) async { if let v: KoyView = try? await get("/rajon/world/village/\(bid)") { aktifKoy = v } }
+    func koyTopla(_ bid: Int) async { if let v: KoyView = try? await post("/rajon/world/village/collect", body: ["us_id": bid]) { aktifKoy = v } }
+    func koyBina(_ bid: Int, _ tip: String) async { if let v: KoyView = try? await post("/rajon/world/village/building", body: ["us_id": bid, "tip": tip]) { aktifKoy = v } }
+    func koyAsker(_ bid: Int, _ tip: String, _ count: Int) async { if let v: KoyView = try? await post("/rajon/world/village/train", body: ["us_id": bid, "tip": tip, "count": count]) { aktifKoy = v } }
+
     // MARK: - Birlik kataloğu (savaş derinliği)
     func birimKatalogCek() async {
         if birimKatalog.isEmpty, let r: BirimKatalogResp = try? await get("/rajon/world/units") { birimKatalog = r.birimler }
@@ -611,6 +618,12 @@ struct DusmanUs: Codable, Identifiable {
     let sadakat: Int; let uzaklik: Int
 }
 struct UslerimResp: Codable { let usler: [Us]; let limit: Int; let kurulu: Int }
+struct KoyView: Codable {
+    let id: Int; let ad: String; let cash: Int; let idle: Int; let cephane: Int
+    let incomePerMin: Int; let depoKapasite: Int; let cephaneMax: Int; let maxKadro: Int
+    let buildings: [DBina]; let insaatMesgul: Bool
+    let army: [String: Int]; var train: DTrain? = nil; let savunma: Int
+}
 struct DusmanUslerResp: Codable { let usler: [DusmanUs] }
 
 struct HeroBilgi: Codable {
