@@ -512,6 +512,19 @@ final class OnlineService: ObservableObject {
         }
     }
 
+    // MARK: - Kervan + ticaret rotası
+    @Published var kervan: KervanDurum?
+    func kervanlarCek() async { if let k: KervanDurum = try? await get("/rajon/world/caravans") { kervan = k } }
+    func kervanGonder(_ bid: Int, _ miktar: Int) async {
+        await dunyaAksiyon("/rajon/world/caravan", ["us_id": bid, "miktar": miktar]); await kervanlarCek()
+    }
+    func rotaEkle(_ bid: Int, _ miktar: Int, _ periyot: Int) async {
+        if let r: KervanResp = try? await post("/rajon/world/route/add", body: ["us_id": bid, "miktar": miktar, "periyot": periyot]) { kervan = r.kervan }
+    }
+    func rotaSil(_ id: Int) async {
+        if let r: KervanResp = try? await post("/rajon/world/route/remove", body: ["id": id]) { kervan = r.kervan }
+    }
+
     // MARK: - Akademi (araştırma) + Belediye (kutlama)
     @Published var arge: ArgeDurum?
     func argeCek() async { if let a: ArgeDurum = try? await get("/rajon/world/research") { arge = a } }
@@ -700,6 +713,11 @@ struct ArgeBirim: Codable, Identifiable {
 struct ArgeDurum: Codable { let akademi: Int; let birimler: [ArgeBirim] }
 struct ArgeResp: Codable { var arge: ArgeDurum? = nil; var world: DunyaView? = nil }
 struct KutlamaResp: Codable { var world: DunyaView? = nil; var kazanc: Int? = nil }
+
+struct KervanYolda: Codable, Identifiable { let id: Int; let hedef: String; let miktar: Int; let kalan: Int }
+struct TicaretRota: Codable, Identifiable { let id: Int; let hedef: String; let hedefKoy: Int; let miktar: Int; let periyot: Int }
+struct KervanDurum: Codable { let yolda: [KervanYolda]; let rotalar: [TicaretRota] }
+struct KervanResp: Codable { var kervan: KervanDurum? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }

@@ -11,10 +11,15 @@ struct UslerView: View {
             Picker("", selection: $sekme) {
                 Text("Üslerim").tag(0)
                 Text("Fetih").tag(1)
+                Text("Kervan").tag(2)
             }.pickerStyle(.segmented).padding(12)
 
-            ScrollView {
-                if sekme == 0 { uslerimBolum } else { fetihBolum }
+            if sekme == 2 {
+                KervanView().environmentObject(online)
+            } else {
+                ScrollView {
+                    if sekme == 0 { uslerimBolum } else { fetihBolum }
+                }
             }
         }
         .task { await online.uslerimCek(); await online.dusmanUsleriCek() }
