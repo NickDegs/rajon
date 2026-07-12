@@ -16,17 +16,19 @@ struct OnlineWorldView: View {
     @State private var demirciAcik = false
     @State private var harikaAcik = false
     @State private var rehberAcik = false
+    @State private var akademiAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
     private static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
         "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
+        "belediye": "Belediye", "akademi": "Akademi",
     ]
     private static let binaIkon: [String: String] = [
         "karargah": "flag.2.crossed.fill", "kasa": "banknote.fill", "depo": "shippingbox.fill",
         "cephanelik": "shield.lefthalf.filled", "kisla": "person.3.sequence.fill", "korunak": "lock.shield.fill",
-        "zula": "archivebox.fill",
+        "zula": "archivebox.fill", "belediye": "building.columns.fill", "akademi": "graduationcap.fill",
     ]
     private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı", "sef": "Şef", "suvari": "Süvari", "muhafiz": "Muhafız", "izci": "İzci"]
     private static let askerNot: [String: String] = ["yikici": "bina yıkar", "sef": "üs+başkent fetheder", "suvari": "hızlı saldırı", "muhafiz": "ağır savunma", "izci": "keşif"]
@@ -182,6 +184,15 @@ struct OnlineWorldView: View {
                     .navigationTitle("Birlik Rehberi").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { rehberAcik = false } } }
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $akademiAcik) {
+            NavigationStack {
+                AkademiView()
+                    .navigationTitle("Akademi & Kültür").navigationBarTitleDisplayMode(.inline)
+                    .background(Theme.bg)
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { akademiAcik = false } } }
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
         }
@@ -479,11 +490,14 @@ struct OnlineWorldView: View {
                     Text("Eğitimde: \(Self.askerAd[t.tip] ?? t.tip) ×\(t.count) · \(sureMetni(t.kalan))")
                         .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 }
-                HStack {
+                HStack(spacing: 12) {
                     Text("ASKER EĞİT").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke)
                     Spacer()
                     Button { rehberAcik = true } label: {
                         Label("Rehber", systemImage: "book.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
+                    }
+                    Button { akademiAcik = true } label: {
+                        Label("Akademi", systemImage: "graduationcap.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)
                     }
                     Button { demirciAcik = true } label: {
                         Label("Demirci", systemImage: "hammer.fill").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.gold)

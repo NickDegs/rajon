@@ -512,6 +512,18 @@ final class OnlineService: ObservableObject {
         }
     }
 
+    // MARK: - Akademi (araştırma) + Belediye (kutlama)
+    @Published var arge: ArgeDurum?
+    func argeCek() async { if let a: ArgeDurum = try? await get("/rajon/world/research") { arge = a } }
+    func argeYap(_ tip: String) async {
+        if let r: ArgeResp = try? await post("/rajon/world/research", body: ["tip": tip]) { arge = r.arge; if let w = r.world { dunya = w } }
+    }
+    func kutlama(_ buyuk: Bool) async {
+        if let r: KutlamaResp = try? await post("/rajon/world/celebrate", body: ["buyuk": buyuk]) {
+            if let w = r.world { dunya = w }; if let k = r.kazanc { dunyaBilgi = "Kutlama düzenlendi: +\(k) kültür puanı" }
+        }
+    }
+
     // MARK: - Tam köy yönetimi (bağımsız köyler)
     @Published var aktifKoy: KoyView?
     func koyGor(_ bid: Int) async { if let v: KoyView = try? await get("/rajon/world/village/\(bid)") { aktifKoy = v } }
@@ -607,6 +619,9 @@ struct DunyaView: Codable {
     var usLimit: Int? = nil         // kurulabilir ek üs hakkı (karargah nüfuzu)
     var idameDk: Int? = nil         // ordunun dakikalık besleme gideri
     var konakSadakat: Int? = nil    // başkent sadakati (düşman şefi düşürür → 0'da fetih)
+    var kp: Int? = nil              // kültür puanı (genişleme)
+    var kpSaat: Int? = nil          // saatlik KP üretimi
+    var genislemeBedeli: Int? = nil // sonraki köy KP bedeli
 }
 struct FraksiyonSecim: Codable, Identifiable { let kod: String; let ad: String; let bonus: String; var id: String { kod } }
 struct Us: Codable, Identifiable {
@@ -676,6 +691,15 @@ struct BirimBilgi: Codable, Identifiable {
     var id: String { tip }
 }
 struct BirimKatalogResp: Codable { let birimler: [BirimBilgi] }
+
+struct ArgeBirim: Codable, Identifiable {
+    let tip: String; let ad: String; let gerekenAkademi: Int; let akademi: Int
+    let cash: Int; let cephane: Int; let arastirildi: Bool; let acik: Bool
+    var id: String { tip }
+}
+struct ArgeDurum: Codable { let akademi: Int; let birimler: [ArgeBirim] }
+struct ArgeResp: Codable { var arge: ArgeDurum? = nil; var world: DunyaView? = nil }
+struct KutlamaResp: Codable { var world: DunyaView? = nil; var kazanc: Int? = nil }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }
