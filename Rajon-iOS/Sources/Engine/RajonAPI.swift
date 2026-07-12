@@ -336,6 +336,8 @@ final class OnlineService: ObservableObject {
         }
     }
 
+    func fraksiyonSec(_ kod: String) async { await dunyaAksiyon("/rajon/world/faction", ["kod": kod]) }
+
     func dunyaTopla() async { await dunyaAksiyon("/rajon/world/collect", [:]) }
     func dunyaIsletme(_ idx: Int) async { await dunyaAksiyon("/rajon/world/racket", ["idx": idx]) }
     func dunyaBina(_ tip: String) async { await dunyaAksiyon("/rajon/world/building", ["tip": tip]) }
@@ -499,7 +501,10 @@ struct DunyaView: Codable {
     let army: [String: Int]
     let train: DTrain?
     var gelenBaskin: Int? = nil     // bana gelen (yolda) baskın sayısı → savunma uyarısı
+    var fraksiyon: String? = nil
+    var fraksiyonlar: [FraksiyonSecim]? = nil
 }
+struct FraksiyonSecim: Codable, Identifiable { let kod: String; let ad: String; let bonus: String; var id: String { kod } }
 struct DRacket: Codable, Identifiable { let idx: Int; let ad: String; let owned: Bool; let tier: Int; let perMin: Int; let fiyat: Int; var id: Int { idx } }
 struct DBina: Codable, Identifiable { let tip: String; let seviye: Int; let fiyat: Int; let sure: Int; let insaatta: Bool; let kalan: Int; var id: String { tip } }
 struct DBolge: Codable, Identifiable { let idx: Int; let ad: String; let gelirDk: Int; let owned: Bool; let fiyat: Int; let sure: Int; let fetihte: Bool; let kalan: Int; var id: Int { idx } }

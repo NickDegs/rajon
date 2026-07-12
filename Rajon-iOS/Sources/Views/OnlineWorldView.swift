@@ -9,6 +9,7 @@ struct OnlineWorldView: View {
     @State private var magazaAcik = false
     @State private var ayarAcik = false
     @State private var gorevAcik = false
+    @State private var fraksiyonAcik = false
     @State private var rumuzGirildi = false
     @State private var denemeler = 0
 
@@ -20,7 +21,7 @@ struct OnlineWorldView: View {
         "karargah": "flag.2.crossed.fill", "kasa": "banknote.fill", "depo": "shippingbox.fill",
         "cephanelik": "shield.lefthalf.filled", "kisla": "person.3.sequence.fill", "korunak": "lock.shield.fill",
     ]
-    private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför"]
+    private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı"]
 
     var body: some View {
         Group {
@@ -29,6 +30,16 @@ struct OnlineWorldView: View {
                     Theme.bg.ignoresSafeArea()
                     VStack(spacing: 0) {
                         kaynakBar
+                        if (d.fraksiyon ?? "").isEmpty {
+                            Button { fraksiyonAcik = true } label: {
+                                HStack {
+                                    Label("FRAKSİYONUNU SEÇ", systemImage: "shield.checkered").font(.system(size: 13, weight: .black)).foregroundStyle(.white)
+                                    Spacer()
+                                    Text("kalıcı bonus →").font(.system(size: 12, weight: .bold)).foregroundStyle(.white.opacity(0.9))
+                                }
+                                .padding(.horizontal, 16).padding(.vertical, 10).background(Theme.blood)
+                            }
+                        }
                         TabView(selection: $tab) {
                             OnlineKoyView().tag(0).tabItem { Label("Üs", systemImage: "building.2.fill") }
                             OnlineHaritaView().tag(1).tabItem { Label("Harita", systemImage: "map.fill") }
@@ -91,6 +102,14 @@ struct OnlineWorldView: View {
                 GorevlerView()
                     .navigationTitle("Günlük Görevler").navigationBarTitleDisplayMode(.inline)
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Kapat") { gorevAcik = false } } }
+                    .background(Theme.bg)
+            }
+            .preferredColorScheme(tema.colorScheme).environmentObject(online)
+        }
+        .sheet(isPresented: $fraksiyonAcik) {
+            NavigationStack {
+                FraksiyonView { kod in Task { await online.fraksiyonSec(kod); fraksiyonAcik = false } }
+                    .navigationTitle("Fraksiyon Seç").navigationBarTitleDisplayMode(.inline)
                     .background(Theme.bg)
             }
             .preferredColorScheme(tema.colorScheme).environmentObject(online)
@@ -357,20 +376,23 @@ struct OnlineWorldView: View {
                     }.frame(maxWidth: .infinity, alignment: .leading).cardStyle(12)
                 }
                 Text("ORDUN").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     orduKutu("tetikci", d.army["tetikci"] ?? 0)
                     orduKutu("kabadayi", d.army["kabadayi"] ?? 0)
                     orduKutu("sofor", d.army["sofor"] ?? 0)
+                    orduKutu("yikici", d.army["yikici"] ?? 0)
                 }
                 if let t = d.train {
                     Text("Eğitimde: \(Self.askerAd[t.tip] ?? t.tip) ×\(t.count) · \(sureMetni(t.kalan))")
                         .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.gold)
                 }
-                Text("ASKER EĞİT (5'er)").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
-                ForEach(["tetikci", "kabadayi", "sofor"], id: \.self) { tip in
-                    Button { Task { await online.dunyaAsker(tip, 5) } } label: {
+                Text("ASKER EĞİT").font(.system(size: 12, weight: .black)).foregroundStyle(Theme.smoke).frame(maxWidth: .infinity, alignment: .leading)
+                ForEach(["tetikci", "kabadayi", "sofor", "yikici"], id: \.self) { tip in
+                    let adet = tip == "yikici" ? 1 : 5
+                    Button { Task { await online.dunyaAsker(tip, adet) } } label: {
                         HStack {
-                            (Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)) + Text(" ×5")).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
+                            (Text(LocalizedStringKey(Self.askerAd[tip] ?? tip)) + Text(" ×\(adet)")).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
+                            if tip == "yikici" { Text("bina yıkar").font(.system(size: 10)).foregroundStyle(Theme.blood) }
                             Spacer()
                             Image(systemName: "plus.circle.fill").foregroundStyle(Theme.gold)
                         }.cardStyle(12)
