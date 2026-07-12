@@ -606,6 +606,7 @@ struct DunyaView: Codable {
     var usSayisi: Int? = nil        // ek üs (outpost) sayısı
     var usLimit: Int? = nil         // kurulabilir ek üs hakkı (karargah nüfuzu)
     var idameDk: Int? = nil         // ordunun dakikalık besleme gideri
+    var konakSadakat: Int? = nil    // başkent sadakati (düşman şefi düşürür → 0'da fetih)
 }
 struct FraksiyonSecim: Codable, Identifiable { let kod: String; let ad: String; let bonus: String; var id: String { kod } }
 struct Us: Codable, Identifiable {

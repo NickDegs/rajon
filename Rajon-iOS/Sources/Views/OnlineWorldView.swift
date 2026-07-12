@@ -29,7 +29,7 @@ struct OnlineWorldView: View {
         "zula": "archivebox.fill",
     ]
     private static let askerAd: [String: String] = ["tetikci": "Tetikçi", "kabadayi": "Kabadayı", "sofor": "Şoför", "yikici": "Yıkıcı", "sef": "Şef", "suvari": "Süvari", "muhafiz": "Muhafız", "izci": "İzci"]
-    private static let askerNot: [String: String] = ["yikici": "bina yıkar", "sef": "üs fetheder", "suvari": "hızlı saldırı", "muhafiz": "ağır savunma", "izci": "keşif"]
+    private static let askerNot: [String: String] = ["yikici": "bina yıkar", "sef": "üs+başkent fetheder", "suvari": "hızlı saldırı", "muhafiz": "ağır savunma", "izci": "keşif"]
 
     var body: some View {
         Group {
@@ -38,6 +38,15 @@ struct OnlineWorldView: View {
                     Theme.bg.ignoresSafeArea()
                     VStack(spacing: 0) {
                         kaynakBar
+                        if let sad = d.konakSadakat, sad < 100 {
+                            HStack {
+                                Image(systemName: "exclamationmark.shield.fill").foregroundStyle(.white)
+                                Text("Başkent sadakati %\(sad) — düşman şefi başkentini fethetmeye çalışıyor! Muhafız/kabadayı ile savun.")
+                                    .font(.system(size: 12, weight: .bold)).foregroundStyle(.white)
+                                Spacer()
+                            }.padding(.horizontal, 14).padding(.vertical, 8)
+                                .background(sad < 40 ? Theme.blood : Theme.bloodDim)
+                        }
                         if (d.fraksiyon ?? "").isEmpty {
                             Button { fraksiyonAcik = true } label: {
                                 HStack {
