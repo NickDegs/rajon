@@ -50,6 +50,8 @@ struct OnlineWorldView: View {
             }
         }
         .task {
+            // Gerçek cihaz+uygulama doğrulaması (App Attest). Log-only aşamada akışı bloklamaz.
+            await online.attestSaglat()
             // Dönen kullanıcı (anonim/SMS hesabı var): otomatik giriş.
             if online.hesapVar { await girisDongu() }
             // Canlı poll: dünya yüklendiğinde her 3 sn tazele.

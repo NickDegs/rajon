@@ -227,6 +227,7 @@ final class OnlineService: ObservableObject {
         // hatası verir. Boş bırakınca URLSession gzip'i şeffaf ve güvenilir yönetir.
         r.cachePolicy = .reloadIgnoringLocalCacheData      // bayat/kısmi önbellek yanıtı gelmesin
         if auth, let t = token { r.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization") }
+        if let at = attestToken, !at.isEmpty { r.setValue(at, forHTTPHeaderField: "X-Attest-Token") }
         r.httpBody = body
         return r
     }
@@ -304,6 +305,7 @@ final class OnlineService: ObservableObject {
         UserDefaults.standard.removeObject(forKey: "rajon_device_id")
         AuthService.sil()        // SMS token (iCloud)
         AuthService.anonSil()    // anonim cihaz+token (iCloud)
+        UserDefaults.standard.removeObject(forKey: "rajon_attest_token")
         girisli = false; me = nil; dunya = nil; dunyaAktif = false; hata = nil
     }
 
@@ -341,6 +343,38 @@ final class OnlineService: ObservableObject {
 
     func dunyaHaritasi() async {
         if let m: DunyaMap = try? await get("/rajon/world/map") { dunyaOyuncular = m.players }
+    }
+
+    // MARK: - App Attest (yalnızca gerçek cihaz+uygulama erişebilsin)
+
+    private var attestToken: String? {
+        get { UserDefaults.standard.string(forKey: "rajon_attest_token") }
+        set { UserDefaults.standard.setValue(newValue, forKey: "rajon_attest_token") }
+    }
+
+    /// Cihaz gerçekliğini App Attest ile kanıtla ve attest token'ı tazele.
+    /// Hata olsa da akışı BLOKLAMAZ (sunucu şimdilik log-only). Uygulama açılışında bir kez çağır.
+    func attestSaglat() async {
+        guard AppAttest.destekli else { return }
+        do {
+            let ch: AttestChallengeResp = try await post("/rajon/attest/challenge", body: [:], auth: false)
+            guard let chData = Data(base64Encoded: ch.challenge) else { return }
+            if AppAttest.attestEdildi {
+                let (kid, assertion) = try await AppAttest.assert(challenge: chData)
+                let r: AttestTokenResp = try await post("/rajon/attest/assert",
+                    body: ["key_id": kid, "assertion": assertion.base64EncodedString(), "challenge": ch.challenge], auth: false)
+                attestToken = r.attest_token
+            } else {
+                let (kid, att) = try await AppAttest.attest(challenge: chData)
+                let r: AttestTokenResp = try await post("/rajon/attest/verify",
+                    body: ["key_id": kid, "attestation": att.base64EncodedString(), "challenge": ch.challenge], auth: false)
+                attestToken = r.attest_token
+                AppAttest.attestEdildi = true
+            }
+        } catch {
+            // Uygulama silinip yüklenince eski anahtar geçersiz olabilir → sıfırla, sonraki açılışta yeniden attest.
+            AppAttest.sifirla()
+        }
     }
 
     /// Çete hazinesine bağış — dünya nakdinden otoriter düşülür, sonra çete tazelenir.
@@ -394,6 +428,9 @@ struct OnlinePlayer: Codable {
     var lat: Double? = nil      // gerçek dünya şehir koordinatı (sunucudan)
     var lon: Double? = nil
 }
+
+struct AttestChallengeResp: Codable { let challenge: String }
+struct AttestTokenResp: Codable { let attest_token: String; var env: String? = nil; var ttl: Int? = nil }
 
 struct RegisterResp: Codable { let token: String; let player: OnlinePlayer }
 struct MeResp: Codable { let player: OnlinePlayer }
