@@ -11,12 +11,13 @@ struct OnlineKoyView: View {
 
     static let binaAd: [String: String] = [
         "karargah": "Karargah", "kasa": "Kasa Dairesi", "depo": "Depo",
-        "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak",
+        "cephanelik": "Cephanelik", "kisla": "Kışla", "korunak": "Korunak", "zula": "Zula",
     ]
     static let binaAciklama: [String: String] = [
         "karargah": "İnşaatları hızlandırır", "kasa": "Dakikalık nakit üretir",
         "depo": "Kasa birikim sınırını artırır", "cephanelik": "Saldırı gücünü artırır",
         "kisla": "Sahaya daha çok adam çıkarır", "korunak": "Baskınlarda savunmanı artırır",
+        "zula": "Baskında kaynağının bir kısmını yağmadan gizler",
     ]
     // tip -> (x oranı, y oranı, parsel boyutu)
     private static let yerlesim: [String: (CGFloat, CGFloat, CGFloat)] = [
@@ -26,6 +27,7 @@ struct OnlineKoyView: View {
         "cephanelik": (0.25, 0.63, 84),
         "korunak":    (0.75, 0.63, 84),
         "kisla":      (0.50, 0.83, 84),
+        "zula":       (0.50, 0.50, 72),
     ]
 
     var body: some View {
