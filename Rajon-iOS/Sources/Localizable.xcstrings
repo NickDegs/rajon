@@ -1069,55 +1069,55 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All your progress will be deleted. This can't be undone."
+            "value": "All your progress will be wiped. This can't be undone."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dein ganzer Fortschritt wird gelöscht. Nicht rückgängig."
+            "value": "Dein gesamter Fortschritt wird gelöscht. Das kann nicht rückgängig gemacht werden."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se borrará todo tu progreso. No se puede deshacer."
+            "value": "Se borrará todo tu progreso. Esto no se puede deshacer."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toute ta progression sera supprimée. Irréversible."
+            "value": "Toute ta progression sera effacée. C'est irréversible."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tutti i tuoi progressi saranno eliminati. Irreversibile."
+            "value": "Tutti i tuoi progressi verranno cancellati. Non è reversibile."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todo o seu progresso será apagado. Irreversível."
+            "value": "Todo o seu progresso será apagado. Isso não pode ser desfeito."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Весь твой прогресс будет удалён. Необратимо."
+            "value": "Весь твой прогресс будет удалён. Это необратимо."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "سيُحذف كل تقدّمك. لا يمكن التراجع."
+            "value": "سيُحذف كل تقدمك. لا يمكن التراجع عن هذا."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "進行はすべて削除。取り消せません。"
+            "value": "進行状況はすべて削除されます。取り消せません。"
           }
         }
       }
@@ -1600,43 +1600,43 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You're a Supporter — thank you! 🎩"
+            "value": "You're a supporter — thanks! 🎩"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Du bist Unterstützer — danke! 🎩"
+            "value": "Du bist ein Unterstützer — danke! 🎩"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eres Mecenas — ¡gracias! 🎩"
+            "value": "Eres un mecenas — ¡gracias! 🎩"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tu es Soutien — merci ! 🎩"
+            "value": "Tu es un soutien — merci ! 🎩"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sei un Sostenitore — grazie! 🎩"
+            "value": "Sei un sostenitore — grazie! 🎩"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Você é Apoiador — obrigado! 🎩"
+            "value": "Você é um apoiador — obrigado! 🎩"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ты Покровитель — спасибо! 🎩"
+            "value": "Ты меценат — спасибо! 🎩"
           }
         },
         "ar": {
@@ -1648,7 +1648,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "あなたはサポーター — ありがとう！🎩"
+            "value": "あなたはサポーター — ありがとう！ 🎩"
           }
         }
       }
@@ -4019,55 +4019,55 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open online mode from the 'Online' tab."
+            "value": "Log in to online mode from the 'Online' tab."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Online-Modus im Tab 'Online' öffnen."
+            "value": "Melde dich im Online-Modus über den Reiter 'Online' an."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abre el modo online en la pestaña 'Online'."
+            "value": "Inicia sesión en el modo online desde la pestaña 'Online'."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvre le mode en ligne dans l'onglet 'Online'."
+            "value": "Connecte-toi au mode en ligne depuis l'onglet 'Online'."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apri la modalità online dalla scheda 'Online'."
+            "value": "Accedi alla modalità online dalla scheda 'Online'."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abra o modo online na aba 'Online'."
+            "value": "Entre no modo online pela aba 'Online'."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Открой онлайн-режим во вкладке «Online»."
+            "value": "Войди в онлайн-режим на вкладке «Онлайн»."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "افتح الوضع أونلاين من تبويب 'Online'."
+            "value": "سجّل الدخول إلى وضع الأونلاين من علامة تبويب «أونلاين»."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「Online」タブからオンラインモードへ。"
+            "value": "「オンライン」タブからオンラインモードにログイン。"
           }
         }
       }
@@ -4385,25 +4385,25 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reiniciar juego"
+            "value": "Reiniciar Juego"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Réinitialiser"
+            "value": "Réinitialiser le jeu"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Azzera gioco"
+            "value": "Reimposta Gioco"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reiniciar jogo"
+            "value": "Reiniciar Jogo"
           }
         },
         "ru": {
@@ -4415,7 +4415,7 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "إعادة ضبط اللعبة"
+            "value": "إعادة تعيين اللعبة"
           }
         },
         "ja": {
@@ -5447,7 +5447,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Restaurar compras"
+            "value": "Restaurar Compras"
           }
         },
         "fr": {
@@ -5459,13 +5459,13 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ripristina acquisti"
+            "value": "Ripristina Acquisti"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Restaurar compras"
+            "value": "Restaurar Compras"
           }
         },
         "ru": {
@@ -6261,55 +6261,55 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Link via SMS; auto backup to iCloud + phone"
+            "value": "Link via SMS; auto backup to iCloud + your phone"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Per SMS verbinden; Auto-Backup zu iCloud + Telefon"
+            "value": "Per SMS verknüpfen; automatisches Backup auf iCloud + dein Telefon"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vincula por SMS; respaldo a iCloud + teléfono"
+            "value": "Vincula por SMS; copia automática en iCloud + tu teléfono"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lier par SMS ; sauvegarde iCloud + téléphone"
+            "value": "Lier par SMS ; sauvegarde auto sur iCloud + ton téléphone"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Collega via SMS; backup su iCloud + telefono"
+            "value": "Collega via SMS; backup automatico su iCloud + telefono"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vincule por SMS; backup no iCloud + telefone"
+            "value": "Vincule por SMS; backup automático no iCloud + seu telefone"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Привязка по SMS; авторезерв в iCloud + телефон"
+            "value": "Привяжи по SMS; автобэкап в iCloud + на телефон"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "اربط عبر SMS؛ نسخ تلقائي إلى iCloud والهاتف"
+            "value": "اربط عبر SMS؛ نسخ احتياطي تلقائي إلى iCloud وهاتفك"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "SMSで連携。iCloudと電話へ自動バックアップ"
+            "value": "SMSで連携；iCloud＋端末に自動バックアップ"
           }
         }
       }
@@ -6969,55 +6969,55 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All progress is wiped; you start over. Your online account stays."
+            "value": "All progress is wiped, you start over. Your online account stays."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aller Fortschritt wird gelöscht; du fängst neu an. Online-Konto bleibt."
+            "value": "Der gesamte Fortschritt wird gelöscht, du fängst von vorn an. Dein Online-Konto bleibt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se borra todo el progreso; empiezas de nuevo. Tu cuenta online queda."
+            "value": "Se borra todo el progreso, empiezas de cero. Tu cuenta online se mantiene."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toute la progression est effacée ; tu recommences. Ton compte en ligne reste."
+            "value": "Toute la progression est effacée, tu recommences. Ton compte en ligne est conservé."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tutti i progressi cancellati; ricominci. L'account online resta."
+            "value": "Tutti i progressi vengono cancellati, ricominci da capo. Il tuo account online resta."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todo o progresso é apagado; recomeça. Sua conta online fica."
+            "value": "Todo o progresso é apagado, você começa do zero. Sua conta online permanece."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Весь прогресс стирается; начинаешь заново. Онлайн-аккаунт остаётся."
+            "value": "Весь прогресс удаляется, начнёшь заново. Онлайн-аккаунт сохранится."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "يُمحى كل التقدّم؛ تبدأ من جديد. يبقى حسابك أونلاين."
+            "value": "يُحذف كل التقدم وتبدأ من جديد. يبقى حسابك على الأونلاين."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "進行はすべて消去、最初から。オンラインアカウントは残る。"
+            "value": "全進行状況が削除され、最初からやり直し。オンラインアカウントは残る。"
           }
         }
       }
@@ -7028,43 +7028,43 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All purchases are cosmetic and don't boost gameplay."
+            "value": "All purchases are cosmetic and don't make the game stronger."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle Käufe sind kosmetisch und stärken nicht."
+            "value": "Alle Käufe sind kosmetisch und machen das Spiel nicht stärker."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todas las compras son cosméticas y no potencian el juego."
+            "value": "Todas las compras son cosméticas, no potencian el juego."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tous les achats sont cosmétiques et n'avantagent pas."
+            "value": "Tous les achats sont cosmétiques et ne renforcent pas le jeu."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tutti gli acquisti sono estetici e non potenziano."
+            "value": "Tutti gli acquisti sono cosmetici, non potenziano il gioco."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todas as compras são cosméticas e não fortalecem."
+            "value": "Todas as compras são cosméticas, não fortalecem o jogo."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Все покупки косметические и не усиливают игру."
+            "value": "Все покупки косметические, не усиливают игру."
           }
         },
         "ar": {
@@ -7076,7 +7076,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "購入はすべて見た目だけで強化なし。"
+            "value": "全ての購入はコスメティックで、ゲームを強化しない。"
           }
         }
       }
@@ -9378,6 +9378,5198 @@
           "stringUnit": {
             "state": "translated",
             "value": "弾薬"
+          }
+        }
+      }
+    },
+    "Alındı": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Received"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erhalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reçu"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recibido"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricevuto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recebido"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Получено"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "受領済み"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم الاستلام"
+          }
+        }
+      }
+    },
+    "Ana üsten gönderilecek birlik": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Troops to send from main base"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Truppen von der Hauptbasis senden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Troupes à envoyer depuis la base principale"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tropa a enviar desde la base principal"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Truppa da inviare dalla base principale"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tropa a enviar da base principal"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отряд для отправки с главной базы"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拠点から派遣する部隊"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وحدة تُرسل من القاعدة الرئيسية"
+          }
+        }
+      }
+    },
+    "Araştır": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Research"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erforschen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Investigar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricerca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pesquisar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Исследовать"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "研究"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بحث"
+          }
+        }
+      }
+    },
+    "Araştırıldı ✓": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Researched ✓"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erforscht ✓"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherché ✓"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Investigado ✓"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricercato ✓"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pesquisado ✓"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Исследовано ✓"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "研究済み ✓"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم البحث ✓"
+          }
+        }
+      }
+    },
+    "AÇIK İLANLARIM": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MY OPEN LISTINGS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MEINE OFFENEN ANGEBOTE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MES ANNONCES OUVERTES"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MIS ANUNCIOS ABIERTOS"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I MIEI ANNUNCI APERTI"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MEUS ANÚNCIOS ABERTOS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "МОИ ОБЪЯВЛЕНИЯ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公開中の出品"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعلاناتي المفتوحة"
+          }
+        }
+      }
+    },
+    "BELEDİYE — KUTLAMA": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOWN HALL — CELEBRATION"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RATHAUS — FEIER"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MAIRIE — CÉLÉBRATION"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AYUNTAMIENTO — CELEBRACIÓN"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MUNICIPIO — CELEBRAZIONE"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREFEITURA — CELEBRAÇÃO"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "МЭРИЯ — ПРАЗДНЕСТВО"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市庁舎 — 祝祭"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البلدية — احتفال"
+          }
+        }
+      }
+    },
+    "Baskın Yap — Eseri Al": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raid — Take the Artifact"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überfall — Artefakt erbeuten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attaquer — Prendre l'artefact"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asaltar — Tomar el Artefacto"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai un'incursione — Prendi l'Artefatto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invadir — Pegar o Artefato"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Совершить налёт — забрать артефакт"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "襲撃する — 遺物を奪う"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شنّ غارة — استحوذ على القطعة الأثرية"
+          }
+        }
+      }
+    },
+    "Bonus tüm oyun boyunca geçerlidir. Sonradan değiştirilemez.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The bonus lasts the whole game. It can't be changed later."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Bonus gilt das ganze Spiel über. Er kann später nicht geändert werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le bonus dure toute la partie. Il ne peut pas être modifié ensuite."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El bonus vale durante toda la partida. No se puede cambiar después."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il bonus vale per tutta la partita. Non è modificabile in seguito."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O bônus vale por toda a partida. Não pode ser alterado depois."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бонус действует всю игру. Изменить позже нельзя."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ボーナスはゲーム全体で有効。後から変更不可。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المكافأة سارية طوال اللعبة. لا يمكن تغييرها لاحقًا."
+          }
+        }
+      }
+    },
+    "Bu eser şu an sende — bonusun aktif.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This artifact is yours right now — bonus active."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Artefakt gehört dir gerade — Bonus aktiv."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cet artefact est à toi en ce moment — bonus actif."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este artefacto es tuyo ahora — bonus activo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo artefatto è tuo ora — bonus attivo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este artefato é seu agora — bônus ativo."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Этот артефакт сейчас у тебя — бонус активен."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この遺物は今あなたのもの — ボーナス有効。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذه القطعة الأثرية معك الآن — المكافأة فعّالة."
+          }
+        }
+      }
+    },
+    "Büyük Kutlama": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grand Celebration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Große Feier"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grande célébration"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gran Celebración"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grande Celebrazione"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grande Celebração"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Большое празднество"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大祝祭"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "احتفال كبير"
+          }
+        }
+      }
+    },
+    "BİNALAR": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BUILDINGS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GEBÄUDE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BÂTIMENTS"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EDIFICIOS"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EDIFICI"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONSTRUÇÕES"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗДАНИЯ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建物"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المباني"
+          }
+        }
+      }
+    },
+    "Diplomasi için bir çeteye katılman gerekir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You need to join a gang for diplomacy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Diplomatie musst du einer Bande beitreten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu dois rejoindre un gang pour la diplomatie."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para la diplomacia debes unirte a una banda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per la diplomazia devi unirti a una banda."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para diplomacia você precisa entrar em uma gangue."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для дипломатии нужно вступить в банду."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外交にはギャングへの加入が必要。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "للدبلوماسية عليك الانضمام إلى عصابة."
+          }
+        }
+      }
+    },
+    "Dünya Harikası bir çete işidir. Önce bir çeteye katıl.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Wonder is a gang affair. Join a gang first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Weltwunder ist Bandensache. Tritt zuerst einer Bande bei."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La Merveille est une affaire de gang. Rejoins d'abord un gang."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La Maravilla del Mundo es cosa de banda. Primero únete a una banda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La Meraviglia del Mondo è cosa da banda. Prima unisciti a una banda."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Maravilha do Mundo é coisa de gangue. Primeiro entre em uma gangue."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чудо света — дело банды. Сначала вступи в банду."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "世界の不思議はギャングの仕事。まずギャングに加入を。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عجيبة العالم عمل عصابة. انضم إلى عصابة أولًا."
+          }
+        }
+      }
+    },
+    "EŞYALAR": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITEMS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GEGENSTÄNDE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OBJETS"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OBJETOS"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OGGETTI"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITENS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПРЕДМЕТЫ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイテム"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأغراض"
+          }
+        }
+      }
+    },
+    "Eşya Müzayedesi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item Auction"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gegenstand-Auktion"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enchère d'objets"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subasta de Objetos"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asta di Oggetti"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leilão de Itens"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Аукцион предметов"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイテムオークション"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مزاد الأغراض"
+          }
+        }
+      }
+    },
+    "Eşya Müzayedesi — al/sat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item Auction — buy/sell"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gegenstand-Auktion — kaufen/verkaufen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enchère d'objets — acheter/vendre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subasta de Objetos — comprar/vender"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asta di Oggetti — compra/vendi"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leilão de Itens — comprar/vender"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Аукцион предметов — купить/продать"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイテムオークション — 売買"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مزاد الأغراض — بيع/شراء"
+          }
+        }
+      }
+    },
+    "Eşya Sat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sell Item"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gegenstand verkaufen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre l'objet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vender Objeto"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendi Oggetto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vender Item"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продать предмет"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイテムを売る"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بيع غرض"
+          }
+        }
+      }
+    },
+    "Fetih": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conquest"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eroberung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conquête"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conquista"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conquista"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conquista"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Захват"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "征服"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غزو"
+          }
+        }
+      }
+    },
+    "Fetih Baskını": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conquest Raid"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eroberungsüberfall"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raid de conquête"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asalto de Conquista"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incursione di Conquista"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invasão de Conquista"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Захватнический налёт"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "征服襲撃"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غارة الغزو"
+          }
+        }
+      }
+    },
+    "Garnizon Yerleştir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place Garrison"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garnison platzieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placer la garnison"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colocar Guarnición"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piazza Guarnigione"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posicionar Guarnição"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разместить гарнизон"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "駐留軍を配置"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نشر حامية"
+          }
+        }
+      }
+    },
+    "Garnizona Yerleştir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Garrison"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zur Garnison hinzufügen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter à la garnison"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colocar en Guarnición"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piazza in Guarnigione"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posicionar na Guarnição"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разместить в гарнизоне"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "駐留軍に配置"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وضع في الحامية"
+          }
+        }
+      }
+    },
+    "Geri Çek": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Withdraw"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurückziehen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ritira"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отозвать"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤退"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سحب"
+          }
+        }
+      }
+    },
+    "GÖRÜNÜM": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APPEARANCE"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ERSCHEINUNGSBILD"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APPARENCE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APARIENCIA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ASPETTO"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APARÊNCIA"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВНЕШНИЙ ВИД"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外観"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المظهر"
+          }
+        }
+      }
+    },
+    "Görevler yükleniyor…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading quests…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben werden geladen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chargement des quêtes…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando misiones…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caricamento missioni…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregando missões…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Задания загружаются…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クエストを読み込み中…"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارٍ تحميل المهام…"
+          }
+        }
+      }
+    },
+    "HARİKA SIRALAMASI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WONDER RANKING"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WELTWUNDER-RANGLISTE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLASSEMENT DES MERVEILLES"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RANKING DE MARAVILLAS"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLASSIFICA MERAVIGLIE"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RANKING DE MARAVILHAS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "РЕЙТИНГ ЧУДЕС"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不思議ランキング"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ترتيب العجائب"
+          }
+        }
+      }
+    },
+    "Harikaya Bağışla": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donate to Wonder"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An Weltwunder spenden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire un don à la Merveille"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donar a la Maravilla"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dona alla Meraviglia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doar para a Maravilha"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пожертвовать чуду"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不思議に寄付"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التبرع للعجيبة"
+          }
+        }
+      }
+    },
+    "Henüz diplomatik ilişki yok. Bir düşman çeteye savaş ilan et veya müttefiklik teklif et.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No diplomatic ties yet. Declare war on an enemy gang or offer an alliance."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine diplomatischen Beziehungen. Erkläre einer feindlichen Bande den Krieg oder biete ein Bündnis an."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune relation diplomatique pour l'instant. Déclare la guerre à un gang ennemi ou propose une alliance."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay relaciones diplomáticas. Declara la guerra a una banda enemiga o propón una alianza."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancora nessuna relazione diplomatica. Dichiara guerra a una banda nemica o proponi un'alleanza."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há relações diplomáticas. Declare guerra a uma gangue inimiga ou proponha aliança."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дипломатических отношений пока нет. Объяви войну вражеской банде или предложи союз."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外交関係はまだない。敵ギャングに宣戦布告するか同盟を提案しよう。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد علاقات دبلوماسية بعد. أعلن الحرب على عصابة عدوّة أو اعرض تحالفًا."
+          }
+        }
+      }
+    },
+    "Henüz eşya yok. Maceralardan ekipman düşer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No items yet. Gear drops from adventures."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Gegenstände. Ausrüstung fällt bei Abenteuern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun objet pour l'instant. L'équipement tombe lors des aventures."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay objetos. El equipo cae en las aventuras."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancora nessun oggetto. L'equipaggiamento cade dalle avventure."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há itens. Equipamentos caem nas aventuras."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предметов пока нет. Снаряжение падает из приключений."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイテムはまだない。冒険から装備がドロップする。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا أغراض بعد. تسقط المعدّات من المغامرات."
+          }
+        }
+      }
+    },
+    "Henüz kimse harika inşa etmedi. İlk sizsiniz!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nobody has built a wonder yet. Be the first!"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch hat niemand ein Weltwunder gebaut. Sei der Erste!"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personne n'a encore construit de merveille. Sois le premier !"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún nadie ha construido una maravilla. ¡Sé el primero!"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuno ha ancora costruito una meraviglia. Sii il primo!"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguém construiu uma maravilha ainda. Seja o primeiro!"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чудо ещё никто не построил. Будьте первыми!"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ誰も不思議を建てていない。あなたが一番乗り！"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يبنِ أحد عجيبة بعد. كن الأول!"
+          }
+        }
+      }
+    },
+    "Her gün yenilenir. Tamamla, ödülü al.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renews daily. Complete it, claim the reward."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneuert sich täglich. Erledige sie, kassiere die Belohnung."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renouvelé chaque jour. Termine, récupère la récompense."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se renueva cada día. Completa y recibe la recompensa."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si rinnova ogni giorno. Completa e ricevi la ricompensa."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renova todo dia. Complete e pegue a recompensa."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обновляется каждый день. Выполни, забери награду."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "毎日更新。達成して報酬を受け取ろう。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يتجدّد كل يوم. أكمِل واحصل على المكافأة."
+          }
+        }
+      }
+    },
+    "Her yükseltme o birimin saldırı ve savunmasını kalıcı %2 artırır. Ordunu kalabalıklaştırmadan güçlendir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each upgrade permanently boosts that unit's attack and defense by %2. Strengthen your army without swelling its ranks."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jedes Upgrade erhöht Angriff und Verteidigung dieser Einheit dauerhaft um %2. Stärke deine Armee, ohne sie aufzublähen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque amélioration augmente définitivement l'attaque et la défense de cette unité de %2. Renforce ton armée sans la surcharger."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada mejora aumenta permanentemente el ataque y defensa de esa unidad un %2. Fortalece tu ejército sin amontonarlo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogni potenziamento aumenta in modo permanente attacco e difesa di quell'unità del %2. Rafforza il tuo esercito senza affollarlo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada melhoria aumenta permanentemente o ataque e a defesa daquela unidade em %2. Fortaleça seu exército sem lotá-lo."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каждое улучшение навсегда повышает атаку и защиту этого юнита на %2. Усиль армию, не раздувая её."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレードごとにそのユニットの攻撃・防御が永続で%2上昇。数を増やさず軍を強化。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كل ترقية تزيد هجوم ودفاع تلك الوحدة بنسبة %2 بشكل دائم. قوِّ جيشك دون تضخيمه."
+          }
+        }
+      }
+    },
+    "Hesabı Sil": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Account"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto löschen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer le compte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar Cuenta"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elimina Account"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excluir Conta"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить аккаунт"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アカウント削除"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف الحساب"
+          }
+        }
+      }
+    },
+    "Hesabın ve tüm ilerlemen sunucudan KALICI olarak silinir. Bu geri alınamaz.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account and all progress are PERMANENTLY deleted from the server. This can't be undone."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Konto und dein gesamter Fortschritt werden DAUERHAFT vom Server gelöscht. Das kann nicht rückgängig gemacht werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ton compte et toute ta progression sont DÉFINITIVEMENT supprimés du serveur. C'est irréversible."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu cuenta y todo tu progreso se borran PERMANENTEMENTE del servidor. Esto no se puede deshacer."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tuo account e tutti i progressi vengono eliminati DEFINITIVAMENTE dal server. Non è reversibile."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua conta e todo o seu progresso serão apagados PERMANENTEMENTE do servidor. Isso não pode ser desfeito."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Твой аккаунт и весь прогресс будут НАВСЕГДА удалены с сервера. Это необратимо."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アカウントと全進行状況がサーバーから永久に削除されます。取り消せません。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سيُحذف حسابك وكل تقدمك من الخادم بشكل دائم. لا يمكن التراجع."
+          }
+        }
+      }
+    },
+    "Hesabın ve tüm ilerlemen sunucudan kalıcı olarak silinir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account and all progress are permanently deleted from the server."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Konto und dein gesamter Fortschritt werden dauerhaft vom Server gelöscht."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ton compte et toute ta progression sont définitivement supprimés du serveur."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu cuenta y todo tu progreso se borran permanentemente del servidor."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tuo account e tutti i progressi vengono eliminati definitivamente dal server."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua conta e todo o seu progresso serão apagados permanentemente do servidor."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Твой аккаунт и весь прогресс будут навсегда удалены с сервера."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アカウントと全進行状況がサーバーから永久に削除されます。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سيُحذف حسابك وكل تقدمك من الخادم بشكل دائم."
+          }
+        }
+      }
+    },
+    "Kahraman macerada — savaşta yok": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hero on an adventure — not in the fight"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Held auf Abenteuer — nicht im Kampf"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Héros en aventure — absent du combat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El héroe está en aventura — no en batalla"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'eroe è in avventura — non in battaglia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O herói está em aventura — fora da batalha"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Герой в приключении — не в бою"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヒーローは冒険中 — 戦闘に不在"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البطل في مغامرة — غائب عن المعركة"
+          }
+        }
+      }
+    },
+    "Karanlık noir mu, açık tema mı — sen seç.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark noir or light theme — you choose."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dunkles Noir oder helles Thema — du entscheidest."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noir sombre ou thème clair — à toi de choisir."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Noir oscuro o tema claro? Tú eliges."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noir scuro o tema chiaro? Scegli tu."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noir escuro ou tema claro? Você escolhe."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тёмный нуар или светлая тема — выбирай сам."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダークノワールかライトテーマか — あなた次第。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نوار داكن أم سمة فاتحة — الخيار لك."
+          }
+        }
+      }
+    },
+    "Karargahını yükselttikçe daha çok ek üs kurabilirsin (her 5 seviye +1 hak). Ek üsler gelir üretir, garnizonla savunulur ve düşman şef gönderirse fethedilebilir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The more you upgrade your HQ, the more extra bases you can found (+1 slot every 5 levels). Extra bases produce income, are defended by garrisons, and can be conquered if an enemy sends a boss."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je weiter du dein Hauptquartier ausbaust, desto mehr Zusatzbasen kannst du gründen (+1 Recht pro 5 Stufen). Zusatzbasen erzeugen Einkommen, werden von Garnisonen verteidigt und können erobert werden, wenn ein Feind einen Boss schickt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tu améliores ton QG, plus tu peux fonder de bases supplémentaires (+1 droit tous les 5 niveaux). Les bases supplémentaires génèrent des revenus, sont défendues par des garnisons et peuvent être conquises si un ennemi envoie un chef."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuanto más mejoras tu cuartel, más bases extra puedes fundar (+1 derecho cada 5 niveles). Las bases extra generan ingresos, se defienden con guarnición y pueden ser conquistadas si el enemigo envía un jefe."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Più potenzi il tuo quartier generale, più basi extra puoi fondare (+1 diritto ogni 5 livelli). Le basi extra generano reddito, si difendono con la guarnigione e possono essere conquistate se il nemico invia un capo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quanto mais você melhora seu QG, mais bases extras pode fundar (+1 direito a cada 5 níveis). Bases extras geram renda, são defendidas com guarnição e podem ser conquistadas se o inimigo enviar um chefe."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чем выше штаб, тем больше дополнительных баз можно основать (каждые 5 уровней +1). Дополнительные базы дают доход, защищаются гарнизоном и могут быть захвачены, если враг пошлёт шефа."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本部を上げるほど追加拠点を建てられる（5レベルごとに+1権利）。追加拠点は収入を生み、駐留軍で守られ、敵がボスを送れば征服され得る。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كلما رفعت مقرك أمكنك تأسيس قواعد إضافية أكثر (كل 5 مستويات +1). القواعد الإضافية تدرّ دخلًا وتُحمى بحامية ويمكن غزوها إن أرسل العدو زعيمًا."
+          }
+        }
+      }
+    },
+    "Katkı": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contribution"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beitrag"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contribution"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contribución"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contributo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contribuição"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вклад"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貢献"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مساهمة"
+          }
+        }
+      }
+    },
+    "Katkın tüm çete üyelerini kalıcı güçlendirir. Birlikte yatırım yapın.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your contribution permanently strengthens all gang members. Invest together."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Beitrag stärkt alle Bandenmitglieder dauerhaft. Investiert gemeinsam."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta contribution renforce définitivement tous les membres du gang. Investissez ensemble."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu contribución fortalece permanentemente a todos los miembros de la banda. Inviertan juntos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tuo contributo rafforza in modo permanente tutti i membri della banda. Investite insieme."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua contribuição fortalece permanentemente todos os membros da gangue. Invistam juntos."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Твой вклад навсегда усиливает всех членов банды. Инвестируйте вместе."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたの貢献はギャング全員を永続で強化する。共に投資を。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مساهمتك تقوّي كل أعضاء العصابة بشكل دائم. استثمروا معًا."
+          }
+        }
+      }
+    },
+    "Kervan ana üs kasandan (topladığın nakit) taşır. Rota her periyotta otomatik yollar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The caravan hauls from your main base vault (the cash you've collected). The route ships automatically each period."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Karawane transportiert aus deinem Hauptbasis-Tresor (das gesammelte Bargeld). Die Route liefert jede Periode automatisch."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La caravane transporte depuis le coffre de ta base principale (le liquide que tu as amassé). La route livre automatiquement à chaque période."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La caravana transporta desde la caja de tu base principal (el efectivo que juntas). La ruta envía automáticamente cada periodo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La carovana trasporta dalla cassa della tua base principale (il contante che accumuli). La rotta invia automaticamente a ogni periodo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A caravana transporta do caixa da sua base principal (o dinheiro que você junta). A rota envia automaticamente a cada período."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Караван перевозит из кассы главной базы (собранный нал). Маршрут отправляет автоматически каждый период."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隊商は拠点の金庫（集めた現金）から運ぶ。ルートは毎周期自動で送る。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القافلة تنقل من خزنة قاعدتك الرئيسية (النقد المجموع). المسار يرسل تلقائيًا كل دورة."
+          }
+        }
+      }
+    },
+    "Kuruşun harikaya akar. Çete olarak birlikte inşa edip sezonu kazanın; 25/50/75/100. seviyelerde eser kazanılır.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every penny flows into the wonder. Build it together as a gang and win the season; artifacts are earned at levels 25/50/75/100."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeder Cent fließt in das Weltwunder. Baut es gemeinsam als Bande und gewinnt die Saison; Artefakte gibt es auf Stufe 25/50/75/100."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque sou coule dans la merveille. Construisez-la ensemble en gang et gagnez la saison ; des artefacts sont obtenus aux niveaux 25/50/75/100."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada centavo fluye a la maravilla. Construyan juntos como banda y ganen la temporada; en los niveles 25/50/75/100 se obtienen artefactos."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogni centesimo confluisce nella meraviglia. Costruite insieme come banda e vincete la stagione; ai livelli 25/50/75/100 si ottengono artefatti."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada centavo flui para a maravilha. Construam juntos como gangue e ganhem a temporada; nos níveis 25/50/75/100 são obtidos artefatos."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Твоя копейка течёт к чуду. Стройте бандой вместе и выиграйте сезон; на уровнях 25/50/75/100 даётся артефакт."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたの一銭が不思議へ流れる。ギャングで共に建て、シーズンを勝ち取れ。25/50/75/100レベルで遺物を獲得。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قِرشك يتدفّق إلى العجيبة. ابنوا معًا كعصابة واربحوا الموسم؛ عند المستويات 25/50/75/100 تُكتسب قطعة أثرية."
+          }
+        }
+      }
+    },
+    "Kutlama düzenle → anında kültür puanı. (Belediye binası gerekir; büyük kutlama Sv.5 ister.)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold a celebration → instant culture points. (Requires town hall; grand celebration needs Sv.5.)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feier veranstalten → sofort Kulturpunkte. (Rathaus erforderlich; große Feier braucht Sv.5.)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organise une célébration → points de culture instantanés. (Mairie requise ; la grande célébration exige Sv.5.)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organiza una celebración → puntos de cultura al instante. (Requiere ayuntamiento; la gran celebración exige Sv.5.)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizza una celebrazione → punti cultura all'istante. (Richiede il municipio; la grande celebrazione esige Sv.5.)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organize uma celebração → pontos de cultura na hora. (Requer prefeitura; a grande celebração exige Sv.5.)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Устрой празднество → мгновенные очки культуры. (Нужна мэрия; большое празднество требует Ур.5.)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "祝祭を開催 → 即座に文化ポイント。（市庁舎が必要、大祝祭はSv.5が必要。）"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أقِم احتفالًا ← نقاط ثقافة فورية. (يلزم مبنى البلدية؛ الاحتفال الكبير يتطلب Sv.5.)"
+          }
+        }
+      }
+    },
+    "KÖY ORDUSU": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VILLAGE ARMY"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DORFARMEE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ARMÉE DU VILLAGE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EJÉRCITO DE LA ALDEA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ESERCITO DEL VILLAGGIO"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EXÉRCITO DA VILA"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АРМИЯ ДЕРЕВНИ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "村の軍"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جيش القرية"
+          }
+        }
+      }
+    },
+    "KÖYDE EĞİT": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRAIN IN VILLAGE"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IM DORF AUSBILDEN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ENTRAÎNER AU VILLAGE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ENTRENAR EN LA ALDEA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ADDESTRA NEL VILLAGGIO"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TREINAR NA VILA"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОБУЧИТЬ В ДЕРЕВНЕ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "村で訓練"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التدريب في القرية"
+          }
+        }
+      }
+    },
+    "Köyde savunma yok — garnizon gönder veya eğit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No defense in the village — send a garrison or train."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Verteidigung im Dorf — schicke eine Garnison oder bilde aus."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune défense au village — envoie une garnison ou entraîne."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay defensa en la aldea — envía guarnición o entrena."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna difesa nel villaggio — invia una guarnigione o addestra."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem defesa na vila — envie guarnição ou treine."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В деревне нет защиты — пошли гарнизон или обучи."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "村に防御なし — 駐留軍を送るか訓練を。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا دفاع في القرية — أرسل حامية أو درّب."
+          }
+        }
+      }
+    },
+    "Köyü Yönet (bina · ekonomi · eğit)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage Village (build · economy · train)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dorf verwalten (bauen · Wirtschaft · ausbilden)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gérer le village (bâtir · économie · entraîner)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestionar Aldea (edificio · economía · entrenar)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestisci Villaggio (edificio · economia · addestra)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerenciar Vila (construção · economia · treinar)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Управлять деревней (здания · экономика · обучение)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "村を管理（建物・経済・訓練）"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إدارة القرية (مبانٍ · اقتصاد · تدريب)"
+          }
+        }
+      }
+    },
+    "Kültür puanı bina seviyelerinden ve kutlamalardan gelir; yeni köy kurmak için gerekir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Culture points come from building levels and celebrations; needed to found new villages."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kulturpunkte stammen aus Gebäudestufen und Feiern; nötig, um neue Dörfer zu gründen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les points de culture proviennent des niveaux de bâtiments et des célébrations ; nécessaires pour fonder de nouveaux villages."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los puntos de cultura vienen de los niveles de edificios y de las celebraciones; hacen falta para fundar una nueva aldea."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I punti cultura provengono dai livelli degli edifici e dalle celebrazioni; servono per fondare un nuovo villaggio."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os pontos de cultura vêm dos níveis das construções e das celebrações; são necessários para fundar uma nova vila."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очки культуры дают уровни зданий и празднества; нужны для основания новой деревни."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文化ポイントは建物レベルと祝祭から得られ、新しい村の建設に必要。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقاط الثقافة تأتي من مستويات المباني والاحتفالات؛ وهي لازمة لتأسيس قرية جديدة."
+          }
+        }
+      }
+    },
+    "Küçük Kutlama": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Small Celebration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kleine Feier"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Petite célébration"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pequeña Celebración"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piccola Celebrazione"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pequena Celebração"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Малое празднество"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "小祝祭"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "احتفال صغير"
+          }
+        }
+      }
+    },
+    "Müzayedeye Koy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Put up for Auction"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zur Auktion stellen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre aux enchères"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poner en Subasta"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metti all'Asta"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colocar em Leilão"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выставить на аукцион"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オークションに出品"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "طرح في المزاد"
+          }
+        }
+      }
+    },
+    "Natar kaleleri sunucu geneli benzersiz eserleri tutar. Yeterince güçlü orduyla baskın yap → eseri ele geçir. Eser sende oldukça bonusu senin; başkası fethederse elinden alır.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Natar fortresses hold server-wide unique artifacts. Raid with a strong enough army → seize the artifact. As long as it's yours, the bonus is yours; if someone else conquers it, they take it from you."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Natar-Festungen bewahren serverweite einzigartige Artefakte. Überfalle mit einer starken genug Armee → erbeute das Artefakt. Solange es dir gehört, gehört der Bonus dir; erobert es jemand anderes, nimmt er es dir weg."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les forteresses Natar détiennent des artefacts uniques à l'échelle du serveur. Attaque avec une armée assez puissante → empare-toi de l'artefact. Tant qu'il est à toi, le bonus est à toi ; si quelqu'un le conquiert, il te le prend."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las fortalezas Natar guardan artefactos únicos de todo el servidor. Asalta con un ejército lo bastante fuerte → toma el artefacto. Mientras el artefacto sea tuyo, el bonus es tuyo; si otro lo conquista, te lo arrebata."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fortezze Natar custodiscono artefatti unici in tutto il server. Fai un'incursione con un esercito abbastanza forte → conquista l'artefatto. Finché l'artefatto è tuo, il bonus è tuo; se un altro lo conquista, te lo strappa."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As fortalezas Natar guardam artefatos únicos do servidor inteiro. Invada com um exército forte o bastante → tome o artefato. Enquanto o artefato for seu, o bônus é seu; se outro conquistar, ele te tira."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Крепости Натаров хранят уникальные для всего сервера артефакты. Соверши налёт достаточно сильной армией → захвати артефакт. Пока артефакт у тебя — бонус твой; если кто-то захватит, он его отберёт."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ナタルの砦はサーバー全体で唯一の遺物を保持する。十分に強い軍で襲撃し → 遺物を奪え。遺物を持つ限りボーナスは自分のもの。誰かに征服されると奪われる。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قلاع الناتار تحوي قطعًا أثرية فريدة على مستوى الخادم. شنّ غارة بجيش قوي بما يكفي ← استولِ على القطعة. ما دامت معك فالمكافأة لك؛ ومن يغزوها ينتزعها منك."
+          }
+        }
+      }
+    },
+    "PAZARDAKİ EŞYALAR": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITEMS ON THE MARKET"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GEGENSTÄNDE AUF DEM MARKT"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OBJETS SUR LE MARCHÉ"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OBJETOS EN EL MERCADO"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OGGETTI AL MERCATO"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITENS NO MERCADO"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПРЕДМЕТЫ НА РЫНКЕ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市場のアイテム"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأغراض في السوق"
+          }
+        }
+      }
+    },
+    "PAZARDAKİ İLANLAR": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MARKET LISTINGS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MARKTANGEBOTE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ANNONCES DU MARCHÉ"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ANUNCIOS EN EL MERCADO"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ANNUNCI AL MERCATO"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ANÚNCIOS NO MERCADO"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОБЪЯВЛЕНИЯ НА РЫНКЕ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市場の出品"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإعلانات في السوق"
+          }
+        }
+      }
+    },
+    "Rajon · sürüm 1.0\\nBütün karakterler ve olaylar kurgudur.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · version 1.0\nAll characters and events are fictional."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · Version 1.0\nAlle Charaktere und Ereignisse sind fiktiv."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · version 1.0\nTous les personnages et événements sont fictifs."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · versión 1.0\\nTodos los personajes y hechos son ficticios."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · versione 1.0\\nTutti i personaggi e gli eventi sono di fantasia."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · versão 1.0\\nTodos os personagens e fatos são fictícios."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · версия 1.0\nВсе персонажи и события вымышлены."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · バージョン1.0\n全ての登場人物と出来事はフィクションです。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rajon · الإصدار 1.0\nجميع الشخصيات والأحداث خيالية."
+          }
+        }
+      }
+    },
+    "SATILACAK EŞYALARIM": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MY ITEMS FOR SALE"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MEINE GEGENSTÄNDE ZUM VERKAUF"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MES OBJETS À VENDRE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MIS OBJETOS A LA VENTA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I MIEI OGGETTI IN VENDITA"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MEUS ITENS À VENDA"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "МОИ ПРЕДМЕТЫ НА ПРОДАЖУ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "売却するアイテム"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أغراضي للبيع"
+          }
+        }
+      }
+    },
+    "SEZON ZAFERİ KAZANILDI!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEASON VICTORY WON!"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SAISONSIEG ERRUNGEN!"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VICTOIRE DE LA SAISON REMPORTÉE !"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡VICTORIA DE TEMPORADA CONSEGUIDA!"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VITTORIA DELLA STAGIONE OTTENUTA!"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VITÓRIA DA TEMPORADA CONQUISTADA!"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОБЕДА В СЕЗОНЕ ОДЕРЖАНА!"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "シーズン勝利を獲得！"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحقّق النصر في الموسم!"
+          }
+        }
+      }
+    },
+    "Saldırmazlık": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non-aggression"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichtangriff"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non-agression"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No agresión"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non aggressione"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não agressão"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ненападение"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不可侵"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عدم اعتداء"
+          }
+        }
+      }
+    },
+    "Sat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sell"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verkaufen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vender"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendi"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vender"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продать"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "売る"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بيع"
+          }
+        }
+      }
+    },
+    "Satılabilir (takılı olmayan) eşyan yok.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have no sellable (unequipped) items."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast keine verkäuflichen (nicht ausgerüsteten) Gegenstände."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu n'as aucun objet vendable (non équipé)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tienes objetos vendibles (no equipados)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non hai oggetti vendibili (non equipaggiati)."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você não tem itens vendíveis (não equipados)."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет предметов для продажи (не экипированных)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "売却可能な（未装備の）アイテムがない。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا أغراض قابلة للبيع (غير مجهّزة)."
+          }
+        }
+      }
+    },
+    "Savaş": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "War"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krieg"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerra"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerra"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerra"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Война"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戦争"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حرب"
+          }
+        }
+      }
+    },
+    "Savaş: kahraman saldırı/savunması • Liderlik: orduya % güç • Servet: % gelir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "War: hero attack/defense • Leadership: % power to army • Wealth: % income"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krieg: Heldenangriff/-verteidigung • Führung: % Kraft für die Armee • Reichtum: % Einkommen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerre : attaque/défense du héros • Leadership : % de puissance à l'armée • Fortune : % de revenus"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerra: ataque/defensa del héroe • Liderazgo: % de fuerza al ejército • Fortuna: % de ingresos"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerra: attacco/difesa dell'eroe • Comando: % di forza all'esercito • Ricchezza: % di reddito"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guerra: ataque/defesa do herói • Liderança: % de força ao exército • Fortuna: % de renda"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бой: атака/защита героя • Лидерство: % силы армии • Богатство: % дохода"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戦闘：ヒーローの攻撃/防御 • 統率：軍に%の力 • 富：%の収入"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قتال: هجوم/دفاع البطل • قيادة: % قوة للجيش • ثروة: % دخل"
+          }
+        }
+      }
+    },
+    "Savunma, saldıranın piyade/süvari oranına göre ağırlıklanır. Piyadeye karşı Muhafız, süvariye karşı Kabadayı güçlüdür — düşmanın neyle geldiğine göre savun.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Defense is weighted by the attacker's infantry/cavalry ratio. Guards are strong against infantry, Bruisers against cavalry — defend based on what the enemy brings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verteidigung wird nach dem Infanterie/Kavallerie-Verhältnis des Angreifers gewichtet. Wächter sind stark gegen Infanterie, Schläger gegen Kavallerie — verteidige je nachdem, womit der Feind kommt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La défense est pondérée selon le ratio infanterie/cavalerie de l'attaquant. Les Gardes sont forts contre l'infanterie, les Cogneurs contre la cavalerie — défends-toi selon ce que l'ennemi amène."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La defensa se pondera según la proporción de infantería/caballería del atacante. Contra infantería el Guardia es fuerte, contra caballería el Matón — defiende según con qué venga el enemigo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La difesa è ponderata in base al rapporto fanteria/cavalleria dell'attaccante. Contro la fanteria la Guardia è forte, contro la cavalleria il Bullo — difenditi in base a con cosa arriva il nemico."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A defesa é ponderada pela proporção de infantaria/cavalaria do atacante. Contra infantaria o Guarda é forte, contra cavalaria o Capanga — defenda conforme o que o inimigo traz."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Защита взвешивается по соотношению пехоты/кавалерии атакующего. Против пехоты силён Страж, против кавалерии — Громила. Защищайся по тому, с чем идёт враг."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "防御は攻撃側の歩兵/騎兵比率で重み付けされる。歩兵にはガーディアン、騎兵にはならず者が強い。敵が何で来るかに応じて守れ。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الدفاع يُرجّح حسب نسبة المشاة/الفرسان لدى المهاجم. الحارس قوي ضد المشاة، والبلطجي ضد الفرسان — دافع حسب ما يأتي به العدو."
+          }
+        }
+      }
+    },
+    "Sokakta hangi ailedensin? Seçimin kalıcıdır ve sana özel bir güç verir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which family are you with on the street? Your choice is permanent and grants you a unique power."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu welcher Familie gehörst du auf der Straße? Deine Wahl ist endgültig und verleiht dir eine einzigartige Kraft."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À quelle famille appartiens-tu dans la rue ? Ton choix est définitif et t'accorde un pouvoir unique."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿De qué familia eres en la calle? Tu elección es permanente y te da un poder único."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Di quale famiglia sei per strada? La tua scelta è permanente e ti dà un potere unico."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De qual família você é na rua? Sua escolha é permanente e te dá um poder único."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Из какой ты семьи на улице? Выбор навсегда и даёт тебе особую силу."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "路上でどの一家に属す？選択は永続で、あなた専用の力を与える。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "من أي عائلة أنت في الشارع؟ اختيارك دائم ويمنحك قوة خاصة بك."
+          }
+        }
+      }
+    },
+    "Sıfırla": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurücksetzen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réinitialiser"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reimposta"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リセット"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة تعيين"
+          }
+        }
+      }
+    },
+    "Teklif Gönder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Offer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angebot senden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer l'offre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar Oferta"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invia Offerta"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar Oferta"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправить предложение"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オファーを送る"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إرسال عرض"
+          }
+        }
+      }
+    },
+    "Ticaret Rotası Kur (otomatik)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set Up Trade Route (automatic)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Handelsroute einrichten (automatisch)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Établir une route commerciale (automatique)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear Ruta Comercial (automática)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crea Rotta Commerciale (automatica)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Criar Rota Comercial (automática)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создать торговый маршрут (автоматический)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "交易ルートを設定（自動）"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء مسار تجاري (تلقائي)"
+          }
+        }
+      }
+    },
+    "TİCARET ROTALARI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRADE ROUTES"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HANDELSROUTEN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ROUTES COMMERCIALES"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RUTAS COMERCIALES"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ROTTE COMMERCIALI"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ROTAS COMERCIAIS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТОРГОВЫЕ МАРШРУТЫ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "交易ルート"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المسارات التجارية"
+          }
+        }
+      }
+    },
+    "Vazgeç": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desistir"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "やめる"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تراجع"
+          }
+        }
+      }
+    },
+    "YENİ TEKLİF": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW OFFER"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEUES ANGEBOT"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOUVELLE OFFRE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NUEVA OFERTA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NUOVA OFFERTA"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOVA OFERTA"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВОЕ ПРЕДЛОЖЕНИЕ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新規オファー"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عرض جديد"
+          }
+        }
+      }
+    },
+    "YOLDAKİ KERVANLAR": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CARAVANS EN ROUTE"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KARAWANEN UNTERWEGS"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CARAVANES EN ROUTE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CARAVANAS EN CAMINO"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CAROVANE IN VIAGGIO"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CARAVANAS A CAMINHO"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "КАРАВАНЫ В ПУТИ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移動中の隊商"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القوافل في الطريق"
+          }
+        }
+      }
+    },
+    "Yakında fethedilecek düşman üssü yok. Rakipler büyüdükçe burada belirir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No enemy base to conquer nearby. Rivals will appear here as they grow."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine feindliche Basis in der Nähe zum Erobern. Rivalen erscheinen hier, wenn sie wachsen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune base ennemie à conquérir à proximité. Les rivaux apparaîtront ici à mesure qu'ils grandiront."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay base enemiga por conquistar cerca. Aparecerán aquí a medida que los rivales crezcan."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna base nemica da conquistare nelle vicinanze. Appariranno qui man mano che i rivali crescono."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não há base inimiga a conquistar por perto. Vão aparecer aqui conforme os rivais crescem."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поблизости нет вражеской базы для захвата. Соперники появятся здесь по мере роста."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "近くに征服できる敵拠点はない。ライバルが成長するとここに現れる。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا قاعدة عدوّة قريبة للغزو. سيظهر الخصوم هنا كلما كبروا."
+          }
+        }
+      }
+    },
+    "Yeni Ek Üs Kur": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found New Extra Base"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Zusatzbasis gründen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonder une nouvelle base supplémentaire"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fundar Nueva Base Extra"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonda Nuova Base Extra"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fundar Nova Base Extra"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Основать новую доп. базу"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しい追加拠点を建てる"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تأسيس قاعدة إضافية جديدة"
+          }
+        }
+      }
+    },
+    "Yeni İlan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Listing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neues Angebot"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle annonce"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo Anuncio"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuovo Annuncio"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Novo Anúncio"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новое объявление"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新規出品"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعلان جديد"
+          }
+        }
+      }
+    },
+    "Yükselt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbessern"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Améliorer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mejorar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potenzia"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Melhorar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Улучшить"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップグレード"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ترقية"
+          }
+        }
+      }
+    },
+    "ÇETE ESERLERİ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GANG ARTIFACTS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BANDEN-ARTEFAKTE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ARTEFACTS DU GANG"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ARTEFACTOS DE BANDA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ARTEFATTI DELLA BANDA"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ARTEFATOS DA GANGUE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АРТЕФАКТЫ БАНДЫ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ギャングの遺物"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قطع العصابة الأثرية"
+          }
+        }
+      }
+    },
+    "ÖDÜL AL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLAIM REWARD"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BELOHNUNG ABHOLEN"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RÉCUPÉRER LA RÉCOMPENSE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECIBIR RECOMPENSA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RITIRA RICOMPENSA"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PEGAR RECOMPENSA"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАБРАТЬ НАГРАДУ"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "報酬を受け取る"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استلام المكافأة"
+          }
+        }
+      }
+    },
+    "Ödülü Topla": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collect Reward"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belohnung einsammeln"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récupérer la récompense"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recoger Recompensa"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riscuoti Ricompensa"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coletar Recompensa"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Собрать награду"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "報酬を集める"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جمع المكافأة"
+          }
+        }
+      }
+    },
+    "Önce bir köy kur. Kervanlar ana üsten köylerine kaynak taşır.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found a village first. Caravans haul resources from the main base to your villages."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gründe zuerst ein Dorf. Karawanen transportieren Ressourcen von der Hauptbasis zu deinen Dörfern."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonde d'abord un village. Les caravanes acheminent des ressources de la base principale vers tes villages."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primero funda una aldea. Las caravanas llevan recursos desde la base principal a tus aldeas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prima fonda un villaggio. Le carovane portano risorse dalla base principale ai tuoi villaggi."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primeiro funde uma vila. As caravanas levam recursos da base principal às suas vilas."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сначала основай деревню. Караваны везут ресурсы с главной базы в твои деревни."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず村を建てよう。隊商は拠点から村へ資源を運ぶ。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أسّس قرية أولًا. القوافل تنقل الموارد من القاعدة الرئيسية إلى قراك."
+          }
+        }
+      }
+    },
+    "Üslerim": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My Bases"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meine Basen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mes bases"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mis Bases"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le Mie Basi"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minhas Bases"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мои базы"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拠点一覧"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قواعدي"
+          }
+        }
+      }
+    },
+    "İlan Ver (Takas)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "List (Barter)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anbieten (Tausch)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annoncer (Troc)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicar Anuncio (Trueque)"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pubblica Annuncio (Baratto)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anunciar (Troca)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разместить объявление (обмен)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出品する（交換）"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نشر إعلان (مقايضة)"
+          }
+        }
+      }
+    },
+    "İlanı Yayınla": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publish Listing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angebot veröffentlichen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publier l'annonce"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicar Anuncio"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pubblica Annuncio"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicar Anúncio"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Опубликовать объявление"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出品を公開"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نشر الإعلان"
+          }
+        }
+      }
+    },
+    "İleri birlikler eğitmeden önce burada araştırılmalı.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Advanced troops must be researched here before training."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fortgeschrittene Truppen müssen hier erforscht werden, bevor sie ausgebildet werden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les troupes avancées doivent être recherchées ici avant l'entraînement."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las tropas avanzadas deben investigarse aquí antes de entrenarlas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le truppe avanzate vanno ricercate qui prima di addestrarle."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tropas avançadas devem ser pesquisadas aqui antes de treiná-las."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перед обучением продвинутых войск это нужно исследовать здесь."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上級部隊を訓練する前に、ここで研究が必要。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قبل تدريب الوحدات المتقدّمة يجب بحثها هنا."
+          }
+        }
+      }
+    },
+    "İptal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャンセル"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء"
+          }
+        }
+      }
+    },
+    "İstiyorum": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I want it"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich will es"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je le veux"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo quiero"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo voglio"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eu quero"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Хочу"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欲しい"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أريده"
+          }
+        }
+      }
+    },
+    "İttifak": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alliance"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bündnis"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alliance"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alianza"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alleanza"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aliança"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Альянс"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同盟"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحالف"
+          }
+        }
+      }
+    },
+    "İttifak bonusları için bir çeteye katılman gerekir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You need to join a gang for alliance bonuses."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Bündnisboni musst du einer Bande beitreten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu dois rejoindre un gang pour les bonus d'alliance."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para los bonus de alianza debes unirte a una banda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per i bonus d'alleanza devi unirti a una banda."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para os bônus de aliança você precisa entrar em uma gangue."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для бонусов альянса нужно вступить в банду."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同盟ボーナスにはギャングへの加入が必要。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لمكافآت التحالف عليك الانضمام إلى عصابة."
+          }
+        }
+      }
+    },
+    "Şef birliği (Sef) gönder → kazanılan baskında düşman üssünün sadakatini düşür. Sadakat 0 olunca üs SENİN olur.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send a boss squad (Boss) → lower the conquered base's loyalty on a won raid. When loyalty hits 0, the base is YOURS."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schicke einen Boss-Trupp (Boss) → senke bei einem gewonnenen Überfall die Loyalität der eroberten Basis. Erreicht die Loyalität 0, gehört die Basis DIR."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoie une escouade de chef (Chef) → réduis la loyauté de la base conquise lors d'un raid gagné. Quand la loyauté atteint 0, la base est À TOI."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envía tropa de jefe (Sef) → en el asalto ganado baja la lealtad de la base enemiga. Cuando la lealtad llega a 0, la base es TUYA."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invia truppa capo (Sef) → nell'incursione vinta abbassa la fedeltà della base nemica. Quando la fedeltà arriva a 0, la base è TUA."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envie tropa de chefe (Sef) → na invasão vencida reduz a lealdade da base inimiga. Quando a lealdade chega a 0, a base é SUA."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошли отряд шефа (Sef) → в выигранном налёте снизь лояльность вражеской базы. Когда лояльность станет 0, база СТАНЕТ ТВОЕЙ."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ボス部隊（Sef）を送る → 勝利した襲撃で敵拠点の忠誠を下げる。忠誠が0になると拠点はあなたのもの。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أرسل وحدة الزعيم (Sef) ← في الغارة المنتصرة اخفض ولاء قاعدة العدو. عندما يصبح الولاء 0 تصبح القاعدة لك."
+          }
+        }
+      }
+    },
+    "Şu an açık ilan yok. İlk teklifi sen ver!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No open listings right now. Make the first offer!"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerade keine offenen Angebote. Mach das erste Angebot!"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune annonce ouverte pour l'instant. Fais la première offre !"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora mismo no hay anuncios abiertos. ¡Haz tú la primera oferta!"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al momento non ci sono annunci aperti. Fai tu la prima offerta!"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No momento não há anúncios abertos. Faça você a primeira oferta!"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открытых объявлений сейчас нет. Сделай первое предложение!"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今、公開中の出品はない。最初のオファーを出そう！"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا إعلانات مفتوحة حاليًا. قدّم أول عرض!"
+          }
+        }
+      }
+    },
+    "Şu an satılan eşya yok.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No items for sale right now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerade keine Gegenstände zum Verkauf."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun objet en vente pour l'instant."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora mismo no hay objetos a la venta."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al momento non ci sono oggetti in vendita."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No momento não há itens à venda."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сейчас нет продаваемых предметов."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今、売られているアイテムはない。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا أغراض معروضة للبيع حاليًا."
           }
         }
       }
