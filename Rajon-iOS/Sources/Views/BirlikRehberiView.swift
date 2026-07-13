@@ -39,7 +39,7 @@ struct BirlikRehberiView: View {
     private func deger(_ ad: String, _ v: String, _ c: Color) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(v).font(.system(size: 14, weight: .black)).foregroundStyle(c)
-            Text(ad).font(.system(size: 9)).foregroundStyle(Theme.smoke)
+            Text(LocalizedStringKey(ad)).font(.system(size: 9)).foregroundStyle(Theme.smoke)
         }
     }
 }

@@ -51,7 +51,7 @@ struct KahramanView: View {
     private func rozet(_ ad: String, _ v: String, _ c: Color) -> some View {
         VStack(spacing: 2) {
             Text(v).font(.system(size: 15, weight: .black)).foregroundStyle(c)
-            Text(ad).font(.system(size: 10)).foregroundStyle(Theme.smoke)
+            Text(LocalizedStringKey(ad)).font(.system(size: 10)).foregroundStyle(Theme.smoke)
         }
     }
 
@@ -75,7 +75,7 @@ struct KahramanView: View {
     private func yetenekSatir(_ ad: String, _ ikon: String, _ deger: Int, _ kod: String, _ acik: Bool) -> some View {
         HStack {
             Image(systemName: ikon).foregroundStyle(Theme.gold).frame(width: 26)
-            Text(ad).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
+            Text(LocalizedStringKey(ad)).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
             Spacer()
             Text("\(deger)").font(.system(size: 15, weight: .black)).foregroundStyle(Theme.ink)
             Button { Task { await online.heroYetenek(kod) } } label: {

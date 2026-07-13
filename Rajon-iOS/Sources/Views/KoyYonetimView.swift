@@ -93,7 +93,7 @@ struct KoyYonetimView: View {
     private func deger(_ ad: String, _ v: String, _ c: Color) -> some View {
         VStack(spacing: 1) {
             Text(v).font(.system(size: 14, weight: .black)).foregroundStyle(c)
-            Text(ad).font(.system(size: 10)).foregroundStyle(Theme.smoke)
+            Text(LocalizedStringKey(ad)).font(.system(size: 10)).foregroundStyle(Theme.smoke)
         }
     }
     private func sure(_ sn: Int) -> String { sn >= 60 ? "\(sn / 60)dk \(sn % 60)sn" : "\(sn)sn" }
