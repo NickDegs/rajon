@@ -29891,6 +29891,77 @@
           }
         }
       }
+    },
+    "⭐️ işaretli kozmetikler Destekçi paketiyle açılır. Hepsi sadece görünümdür, oyunu güçlendirmez.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⭐️ marked cosmetics unlock with the Supporter Pack. All are cosmetic only and don't boost gameplay."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit ⭐️ markierte Kosmetika werden mit dem Unterstützerpaket freigeschaltet. Rein kosmetisch, kein Spielvorteil."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los cosméticos con ⭐️ se desbloquean con el Pack Mecenas. Solo estéticos, no potencian el juego."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les cosmétiques marqués ⭐️ se débloquent avec le Pack Soutien. Purement cosmétiques, aucun avantage."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I cosmetici con ⭐️ si sbloccano col Pacchetto Sostenitore. Solo estetici, nessun vantaggio di gioco."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⭐️付きの装飾は「サポーターパック」で解放。すべて見た目のみで、ゲームを強化しません。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cosméticos com ⭐️ são desbloqueados com o Pacote Apoiador. Apenas visuais, sem vantagem no jogo."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Косметика с ⭐️ открывается «Набором спонсора». Только внешний вид, без преимуществ."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تُفتح مستحضرات التجميل المعلَّمة بـ⭐️ عبر حزمة الداعم. للمظهر فقط ولا تعزز اللعب."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⭐️ 표시 꾸미기는 서포터 팩으로 해제됩니다. 외형 전용이며 게임을 강화하지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "带⭐️的装饰通过支持者礼包解锁。仅为外观，不增强游戏。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
