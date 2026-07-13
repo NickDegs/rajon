@@ -54,7 +54,7 @@ struct KoyYonetimView: View {
             ForEach(k.buildings) { b in
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("\(Self.binaAd[b.tip] ?? b.tip) · Sv.\(b.seviye)").font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
+                        (Text(LocalizedStringKey(Self.binaAd[b.tip] ?? b.tip)) + Text(" · Sv.\(b.seviye)")).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)
                         if b.insaatta { Text("İnşaatta · \(sure(b.kalan))").font(.system(size: 11)).foregroundStyle(Theme.gold) }
                         else { Text(b.icki > 0 ? "₺\(b.fiyat) · 🍷\(b.icki) · \(sure(b.sure))" : "₺\(b.fiyat) · \(sure(b.sure))").font(.system(size: 11)).foregroundStyle(Theme.smoke) }
                     }
