@@ -10,6 +10,7 @@ struct AyarlarView: View {
     @ObservedObject private var sound = SoundManager.shared
     @State private var adDuzenle = ""
     @State private var sifirlaUyari = false
+    @State private var hesapSilUyari = false
     @State private var bilgi: String?
     @State private var smsAcik = false
 
@@ -36,6 +37,16 @@ struct AyarlarView: View {
                             }
                             .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.gold)
                         }
+                        Divider().background(Color.white.opacity(0.08))
+                        Button(role: .destructive) { hesapSilUyari = true } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "trash.fill")
+                                Text("Hesabı Sil").font(.system(size: 14, weight: .bold))
+                                Spacer()
+                            }.foregroundStyle(Theme.blood)
+                        }
+                        Text("Hesabın ve tüm ilerlemen sunucudan kalıcı olarak silinir.")
+                            .font(.system(size: 11)).foregroundStyle(Theme.smoke)
                     } else {
                         Text("Online moda 'Online' sekmesinden giriş yap.")
                             .font(.system(size: 12)).foregroundStyle(Theme.smoke)
@@ -153,6 +164,14 @@ struct AyarlarView: View {
             Button("Sıfırla", role: .destructive) { game.sifirla(); bilgi = "Oyun sıfırlandı." }
         } message: {
             Text("Bütün ilerlemen silinecek. Bu geri alınamaz.")
+        }
+        .alert("Hesabı Sil", isPresented: $hesapSilUyari) {
+            Button("Vazgeç", role: .cancel) {}
+            Button("Hesabı Sil", role: .destructive) {
+                Task { await online.hesabiSil(); bilgi = "Hesabın silindi." }
+            }
+        } message: {
+            Text("Hesabın ve tüm ilerlemen sunucudan KALICI olarak silinir. Bu geri alınamaz.")
         }
     }
 }

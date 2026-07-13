@@ -317,6 +317,15 @@ final class OnlineService: ObservableObject {
         girisli = false; me = nil; dunya = nil; dunyaAktif = false; hata = nil
     }
 
+    /// Uygulama içi HESAP SİLME (App Store 5.1.1(v)): sunucudaki tüm veriyi kalıcı siler + yereli temizler.
+    @discardableResult
+    func hesabiSil() async -> Bool {
+        var ok = false
+        if let _: OkResp = try? await post("/rajon/account/delete", body: [:]) { ok = true }
+        tamSifirla()   // sunucu silinsin ya da silinmesin yerel kimliği temizle (geri dönülmez)
+        return ok
+    }
+
     /// Attest token yoksa sağla (hassas aksiyon öncesi) — kullanıcı hata görmesin.
     private func attestGerekli() async {
         if (attestToken ?? "").isEmpty { await attestSaglat() }
