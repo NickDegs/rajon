@@ -46,6 +46,8 @@ struct ShotHostView: View {
             BirlikRehberiView().navigationTitle("Birlik Rehberi").navigationBarTitleDisplayMode(.inline)
         case "akademi":
             AkademiView().navigationTitle("Akademi & Kültür").navigationBarTitleDisplayMode(.inline)
+        case "magaza":
+            MagazaView(shotMode: true).navigationTitle("Mağaza").navigationBarTitleDisplayMode(.inline)
         case "pazar":
             PazarView().navigationTitle("Pazar & Diplomasi").navigationBarTitleDisplayMode(.inline)
         case "ittifak":

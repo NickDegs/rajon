@@ -4,22 +4,27 @@ import StoreKit
 /// Mağaza — YALNIZCA KOZMETİK. Hiçbir ürün oyunu güçlendirmez.
 struct MagazaView: View {
     @EnvironmentObject var store: StoreManager
+    /// App Store görsel modu: abonelik açıklamasını (Apple 3.1.2) üstte garanti gösterir, yükleniyor/hata metnini gizler.
+    var shotMode = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 bilgiNotu
 
+                // Görsel modunda abonelik + zorunlu linkler en üstte, tam görünür olsun.
+                if shotMode { abonelikNotu }
+
                 Text("KOZMETİK").sectionHeader()
                 ForEach(RajonUrun.allCases, id: \.self) { u in
                     if let p = store.urun(u) {
-                        KozmetikRow(urun: u, product: p, owned: store.sahip(u))
+                        KozmetikRow(urun: u, product: p, owned: store.sahip(u), shotMode: shotMode)
                     } else {
-                        KozmetikRow(urun: u, product: nil, owned: store.sahip(u))
+                        KozmetikRow(urun: u, product: nil, owned: store.sahip(u), shotMode: shotMode)
                     }
                 }
 
-                if store.urun(.vip) != nil { abonelikNotu }
+                if !shotMode && store.urun(.vip) != nil { abonelikNotu }
 
                 Button {
                     Task { await store.geriYukle() }
@@ -29,11 +34,11 @@ struct MagazaView: View {
                 }
                 .padding(.top, 6)
 
-                if store.products.isEmpty {
+                if !shotMode && store.products.isEmpty {
                     Text("Ürünler yükleniyor… (TestFlight'ta ASC ürünleri onaylı olmalı)")
                         .font(.system(size: 11)).foregroundStyle(Theme.smoke).multilineTextAlignment(.center)
                 }
-                if let e = store.sonHata {
+                if !shotMode, let e = store.sonHata {
                     Text(e).font(.system(size: 11)).foregroundStyle(Theme.blood)
                 }
             }
@@ -73,6 +78,7 @@ struct KozmetikRow: View {
     let urun: RajonUrun
     let product: Product?
     var owned: Bool = false
+    var shotMode = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -95,12 +101,22 @@ struct KozmetikRow: View {
             Button {
                 if let p = product { Task { await store.satinAl(p) } }
             } label: {
-                Text(owned ? "SAHİP" : (product?.displayPrice ?? "—"))
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(owned ? Theme.gold : .white)
-                    .padding(.horizontal, 14).padding(.vertical, 9)
-                    .background(owned ? Theme.panelHi : Theme.blood)
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                Group {
+                    if owned {
+                        Text("SAHİP")
+                    } else if let dp = product?.displayPrice {
+                        Text(dp)
+                    } else if shotMode {
+                        Image(systemName: "bag.fill")
+                    } else {
+                        Text("—")
+                    }
+                }
+                .font(.system(size: 13, weight: .black))
+                .foregroundStyle(owned ? Theme.gold : .white)
+                .padding(.horizontal, 14).padding(.vertical, 9)
+                .background(owned ? Theme.panelHi : Theme.blood)
+                .clipShape(RoundedRectangle(cornerRadius: 9))
             }
             .disabled(owned || product == nil || store.yukleniyor)
         }

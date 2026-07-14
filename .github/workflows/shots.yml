@@ -65,7 +65,7 @@ jobs:
           for PAIR in "en-US:en" "tr:tr" "de-DE:de" "es-ES:es" "fr-FR:fr" "pt-BR:pt-BR" "ru:ru" "ja:ja" "ar-SA:ar" "ko:ko" "zh-Hans:zh-Hans"; do
             LOC="${PAIR%%:*}"; LANG_CODE="${PAIR##*:}"
             mkdir -p "shots/$LOC"
-            for S in oyun usler koy kahraman natar rehber akademi; do
+            for S in magaza; do
               xcrun simctl terminate "$DEV" $BID 2>/dev/null
               sleep 1
               xcrun simctl launch "$DEV" $BID -AppleLanguages "($LANG_CODE)" -shot $S
